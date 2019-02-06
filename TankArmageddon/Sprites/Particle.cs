@@ -10,7 +10,7 @@ namespace TankArmageddon
 {
     public class Particle : Sprite
     {
-        private const float GRAVITY = 0.5f;
+        private const float GRAVITY = 1f;
         private const float SPEED_MAX = 3f;
 
         private Gameplay Parent;

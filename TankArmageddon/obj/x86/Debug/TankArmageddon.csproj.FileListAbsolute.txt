@@ -56,3 +56,4 @@ C:\Users\PierArn\Documents\Perso\Jeux Video\GameJam\4_TankArmageddon\TankArmaged
 C:\Users\PierArn\Documents\Perso\Jeux Video\GameJam\4_TankArmageddon\TankArmageddon\TankArmageddon\obj\x86\Debug\TankArmageddon.csproj.CopyComplete
 C:\Users\PierArn\Documents\Perso\Jeux Video\GameJam\4_TankArmageddon\TankArmageddon\TankArmageddon\obj\x86\Debug\TankArmageddon.exe
 C:\Users\PierArn\Documents\Perso\Jeux Video\GameJam\4_TankArmageddon\TankArmageddon\TankArmageddon\obj\x86\Debug\TankArmageddon.pdb
+C:\Users\PierArn\Documents\Perso\Jeux Video\_GameJam\4_TankArmageddon\TankArmageddon\TankArmageddon\bin\Windows\x86\Debug\Content\_Tanks\tanks_spritesheetRetina.xml

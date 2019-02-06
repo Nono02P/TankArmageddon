@@ -56,3 +56,6 @@
 /processorParam:TextureFormat=Color
 /build:_Tiles/spritesheet_tiles.png
 
+#begin _Tanks/tanks_spritesheetRetina.xml
+/copy:_Tanks/tanks_spritesheetRetina.xml
+

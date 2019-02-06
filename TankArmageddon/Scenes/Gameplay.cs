@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Timers;
 using TankArmageddon.GUI;
 
@@ -66,9 +67,11 @@ namespace TankArmageddon
             #region Création de la map
             _perlinNoise = PerlinNoise.Generate1DMap((int)MapSize.X, 550f);
             //
-            float[] perlinLuminosity = PerlinNoise.Generate2DMap(MapSize, 550f);
-            float[] perlinColor = PerlinNoise.Generate1DMap((int)MapSize.X, 340f);
-
+            //float[] perlinLuminosity = PerlinNoise.Generate2DMap(MapSize, 550f);
+            float[] perlinColor1 = PerlinNoise.Generate1DMap((int)MapSize.X, 100f);
+            float[] perlinColor2 = PerlinNoise.Generate1DMap((int)MapSize.X, 300f);
+            float[] perlinColor3 = PerlinNoise.Generate1DMap((int)MapSize.X, 5000f);
+            
             _mapTexture = new Texture2D(MainGame.spriteBatch.GraphicsDevice, (int)MapSize.X, (int)MapSize.Y);
             MapData = new byte[(int)(MapSize.X * MapSize.Y)];
             MapColors = new Color[MapData.Length];
@@ -76,16 +79,49 @@ namespace TankArmageddon
             {
                 //
                 float noiseVal = _perlinNoise[i];
-
+                float noiseVal1 = perlinColor1[i];
+                float noiseVal2 = perlinColor2[i];
+                float noiseVal3 = perlinColor3[i];
+                
                 ushort x = (ushort)(i % MapSize.X);
                 ushort h = (ushort)Math.Floor((noiseVal + 1) * MapSize.Y * 0.5f);
+                ushort h1 = (ushort)Math.Floor((noiseVal1 + 1) * MapSize.Y * 0.5f);
+                ushort h2 = (ushort)Math.Floor((noiseVal2 + 1) * MapSize.Y * 0.5f);
+                ushort h3 = (ushort)Math.Floor((noiseVal3 + 1) * MapSize.Y * 0.5f);
+                //for (ushort y = h; y < MapSize.Y; y++)
                 for (ushort y = h; y < MapSize.Y; y++)
                 {
+                    float max = (new List<float>() { h1, h2, h3 }).Max();
+                    Color color;
+                    if (max == h1)
+                    {
+                        color = Color.Lerp(Color.WhiteSmoke, Color.White, _perlinNoise[y]);
+                    }
+                    else if (max == h2)
+                    {
+                        color = Color.Lerp(Color.DarkGray, Color.Gray, _perlinNoise[y]);
+                    }
+                    else
+                    {
+                        color = Color.Lerp(Color.DarkGreen, Color.Green, _perlinNoise[y]);
+                    }
                     uint index = (uint)(x + y * MapSize.X);
-                    //
-                    MapColors[index] = Color.Lerp(Color.DarkGreen, Color.GreenYellow, perlinColor[y * 2]);
+                    MapColors[index] = color; //Color.Lerp(Color.WhiteSmoke, Color.White, perlinColor1[y]);
                     MapData[index] = 1;
                 }
+                /*
+                for (ushort y = h1; y < h2; y++)
+                {
+                    uint index = (uint)(x + y * MapSize.X);
+                    MapColors[index] = Color.Lerp(Color.DarkGray, Color.Gray, perlinColor2[y]);
+                    MapData[index] = 1;
+                }
+                for (ushort y = h2; y < MapSize.Y; y++)
+                {
+                    uint index = (uint)(x + y * MapSize.X);
+                    MapColors[index] = Color.Lerp(Color.DarkGreen, Color.Green, perlinColor3[y]);
+                    MapData[index] = 1;
+                }*/
             }
             _mapTexture.SetData(MapColors);
             #endregion
@@ -240,12 +276,12 @@ namespace TankArmageddon
         /// <param name="pPosition">Position du point qui doit être calculé.</param>
         /// <param name="pXOffset">Offset en X à vérifier par rapport à la position.</param>
         /// <returns>Renvoies un Vector2 correspondant à l'écart entre la position passée et le premier point le plus haut à l'offset X.</returns>
-        public Vector2 FindHighestPoint(Vector2 pPosition, int pHeightLimit, int pXOffset)
+        public Vector2 FindHighestPoint(Vector2 pPosition, int pXOffset) //, int pHeightLimit, int pXOffset)
         {
             // Remonte pour trouver le pixel le plus haut à l'emplacement Position.X + XOffset.
             // Afin d'éviter de trop remonter, le paramètre HeightLimit correspond au nombre de pixel max à remonter
             int y = (int)pPosition.Y;
-            while (y > pPosition.Y - pHeightLimit)
+            while (y > 0) //pPosition.Y - pHeightLimit)
             {
                 y--;
                 if (MapData[(uint)(pPosition.X + pXOffset + y * MapSize.X)] == 0)

@@ -48,7 +48,6 @@ namespace TankArmageddon
         public string Name { get; set; }
         public float AngleCannon { get; set; } = MathHelper.ToRadians(360);
         public eBulletType SelectedWeapon { get; set; }
-        public List<Bullet> Bullets { get; private set; }
         public bool Left { get; set; }
         public bool Right { get; set; }
         public bool Up { get; set; }
@@ -71,7 +70,6 @@ namespace TankArmageddon
             _textBox = new Textbox(new Vector2(Position.X, Position.Y - ImgBox.Value.Height), AssetManager.MainFont, Name + " : " + Life);
             _textBox.ApplyColor(pTeamColor, Color.Black);
             _textBox.SetOriginToCenter();
-            Bullets = new List<Bullet>();
             OnSpriteEffectsChange += SpriteEffectsChange;
         }
         #endregion
@@ -89,7 +87,6 @@ namespace TankArmageddon
             Vector2 p = new Vector2(_imgCannon.Width * Scale.X * cosAngle, _imgCannon.Width * Scale.X * sinAngle);
             p += _positionCannon;
             Bullet b = new Bullet(this, Image, p, new Vector2(cosAngle * pForce, sinAngle * pForce), pBulletType, Scale);
-            Bullets.Add(b);
         }
 
         public void SpriteEffectsChange(object sender, SpriteEffects previous, SpriteEffects after)
@@ -145,7 +142,11 @@ namespace TankArmageddon
                 Effects = SpriteEffects.None;
                 Parent.RefreshCameraOnSelection();
             }
-            vy += GRAVITY;
+            // Applique la gravité uniquement si le tank ne touche pas le sol (permet au tank d'éviter de passer au travers le sol qui n'est pas totalement détruit)
+            if (!onFloor)
+            {
+                vy += GRAVITY;
+            }
 
             if (vx > 0)
             {
@@ -190,28 +191,27 @@ namespace TankArmageddon
             if (Parent.Parent.IsSolid(p))
             {
                 onFloor = true;
-                
-                // Récupère l'altitude en Y à position.X -1 et +1 afin d'en déterminer l'angle à partir d'un vecteur tracé entre ces deux points.
-                Vector2 before = Parent.Parent.FindHighestPoint(p, BoundingBox.Height, -1);
-                Vector2 after = Parent.Parent.FindHighestPoint(p, BoundingBox.Height, 1);
+
+                // Récupère l'altitude en Y à position.X -20 et +20 afin d'en déterminer l'angle à partir d'un vecteur tracé entre ces deux points.
+                Vector2 center = Parent.Parent.FindHighestPoint(p, 0);
+                Vector2 before = Parent.Parent.FindHighestPoint(p, -20);
+                Vector2 after = Parent.Parent.FindHighestPoint(p, 20);
                 Angle = (float)utils.MathAngle(after - before);
-                Vector2 dir = Vector2.Zero;
-                switch (_direction)
+
+                // Vérifie que le point le plus haut retourné n'est pas plus grand que le tank.
+                // Permet d'empêcher le tank de se téléporter au dessus quand il est dans un trou.
+                if (center.Y > - BoundingBox.Height)
                 {
-                    case eDirection.Right:
-                        dir = after;
-                        break;
-                    case eDirection.Left:
-                        dir = before;
-                        break;
-                    default:
-                        break;
+                    Position += center;
                 }
-                if (dir.Y == -1 - BoundingBox.Height)
+                else if (before.Y > -BoundingBox.Height)
                 {
-                    dir.Y = 0;
+                    Position += before;
                 }
-                Position = new Vector2(Position.X, Position.Y + dir.Y);
+                else if (after.Y > -BoundingBox.Height)
+                {
+                    Position += after;
+                }
             }
             else
             {
