@@ -38,12 +38,11 @@ namespace TankArmageddon
             {
                 if (_teams.Count > 0 && _indexTeam != value)
                 {
-                    _indexTeam = value;
+                    _indexTeam = (byte)(value % _teams.Count);
                     _teams[value].RefreshCameraOnSelection();
                 }
             }
         }
-
         public Vector2 MapSize { get; private set; } = new Vector2(4096, MainGame.Screen.Height);
         public byte[] MapData { get; private set; }
         public Color[] MapColors { get; private set; }
@@ -66,17 +65,25 @@ namespace TankArmageddon
 
             #region Création de la map
             _perlinNoise = PerlinNoise.Generate1DMap((int)MapSize.X, 550f);
+            //
+            float[] perlinLuminosity = PerlinNoise.Generate2DMap(MapSize, 550f);
+            float[] perlinColor = PerlinNoise.Generate1DMap((int)MapSize.X, 340f);
+
             _mapTexture = new Texture2D(MainGame.spriteBatch.GraphicsDevice, (int)MapSize.X, (int)MapSize.Y);
             MapData = new byte[(int)(MapSize.X * MapSize.Y)];
             MapColors = new Color[MapData.Length];
             for (ushort i = 0; i < _perlinNoise.Length; i++)
             {
+                //
+                float noiseVal = _perlinNoise[i];
+
                 ushort x = (ushort)(i % MapSize.X);
-                ushort h = (ushort)Math.Floor((_perlinNoise[i] + 1) * MapSize.Y / 2);
+                ushort h = (ushort)Math.Floor((noiseVal + 1) * MapSize.Y * 0.5f);
                 for (ushort y = h; y < MapSize.Y; y++)
                 {
                     uint index = (uint)(x + y * MapSize.X);
-                    MapColors[index] = Color.Green;
+                    //
+                    MapColors[index] = Color.Lerp(Color.DarkGreen, Color.GreenYellow, perlinColor[y * 2]);
                     MapData[index] = 1;
                 }
             }
@@ -141,7 +148,6 @@ namespace TankArmageddon
                 {
                     _counter = TIME_BETWEEN_TOUR;
                     IndexTeam++;
-                    IndexTeam = (byte)(IndexTeam % _teams.Count);
                     _currentTeamTextBox.Text = "Team " + (IndexTeam + 1).ToString();
                     _currentTeamTextBox.ApplyColor(_teams[IndexTeam].TeamColor, Color.Black);
                 }
@@ -160,20 +166,63 @@ namespace TankArmageddon
         /// <param name="bulletEventArgs"></param>
         public void CreateExplosion(object sender, Tank.Bullet.BulletEventArgs bulletEventArgs)
         {
-            Vector2 pPosition = bulletEventArgs.Position;
-            int pRadius = bulletEventArgs.Radius;
-            for (uint x = (uint)(pPosition.X - pRadius); x <= (uint)(pPosition.X + pRadius); x++)
+            Color empty = new Color();
+            Vector2 pos = bulletEventArgs.Position;
+            int rad = bulletEventArgs.Radius;
+            int force = bulletEventArgs.Force;
+            int nMaxParticle = 15;
+            int nParticles = 0;
+            for (uint x = (uint)(pos.X - rad); x <= (uint)(pos.X + rad); x++)
             {
                 if (x >= 0 && x < MapSize.X)
                 {
-                    for (uint y = (uint)(pPosition.Y - pRadius); y <= (uint)(pPosition.Y + pRadius); y++)
+                    for (uint y = (uint)(pos.Y - rad); y <= (uint)(pos.Y + rad); y++)
                     {
                         if (y >= 0 && y < MapSize.Y)
                         {
-                            if (Math.Pow(pPosition.X - x, 2) + Math.Pow(pPosition.Y - y, 2) < Math.Pow(pRadius, 2))
+                            if (Math.Pow(pos.X - x, 2) + Math.Pow(pos.Y - y, 2) < Math.Pow(rad, 2))
                             {
                                 if (IsSolid(new Vector2(x, y)))
                                 {
+                                    int rnd = utils.MathRnd(20, 100);
+                                    int rnd2 = utils.MathRnd(0, 100);
+                                    if (rnd <= 30 && rnd2 >= 90 && nMaxParticle > nParticles)
+                                    {
+                                        Texture2D particleTexture = new Texture2D(MainGame.graphics.GraphicsDevice, rnd, rnd);
+                                        Color[] colors = new Color[rnd * rnd];
+                                        bool createParticle = false;
+                                        for (int i = 0; i < rnd; i++)
+                                        {
+                                            for (int j = 0; j < rnd; j++)
+                                            {
+                                                if (Math.Pow(pos.X - x - i, 2) + Math.Pow(pos.Y - y - j, 2) < Math.Pow(rnd, 2))
+                                                {
+                                                    Color c = empty;
+                                                    long index = (x + i + (y + j) * (uint)MapSize.X);
+                                                    if (index < 0 || index > MapColors.Length)
+                                                    {
+                                                        c = empty;
+                                                    }
+                                                    else if (MapColors[index] != empty)
+                                                    {
+                                                        c = MapColors[index];
+                                                        createParticle = true;
+                                                    }
+                                                    colors[i + j * rnd] = c;
+                                                }
+                                            }
+                                        }
+                                        if (createParticle)
+                                        {
+                                            particleTexture.SetData(colors);
+                                            Vector2 p = new Vector2(x, y);
+                                            Particle particle = new Particle(this, particleTexture, null, p, new Vector2(rnd / 2, rnd / 2), Vector2.One);
+                                            float angle = (float)utils.MathAngle(p, pos);
+                                            //particle.Velocity = new Vector2((float)Math.Cos(angle) * force, (float)Math.Sin(angle) * force);
+                                            particle.Velocity = new Vector2(utils.MathRnd(-10, 10), utils.MathRnd(-10, 10));
+                                            nParticles++;
+                                        }
+                                    }
                                     MapData[x + y * (int)MapSize.X] = 0;
                                     MapColors[x + y * (int)MapSize.X] = new Color();
                                 }
@@ -205,7 +254,7 @@ namespace TankArmageddon
                 }
             }
             // Redescend pour les cas où le pixel le plus haut est en dessous.
-            while (y < MapSize.Y)
+            while (y < MapSize.Y - 1)
             {
                 y++;
                 if (MapData[(uint)(pPosition.X + pXOffset + y * MapSize.X)] > 0)
@@ -275,6 +324,8 @@ namespace TankArmageddon
         {
             spriteBatch.Draw(_mapTexture, Vector2.Zero, Color.White);
             base.Draw(spriteBatch, gameTime);
+            Vector3 camPos = MainGame.Camera.Position;
+            spriteBatch.DrawString(AssetManager.MainFont, "Debug : " + lstActors.Count, new Vector2(camPos.X + 500, camPos.Y + 40), Color.Red);
         }
         #endregion
         

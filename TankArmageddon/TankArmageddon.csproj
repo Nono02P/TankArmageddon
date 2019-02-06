@@ -45,7 +45,7 @@
     <Compile Include="Libs\Primitive2D.cs" />
     <Compile Include="Assets\AssetManager.cs" />
     <Compile Include="Game\BackGround.cs" />
-    <Compile Include="Sprites\Explosion.cs" />
+    <Compile Include="Sprites\Particle.cs" />
     <Compile Include="Game\GameState.cs" />
     <Compile Include="Game\IActor.cs" />
     <Compile Include="Game\ICollisionnable.cs" />

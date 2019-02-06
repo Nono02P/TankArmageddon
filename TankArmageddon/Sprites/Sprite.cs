@@ -40,7 +40,7 @@ namespace TankArmageddon
         public Vector2 Position { get; set; }
         public Vector2 Velocity { get; set; }
         public Rectangle BoundingBox { get; private set; }
-        public Rectangle ImgBox { get; protected set; }
+        public Rectangle? ImgBox { get; protected set; }
         public Vector2 Origin { get; set; }
         public Vector2 Scale { get; set; } = Vector2.One;
         public Texture2D Image { get; private set; }
@@ -50,7 +50,7 @@ namespace TankArmageddon
         #endregion
 
         #region Constructeur
-        public Sprite(Texture2D pImage, Rectangle pImgBox, Vector2 pPosition, Vector2 pOrigin, Vector2 pScale)
+        public Sprite(Texture2D pImage, Rectangle? pImgBox, Vector2 pPosition, Vector2 pOrigin, Vector2 pScale)
         {
             Image = pImage;
             ImgBox = pImgBox;
@@ -78,7 +78,14 @@ namespace TankArmageddon
         public virtual void Update(GameTime gameTime)
         {
             Position += Velocity;
-            BoundingBox = new Rectangle((int)(Position.X - Origin.X * Scale.X), (int)(Position.Y - Origin.Y * Scale.Y), (int)(ImgBox.Width * Scale.X), (int)(ImgBox.Height * Scale.Y));
+            if (ImgBox == null)
+            {
+                BoundingBox = new Rectangle((int)(Position.X - Origin.X * Scale.X), (int)(Position.Y - Origin.Y * Scale.Y), (int)(Image.Width * Scale.X), (int)(Image.Height * Scale.Y));
+            }
+            else
+            {
+                BoundingBox = new Rectangle((int)(Position.X - Origin.X * Scale.X), (int)(Position.Y - Origin.Y * Scale.Y), (int)(ImgBox.Value.Width * Scale.X), (int)(ImgBox.Value.Height * Scale.Y));
+            }
         }
         #endregion
 
@@ -86,7 +93,7 @@ namespace TankArmageddon
         public virtual void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             spriteBatch.Draw(Image, Position, ImgBox, Color.White, Angle, Origin, Scale, Effects, 0);
-            spriteBatch.DrawRectangle(BoundingBox, Color.Red, 2);
+            //spriteBatch.DrawRectangle(BoundingBox, Color.Red, 2);
         }
         #endregion
 

@@ -65,10 +65,10 @@ namespace TankArmageddon
             _imgCannon = pCannonImage;
             _originCannon = new Vector2(0, _imgCannon.Height / 2);
             _imgWheel = pWheelImage;
-            _originWheelOffset = new Vector2(ImgBox.Width * 0.04f, 0);
-            _originWheelNormal = new Vector2(_imgWheel.Width / 2, _imgWheel.Height / 2 - ImgBox.Height / 2.5f);
+            _originWheelOffset = new Vector2(ImgBox.Value.Width * 0.04f, 0);
+            _originWheelNormal = new Vector2(_imgWheel.Width / 2, _imgWheel.Height / 2 - ImgBox.Value.Height / 2.5f);
             _originWheel = _originWheelNormal + _originWheelOffset;
-            _textBox = new Textbox(new Vector2(Position.X, Position.Y - ImgBox.Height), AssetManager.MainFont, Name + " : " + Life);
+            _textBox = new Textbox(new Vector2(Position.X, Position.Y - ImgBox.Value.Height), AssetManager.MainFont, Name + " : " + Life);
             _textBox.ApplyColor(pTeamColor, Color.Black);
             _textBox.SetOriginToCenter();
             Bullets = new List<Bullet>();
@@ -79,10 +79,7 @@ namespace TankArmageddon
 
         public override void TouchedBy(ICollisionnable collisionnable)
         {
-            if (collisionnable is Explosion)
-            {
-                Explosion e = (Explosion)collisionnable;
-            }
+            // TODO : Descendre la vie.
         }
 
         public void Shoot(byte pForce, eBulletType pBulletType)
@@ -186,15 +183,14 @@ namespace TankArmageddon
             Velocity = new Vector2(vx, vy);
             #endregion
 
-            Vector2 previousPosition = Position;
-
             base.Update(gameTime);
 
-            #region Collisions avec le sol et angle du tank          
-            if (Parent.Parent.IsSolid(new Vector2(Position.X, Position.Y + _imgWheel.Height / 2)))
+            #region Collisions avec le sol et angle du tank
+            Vector2 p = new Vector2(BoundingBox.Center.X, BoundingBox.Bottom);
+            if (Parent.Parent.IsSolid(p))
             {
                 onFloor = true;
-                Vector2 p = new Vector2(BoundingBox.Center.X, BoundingBox.Bottom);
+                
                 // Récupère l'altitude en Y à position.X -1 et +1 afin d'en déterminer l'angle à partir d'un vecteur tracé entre ces deux points.
                 Vector2 before = Parent.Parent.FindHighestPoint(p, BoundingBox.Height, -1);
                 Vector2 after = Parent.Parent.FindHighestPoint(p, BoundingBox.Height, 1);
@@ -223,10 +219,10 @@ namespace TankArmageddon
             }
             #endregion
 
-            _textBox.Position = new Vector2(Position.X, Position.Y - ImgBox.Height);
+            _textBox.Position = new Vector2(Position.X, Position.Y - ImgBox.Value.Height);
 
             #region Calcul de la position du canon par rapport à la position et l'angle du tank.
-            float hyp = ImgBox.Height * Scale.Y * 0.35f;
+            float hyp = ImgBox.Value.Height * Scale.Y * 0.35f;
             float x = (float)Math.Sin(Angle) * hyp;
             float y = (float)Math.Cos(Angle) * hyp;
             _positionCannon = new Vector2(Position.X + x, Position.Y - y);
@@ -273,7 +269,7 @@ namespace TankArmageddon
                     default:
                         break;
                 }
-                Origin = new Vector2(ImgBox.Width / 2, ImgBox.Height / 2);
+                Origin = new Vector2(ImgBox.Value.Width / 2, ImgBox.Value.Height / 2);
                 OnBulletExplosion += Parent.Parent.Parent.CreateExplosion;
             }
 
@@ -290,7 +286,7 @@ namespace TankArmageddon
             private void Explose()
             {
                 // TODO : gérer plusieurs types radian et forces en fonction du type de bullet.
-                OnBulletExplosion?.Invoke(this, new BulletEventArgs(Position, 100, 100));
+                OnBulletExplosion?.Invoke(this, new BulletEventArgs(Position, 100, 10));
                 Remove = true;
             }
 
@@ -304,7 +300,7 @@ namespace TankArmageddon
 
             public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
             {
-                spriteBatch.DrawRectangle(ImgBox, Color.Red, 2);
+                spriteBatch.DrawRectangle(ImgBox.Value, Color.Red, 2);
                 base.Draw(spriteBatch, gameTime);
             }
 
