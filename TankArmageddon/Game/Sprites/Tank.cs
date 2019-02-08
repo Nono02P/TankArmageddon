@@ -13,15 +13,32 @@ namespace TankArmageddon
         private const float SPEED = 10f;
         private const float FRICTION = 5f;
         private const float GRAVITY = 1f;
+        private const float FUEL_CONSUMPTION = 0.1f;
         #endregion
 
         #region Enumérations
         public enum eBulletType : byte
         {
+            None,
             GrayBullet,
+            GrayBombshell,
             GoldBullet,
+            GoldBombshell,
             GrayMissile,
             GreenMissile,
+            Mine,
+            Grenada,
+            SaintGrenada,
+        }
+
+        public enum eItemType : byte
+        {
+            None,
+            Helicotank,
+            Drilling,
+            TankBaseBall,
+            WhiteFlag,
+            PassTurn,
         }
         #endregion
 
@@ -39,7 +56,9 @@ namespace TankArmageddon
         private Rectangle _imgWheel;
         private Textbox _textBox;
         private int _life = 100;
+        private float _fuel = 100;
         private BarGraph _lifeBar;
+        private BarGraph _fuelBar;
         private TimeSpan _barSpeed = new TimeSpan(0, 0, 0, 0, 250);
         private Group _group;
         private Image _guiGameplayIndex;
@@ -60,6 +79,12 @@ namespace TankArmageddon
             get { return _life; }
             private set { _life = MathHelper.Clamp(value, 0, 100); _lifeBar.SetProgressiveValue(value, _barSpeed); }
         }
+        public float Fuel
+        {
+            get { return _fuel; }
+            set { _fuel = MathHelper.Clamp(value, 0, 100); _fuelBar.SetProgressiveValue(value, _barSpeed); }
+        }
+
         #endregion
 
         #region Constructeur
@@ -77,14 +102,17 @@ namespace TankArmageddon
             _originWheel = _originWheelNormal + _originWheelOffset;
 
             _group = new Group();
-            _textBox = new Textbox(new Vector2(0, - ImgBox.Value.Height), AssetManager.MainFont, Name + " : " + Life);
+            _textBox = new Textbox(new Vector2(0, - ImgBox.Value.Height * 1.25f), AssetManager.MainFont, Name + " : " + Life);
             _textBox.ApplyColor(pTeamColor, Color.Black);
             _textBox.SetOriginToCenter();
             _group.AddElement(_textBox);
 
             Vector2 s = new Vector2(100, 15);
-            _lifeBar = new BarGraph(Life, Life, new Vector2(0, -ImgBox.Value.Height * 0.75f), new Vector2(s.X / 2, 0), s, Color.Blue, Color.Green);
+            _lifeBar = new BarGraph(Life, Life, new Vector2(0, -ImgBox.Value.Height), new Vector2(s.X / 2, 0), s, Color.Blue, Color.Green);
             _group.AddElement(_lifeBar);
+
+            _fuelBar = new BarGraph(Fuel, Fuel, new Vector2(0, -ImgBox.Value.Height * 0.75f), new Vector2(s.X / 2, 0), s, Color.Blue, new Color(240, 105, 105));
+            _group.AddElement(_fuelBar);
 
             Texture2D cursor = new Texture2D(MainGame.graphics.GraphicsDevice, 15, 10);
             Color[] data = new Color[cursor.Width * cursor.Height];
@@ -164,15 +192,23 @@ namespace TankArmageddon
 
             if (Left && onFloor)
             {
-                vx -= xSpeed;
+                if (Fuel > 0)
+                {
+                    vx -= xSpeed;
+                    Fuel -= FUEL_CONSUMPTION;
+                    Parent.RefreshCameraOnSelection();
+                }
                 Effects = SpriteEffects.FlipHorizontally;
-                Parent.RefreshCameraOnSelection();
             }
             if (Right && onFloor)
             {
-                vx += xSpeed;
+                if (Fuel > 0)
+                {
+                    vx += xSpeed;
+                    Fuel -= FUEL_CONSUMPTION;
+                    Parent.RefreshCameraOnSelection();
+                }
                 Effects = SpriteEffects.None;
-                Parent.RefreshCameraOnSelection();
             }
             // Applique la gravité uniquement si le tank ne touche pas le sol (permet au tank d'éviter de passer au travers le sol qui n'est pas totalement détruit)
             if (!onFloor)

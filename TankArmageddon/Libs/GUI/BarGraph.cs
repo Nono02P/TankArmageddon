@@ -25,13 +25,13 @@ namespace TankArmageddon.GUI
         #endregion
 
         #region Constructeur
-        public BarGraph(int pValue, int pMaxValue, Vector2 pPosition, Vector2 pOrigin, Vector2 pSize, bool pVisible = true) : base(pPosition, pOrigin, pSize, pVisible)
+        public BarGraph(float pValue, float pMaxValue, Vector2 pPosition, Vector2 pOrigin, Vector2 pSize, bool pVisible = true) : base(pPosition, pOrigin, pSize, pVisible)
         {
             MaxValue = pMaxValue;
             Value = pValue;
         }
 
-        public BarGraph(int pValue, int pMaxValue, Vector2 pPosition, Vector2 pOrigin, Vector2 pSize, Color pBckgndColor, Color pBarColor, bool pVisible = true) : base(pPosition, pOrigin, pSize, pVisible)
+        public BarGraph(float pValue, float pMaxValue, Vector2 pPosition, Vector2 pOrigin, Vector2 pSize, Color pBckgndColor, Color pBarColor, bool pVisible = true) : base(pPosition, pOrigin, pSize, pVisible)
         {
             MaxValue = pMaxValue;
             Value = pValue;
@@ -50,7 +50,7 @@ namespace TankArmageddon.GUI
             _frontRect = new Rectangle(new Point((int)(Position.X - Origin.X) + Thickness, (int)(Position.Y - Origin.Y) + Thickness), new Point((int)((Size.X - 2 * Thickness) * Value / MaxValue), (int)Size.Y - 2 * Thickness));
         }
 
-        public void SetProgressiveValue(int pDesiredValue, TimeSpan pTimeSpan)
+        public void SetProgressiveValue(float pDesiredValue, TimeSpan pTimeSpan)
         {
             _desiredValue = pDesiredValue;
             _previousValue = Value;

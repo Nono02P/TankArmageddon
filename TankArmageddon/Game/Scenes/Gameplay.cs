@@ -8,6 +8,33 @@ using TankArmageddon.GUI;
 
 namespace TankArmageddon
 {
+    public class ButtonBullet : Button
+    {
+        public Tank.eBulletType BulletType { get; private set; }
+        public ButtonBullet(Tank.eBulletType pBulletType, Vector2 pPosition, Vector2 pOrigin, float pScale, bool pVisible, Texture2D pImageDefault, Texture2D pImageHover, Texture2D pImagePressed) : base(pPosition, pOrigin, pScale, pVisible, pImageDefault, pImageHover, pImagePressed)
+        {
+            BulletType = pBulletType;
+        }
+
+        public ButtonBullet(Tank.eBulletType pBulletType, Vector2 pPosition, Vector2 pOrigin, float pScale, bool pVisible, Texture2D pImageDefault, Texture2D pImageHover, Texture2D pImagePressed, SpriteFont pFont, string pText) : base(pPosition, pOrigin, pScale, pVisible, pImageDefault, pImageHover, pImagePressed, pFont, pText)
+        {
+            BulletType = pBulletType;
+        }
+    }
+    public class ButtonItem : Button
+    {
+        public Tank.eItemType ItemType { get; private set; }
+        public ButtonItem(Tank.eItemType pItemType, Vector2 pPosition, Vector2 pOrigin, float pScale, bool pVisible, Texture2D pImageDefault, Texture2D pImageHover, Texture2D pImagePressed) : base(pPosition, pOrigin, pScale, pVisible, pImageDefault, pImageHover, pImagePressed)
+        {
+            ItemType = pItemType;
+        }
+
+        public ButtonItem(Tank.eItemType pItemType, Vector2 pPosition, Vector2 pOrigin, float pScale, bool pVisible, Texture2D pImageDefault, Texture2D pImageHover, Texture2D pImagePressed, SpriteFont pFont, string pText) : base(pPosition, pOrigin, pScale, pVisible, pImageDefault, pImageHover, pImagePressed, pFont, pText)
+        {
+            ItemType = pItemType;
+        }
+    }
+
     public class Gameplay : Scene
     {
         #region Constantes
@@ -21,6 +48,7 @@ namespace TankArmageddon
         private Textbox _timerTextBox;
         private List<Team> _teams;
         private Textbox _currentTeamTextBox;
+        private Textbox _currentTankTextBox;
         private Timer _timerSecond;
         private int _counter = TIME_PER_TOUR;
         private bool _inTour = true;
@@ -32,6 +60,62 @@ namespace TankArmageddon
         #endregion
 
         #region Propriétés
+        public List<string> Names { get; } = new List<string>()
+            {
+                "Almex",
+                "Anata",
+                "Arnkil",
+                "Asthegor",
+                "Azharis",
+                "Bertho",
+                "BreakingBardo",
+                "Cehem",
+                "David",
+                "Duruti",
+                "Exe siga",
+                "Flashjaysan",
+                "FrenchAssassinX",
+                "Guitoon",
+                "helloWorld",
+                "HydroGene",
+                "JadisGames",
+                "Jérôme",
+                "Jpcr",
+                "Kiba",
+                "Krayne Radion_Wave",
+                "Liolabs",
+                "Lou",
+                "LoubiTek",
+                "Matutu",
+                "Mega",
+                "Mickdev",
+                "Morgan",
+                "Neortik",
+                "Nerils",
+                "Nono02P",
+                "Padawan",
+                "Pompo",
+                "Pseudotom",
+                "Puurple",
+                "PXLcat",
+                "Pyxel",
+                "Raoul",
+                "Rayndar",
+                "S3rval",
+                "Steph.",
+                "Tetsuro",
+                "Thomas T",
+                "Tomroux03",
+                "Torto",
+                "Ufo97",
+                "Valdaria",
+                "Veronimish",
+                "Vesgames",
+                "Vince8",
+                "Wazou",
+                "Wile",
+                "Zethzer",
+            };
         public Group GUIGroup { get; private set; }
         public Vector2 MapSize { get; private set; } = new Vector2(4096, MainGame.Screen.Height - AssetManager.GameBottomBar.Height);
         public byte[] MapData { get; private set; }
@@ -140,11 +224,15 @@ namespace TankArmageddon
             _cursorImage.SetOriginToCenter();
             GUIGroup.AddElement(_cursorImage);
 
-            _timerTextBox = new Textbox(new Vector2(10, 10), AssetManager.MainFont, TIME_BETWEEN_TOUR.ToString());
+            _timerTextBox = new Textbox(new Vector2(326, 725), AssetManager.MainFont, TIME_BETWEEN_TOUR.ToString() + "sec");
+            _timerTextBox.ApplyColor(Color.Green, Color.Black);
             GUIGroup.AddElement(_timerTextBox);
 
-            _currentTeamTextBox = new Textbox(new Vector2(40, 10), AssetManager.MainFont, "Team " + (IndexTeam + 1).ToString());
+            _currentTeamTextBox = new Textbox(new Vector2(25, 725), AssetManager.MainFont, "Equipe des rouges");
             GUIGroup.AddElement(_currentTeamTextBox);
+
+            _currentTankTextBox = new Textbox(new Vector2(200, 725), AssetManager.MainFont, ".");
+            GUIGroup.AddElement(_currentTankTextBox);
 
             c.OnPositionChange += OnCameraPositionChange;
             #endregion
@@ -152,12 +240,17 @@ namespace TankArmageddon
             #region Création des équipes
             _teams = new List<Team>();
             Texture2D img = AssetManager.TanksSpriteSheet;
+            Team t;
             for (byte i = 0; i < NUMBER_OF_TEAMS; i++)
             {
-                _teams.Add(new Team(this, img, NUMBER_OF_TANK_PER_TEAM, i));
+                t = new Team(this, img, NUMBER_OF_TANK_PER_TEAM, i);
+                _teams.Add(t);
+                t.OnTankSelectionChange += OnTankSelectionChange;
             }
-            _teams[IndexTeam].RefreshCameraOnSelection();
-            _currentTeamTextBox.ApplyColor(_teams[IndexTeam].TeamColor, Color.Black);
+            t = _teams[IndexTeam];
+            t.RefreshCameraOnSelection();
+            _currentTeamTextBox.ApplyColor(t.TeamColor, Color.Black);
+            _currentTankTextBox.Text = t.Tanks[t.IndexTank].Name;
             #endregion
 
             base.Load();
@@ -177,22 +270,32 @@ namespace TankArmageddon
         public void OnTimerElapsed(object state, ElapsedEventArgs e)
         {
             _counter--;
-            _timerTextBox.Text = _counter.ToString();
+            _timerTextBox.Text = _counter.ToString() + " sec";
             if (_counter <= 0)
             {
                 if (_inTour)
                 {
                     _counter = TIME_BETWEEN_TOUR;
                     IndexTeam++;
-                    _currentTeamTextBox.Text = "Team " + (IndexTeam + 1).ToString();
-                    _currentTeamTextBox.ApplyColor(_teams[IndexTeam].TeamColor, Color.Black);
+                    Team t = _teams[IndexTeam];
+                    _currentTeamTextBox.Text = t.ToString();
+                    _currentTeamTextBox.ApplyColor(t.TeamColor, Color.Black);
+                    _timerTextBox.ApplyColor(Color.Red, Color.Black);
+                    _currentTankTextBox.Text = t.Tanks[t.IndexTank].Name;
                 }
                 else
                 {
                     _counter = TIME_PER_TOUR;
+                    _timerTextBox.ApplyColor(Color.Green, Color.Black);
                 }
                 _inTour = !_inTour;
             }
+        }
+
+        public void OnTankSelectionChange(object sender, byte before, byte value)
+        {
+            Team t = (Team)sender;
+            _currentTankTextBox.Text = t.Tanks[t.IndexTank].Name;
         }
 
         /// <summary>

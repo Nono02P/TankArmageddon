@@ -140,6 +140,7 @@ namespace TankArmageddon
             //spriteBatch.Begin(samplerState: SamplerState.PointClamp); // Avec l'anti-alliasing
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null,null, Camera.Transformation);
             CurrentScene.Draw(spriteBatch, gameTime);
+            spriteBatch.DrawString(AssetManager.MainFont, Mouse.GetState().Position.ToString(), new Vector2(80, 80) + new Vector2(Camera.Position.X, Camera.Position.Y), Color.White);
             spriteBatch.End();
             base.Draw(gameTime);
         }

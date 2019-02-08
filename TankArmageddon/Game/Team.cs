@@ -7,6 +7,11 @@ namespace TankArmageddon
 {
     public class Team
     {
+        #region Evènements
+        public event onByteChange OnTankSelectionChange;
+        #endregion
+
+
         private byte _missileForce;
 
         private byte _indexTank;
@@ -18,8 +23,10 @@ namespace TankArmageddon
             {
                 if (Tanks.Count > 0 && _indexTank != value)
                 {
-                    _indexTank = value;
+                    byte before = _indexTank;
+                    _indexTank = (byte)(value % Tanks.Count);
                     RefreshCameraOnSelection();
+                    OnTankSelectionChange?.Invoke(this, before, value);
                 }
             }
         }
@@ -60,10 +67,12 @@ namespace TankArmageddon
             Rectangle imgCannon = AssetManager.TanksAtlas.Textures.Find(t => t.Name == tankCannon).ImgBox;
             Rectangle imgWheel = AssetManager.TanksAtlas.Textures.Find(t => t.Name == tankWheel).ImgBox;
 
-            for (int j = 0; j < pNumberOfTanks; j++)
+            for (int i = 0; i < pNumberOfTanks; i++)
             {
-                Tank t = new Tank(this, TeamColor, "tank" + j, pImage, imgTank, imgCannon, imgWheel, new Vector2(utils.MathRnd(40, (int)Parent.MapSize.X - 40), 1), new Vector2(imgTank.Width / 2, imgTank.Height / 2), Vector2.One * 0.5f);
+                int index = utils.MathRnd(0, Parent.Names.Count);
+                Tank t = new Tank(this, TeamColor, Parent.Names[i], pImage, imgTank, imgCannon, imgWheel, new Vector2(utils.MathRnd(40, (int)Parent.MapSize.X - 40), 1), new Vector2(imgTank.Width / 2, imgTank.Height / 2), Vector2.One * 0.5f);
                 Tanks.Add(t);
+                Parent.Names.RemoveAt(i);
             }
         }
 
@@ -78,7 +87,7 @@ namespace TankArmageddon
             if (Tanks.Count > 0)
             {
                 // Sélectionne le tank suivant
-                if (Input.OnPressed(Keys.N))
+                if (Input.OnPressed(Keys.N) && pCanPlay)
                 {
                     IndexTank++;
                 }
@@ -106,6 +115,28 @@ namespace TankArmageddon
 
                 Tanks.RemoveAll(t => t.Remove);
             }
+        }
+
+        public override string ToString()
+        {
+            string result = "";
+            if (TeamColor == Color.Red)
+            {
+                result = "rouges";
+            }
+            if (TeamColor == Color.Green)
+            {
+                result = "verts";
+            }
+            if (TeamColor == Color.Gray)
+            {
+                result = "gris";
+            }
+            if (TeamColor == Color.Yellow)
+            {
+                result = "jaunes";
+            }
+            return "Equipe des " + result; 
         }
     }
 }

@@ -6,7 +6,7 @@ namespace TankArmageddon
     public static class utils
     {
         #region Variables privées
-        private static Random _rnd = new Random();
+        private static Random _rnd = new Random(DateTime.Now.Hour + DateTime.Now.Minute ^ 2 + DateTime.Now.Second ^ 4);
         #endregion
 
         #region Méthodes
