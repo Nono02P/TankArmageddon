@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using System;
 
 namespace TankArmageddon.GUI
 {
@@ -15,7 +16,6 @@ namespace TankArmageddon.GUI
     {
         #region Variables privées
         private int _currentSelection;
-        private Vector2 _position;
         private Color _selectedTextColor = Color.Yellow;
         private Color _selectedTextColorBck = Color.Red;
         private Color _unselectedTextColor = Color.Gray;
@@ -23,37 +23,32 @@ namespace TankArmageddon.GUI
         #endregion
 
         #region Propriétés
-        // sur changement, créer un event
         public int CurrentSelection { get { return _currentSelection; } set { _currentSelection = (Elements.Count + value) % Elements.Count; ; } }
         public Color SelectedTextColor { get { return _selectedTextColor; } set { _selectedTextColor = value; RefreshColors(); } }
         public Color SelectedTextColorBck { get { return _selectedTextColorBck; } set { _selectedTextColorBck = value; RefreshColors(); } }
         public Color UnselectedTextColor { get { return _unselectedTextColor; } set { _unselectedTextColor = value; RefreshColors(); } }
         public Color UnselectedTextColorBck { get { return _unselectedTextColorBck; } set { _unselectedTextColorBck = value; RefreshColors(); } }
-        public Vector2 Position
-        {
-            get {return _position; }
-            set
-            {
-                Vector2 difference = _position - value;
-                foreach (Element e in Elements)
-                {
-                    e.Position += difference;
-                }
-                _position = value;
-            }
-        }
         #endregion
 
         #region Constructeur
-        public GroupMenu()
-        {
-            _position = Vector2.Zero;
-        }
+        public GroupMenu() { }
         #endregion
 
         #region Méthodes
 
         #region Gestion des éléments
+        public new void AddElement(Element pElement)
+        {
+            if (pElement is IIntegrableMenu)
+            {
+                base.AddElement(pElement);
+            }
+            else
+            {
+                throw new Exception("A GroupMenu can contain only IIntegrableMenu objects");
+            }
+        }
+
         public void AddElement(IIntegrableMenu pElement)
         {
             base.AddElement((Element)pElement);
@@ -63,15 +58,18 @@ namespace TankArmageddon.GUI
         public void RemoveElement(IIntegrableMenu pElement)
         {
             base.RemoveElement((Element)pElement);
-            CurrentSelection = CurrentSelection;
+            // Non non, cette ligne n'est pas inutile ! 
+            // Quand on supprime un élément, si la CurrentSelection pointait vers le dernier élément, la CurrentSelection doit être recalculée.
+            // Voir dans le setter de CurrentSelection.
+            CurrentSelection = CurrentSelection; 
         }
         #endregion
 
         private void RefreshColors()
         {
-            foreach (Element element in Elements)
+            for (int i = 0; i < Elements.Count; i++)
             {
-                IIntegrableMenu integrable = (IIntegrableMenu)element;
+                IIntegrableMenu integrable = (IIntegrableMenu)Elements[i];
                 integrable.Color_Selected = SelectedTextColor;
                 integrable.ColorBck_Selected = SelectedTextColorBck;
                 integrable.Color_Default = UnselectedTextColor;
@@ -86,11 +84,10 @@ namespace TankArmageddon.GUI
 
             if (Elements.Count > 0)
             {
-                int i = 0;
-                foreach (IIntegrableMenu e in Elements)
+                for (int i = 0; i < Elements.Count; i++)
                 {
+                    IIntegrableMenu e = (IIntegrableMenu)Elements[i];
                     e.Selected = (i == CurrentSelection);
-                    i++;
                 }
             }
         }

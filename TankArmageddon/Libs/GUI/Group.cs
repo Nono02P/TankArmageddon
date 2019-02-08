@@ -20,8 +20,9 @@ namespace TankArmageddon.GUI
             {
                 if (_position != value)
                 {
-                    foreach (Element element in Elements)
+                    for (int i = 0; i < Elements.Count; i++)
                     {
+                        Element element = Elements[i];
                         element.Position += value - _position;
                     }
                     _position = value;
@@ -41,8 +42,9 @@ namespace TankArmageddon.GUI
             set
             {
                 Visible = value;
-                foreach (Element element in Elements)
+                for (int i = 0; i < Elements.Count; i++)
                 {
+                    Element element = Elements[i];
                     element.Visible = value;
                 }
             }
@@ -73,8 +75,9 @@ namespace TankArmageddon.GUI
         #region Update
         public virtual void Update(GameTime gameTime)
         {
-            foreach (Element element in Elements)
+            for (int i = 0; i < Elements.Count; i++)
             {
+                Element element = Elements[i];
                 element.Update(gameTime);
             }
             Elements.RemoveAll(element => element.Remove);
@@ -84,8 +87,9 @@ namespace TankArmageddon.GUI
         #region Draw
         public virtual void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            foreach (Element element in Elements)
+            for (int i = 0; i < Elements.Count; i++)
             {
+                Element element = Elements[i];
                 element.Draw(spriteBatch, gameTime);
             }
         }

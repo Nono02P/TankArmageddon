@@ -41,20 +41,20 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Game\Camera.cs" />
+    <Compile Include="Libs\Camera.cs" />
+    <Compile Include="Libs\GUI\Image.cs" />
     <Compile Include="Libs\Primitive2D.cs" />
     <Compile Include="Assets\AssetManager.cs" />
-    <Compile Include="Game\BackGround.cs" />
-    <Compile Include="Sprites\Particle.cs" />
-    <Compile Include="Game\GameState.cs" />
-    <Compile Include="Game\IActor.cs" />
-    <Compile Include="Game\ICollisionnable.cs" />
+    <Compile Include="Libs\BackGround.cs" />
+    <Compile Include="Game\Sprites\Particle.cs" />
+    <Compile Include="Libs\IActor.cs" />
+    <Compile Include="Libs\ICollisionnable.cs" />
     <Compile Include="Libs\Input.cs" />
     <Compile Include="Libs\MusicManager.cs" />
     <Compile Include="Libs\PerlingNoise.cs" />
-    <Compile Include="Scenes\Scene.cs" />
+    <Compile Include="Game\Scenes\Scene.cs" />
     <Compile Include="Assets\XmlTextureAtlas.cs" />
-    <Compile Include="Sprites\Tank.cs" />
+    <Compile Include="Game\Sprites\Tank.cs" />
     <Compile Include="Libs\Tweening.cs" />
     <Compile Include="Libs\utils.cs" />
     <Compile Include="Libs\GUI\BarGraph.cs" />
@@ -64,15 +64,15 @@
     <Compile Include="Libs\GUI\GroupMenu.cs" />
     <Compile Include="Libs\GUI\Slider.cs" />
     <Compile Include="Libs\GUI\Textbox.cs" />
-    <Compile Include="MainGame.cs" />
+    <Compile Include="Game\MainGame.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Scenes\Gameover.cs" />
-    <Compile Include="Scenes\Gameplay.cs" />
-    <Compile Include="Scenes\Menu.cs" />
+    <Compile Include="Game\Scenes\Gameover.cs" />
+    <Compile Include="Game\Scenes\Gameplay.cs" />
+    <Compile Include="Game\Scenes\Menu.cs" />
     <Compile Include="Game\Team.cs" />
-    <Compile Include="Scenes\Victory.cs" />
-    <Compile Include="Sprites\Sprite.cs" />
+    <Compile Include="Game\Scenes\Victory.cs" />
+    <Compile Include="Game\Sprites\Sprite.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">

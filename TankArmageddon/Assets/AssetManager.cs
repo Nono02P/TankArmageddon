@@ -20,6 +20,8 @@ namespace TankArmageddon
         #endregion
 
         #region Textures
+        public static Texture2D GameBottomBar { get; private set; }
+        public static Texture2D Cursor { get; private set; }
         public static Texture2D Button { get; private set; }
         public static Texture2D TanksSpriteSheet { get; private set; }
         public static XmlTextureAtlas TanksAtlas { get; private set; }
@@ -34,6 +36,8 @@ namespace TankArmageddon
             sndMusicVictory = pContent.Load<Song>("cool");*/
             MainFont = pContent.Load<SpriteFont>("_Font/MainFont");
             //Button = pContent.Load<Texture2D>("button");
+            GameBottomBar = pContent.Load<Texture2D>("_GUI/GameBottomBar");
+            Cursor = pContent.Load<Texture2D>("_GUI/Cursor");
             TanksSpriteSheet = pContent.Load<Texture2D>("_Tanks/tanks_spritesheetRetina");
             XmlSerializer TankSpriteSheetSer = new XmlSerializer(typeof(XmlTextureAtlas));
             MemoryStream stream = new MemoryStream(File.ReadAllBytes("Content/_Tanks/tanks_spritesheetRetina.xml"));

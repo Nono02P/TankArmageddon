@@ -1,13 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 
 namespace TankArmageddon.GUI
 {
-    public class BarGraph
+    public class BarGraph : Element
     {
         #region Variables privées
-        private Vector2 _position = Vector2.Zero;
-        private Vector2 _size = Vector2.One;
         private Rectangle _bckgndRect;
         private Rectangle _frontRect;
         private float _value;
@@ -18,10 +17,7 @@ namespace TankArmageddon.GUI
         #endregion
 
         #region Propriétés
-        public Vector2 Position { get { return _position; } set { _position = value; RefreshRectangles(); } }
-        public Vector2 Size { get { return _size; } set { _size = value; RefreshRectangles(); } }
         public int Thickness { get; set; } = 2;
-
         public Color BckgndColor { get; set; } = Color.LawnGreen;
         public Color BarColor { get; set; } = Color.Green;
         public float MaxValue { get; private set; }
@@ -29,31 +25,29 @@ namespace TankArmageddon.GUI
         #endregion
 
         #region Constructeur
-        public BarGraph(int pValue, int pMaxValue, Vector2 pPosition, Vector2 pSize)
+        public BarGraph(int pValue, int pMaxValue, Vector2 pPosition, Vector2 pOrigin, Vector2 pSize, bool pVisible = true) : base(pPosition, pOrigin, pSize, pVisible)
         {
             MaxValue = pMaxValue;
             Value = pValue;
-            Position = pPosition;
-            Size = pSize;
         }
 
-        public BarGraph(int pValue, int pMaxValue, Vector2 pPosition, Vector2 pSize, Color pBckgndColor, Color pBarColor)
+        public BarGraph(int pValue, int pMaxValue, Vector2 pPosition, Vector2 pOrigin, Vector2 pSize, Color pBckgndColor, Color pBarColor, bool pVisible = true) : base(pPosition, pOrigin, pSize, pVisible)
         {
             MaxValue = pMaxValue;
             Value = pValue;
-            Position = pPosition;
-            Size = pSize;
             BckgndColor = pBckgndColor;
             BarColor = pBarColor;
+            OnPositionChange += RectangleChanged;
+            OnSizeChange += RectangleChanged;
+            OnOriginChange += RectangleChanged;
         }
         #endregion
 
         #region Méthodes
-
         private void RefreshRectangles()
         {
-            _bckgndRect = new Rectangle(Position.ToPoint(), Size.ToPoint());
-            _frontRect = new Rectangle(new Point((int)Position.X + Thickness, (int)Position.Y + Thickness), new Point((int)((Size.X - 2 * Thickness) * Value / MaxValue), (int)Size.Y - 2 * Thickness));
+            _bckgndRect = new Rectangle((Position - Origin).ToPoint(), Size.ToPoint());
+            _frontRect = new Rectangle(new Point((int)(Position.X - Origin.X) + Thickness, (int)(Position.Y - Origin.Y) + Thickness), new Point((int)((Size.X - 2 * Thickness) * Value / MaxValue), (int)Size.Y - 2 * Thickness));
         }
 
         public void SetProgressiveValue(int pDesiredValue, TimeSpan pTimeSpan)
@@ -64,8 +58,13 @@ namespace TankArmageddon.GUI
             _setpointTimeSpan = pTimeSpan;
         }
 
+        private void RectangleChanged(object sender, Vector2 before, Vector2 actual)
+        {
+            RefreshRectangles();
+        }
+
         #region Update
-        public void Update(GameTime gameTime)
+        public override void Update(GameTime gameTime)
         {
             if (_currentTimeSpan < _setpointTimeSpan)
             {
@@ -78,14 +77,16 @@ namespace TankArmageddon.GUI
                 _setpointTimeSpan = TimeSpan.Zero;
                 Value = _desiredValue;
             }
+            base.Update(gameTime);
         }
         #endregion
 
         #region Draw
-        public void Draw()
+        public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            MainGame.spriteBatch.FillRectangle(_bckgndRect, BckgndColor);
-            MainGame.spriteBatch.FillRectangle(_frontRect, BarColor);
+            spriteBatch.FillRectangle(_bckgndRect, BckgndColor);
+            spriteBatch.FillRectangle(_frontRect, BarColor);
+            base.Draw(spriteBatch, gameTime);
         }
         #endregion
 

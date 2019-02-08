@@ -5,14 +5,50 @@ using Microsoft.Xna.Framework.Input;
 namespace TankArmageddon.GUI
 {
     #region Delegates
-    public delegate void OnHover(Element pSender);
-    public delegate void OnClick(Element pSender, ClickType Clicks);
-    public delegate void OnDblClick(Element pSender, ClickType Clicks);
-    public delegate void OnReleased(Element pSender, ClickType Clicks);
+    public delegate void onHover(Element pSender);
+    public delegate void onClick(Element pSender, ClickType Clicks);
+    public delegate void onDblClick(Element pSender, ClickType Clicks);
+    public delegate void onReleased(Element pSender, ClickType Clicks);
     #endregion
 
     public abstract class Element : IActor
     {
+        #region Evènements
+        /// <summary>
+        /// Evènement apparaissant quand l'élément est survolé.
+        /// </summary>
+        public event onHover OnHover;
+        /// <summary>
+        /// Evènement apparaissant quand l'élément est cliqué.
+        /// </summary>
+        public event onClick OnClick;
+        /// <summary>
+        /// [Pas encore implémenté] 
+        /// TODO
+        /// Evènement apparaissant quand l'élément est double cliqué.
+        /// </summary>
+        public event onDblClick OnDblClick;
+        /// <summary>
+        /// Evènement apparaissant quand l'élément est relaché.
+        /// </summary>
+        public event onReleased OnReleased;
+
+        /// <summary>
+        /// Evènement apparaissant quand la position change.
+        /// </summary>
+        public event onVector2Change OnPositionChange;
+
+        /// <summary>
+        /// Evènement apparaissant quand l'origine change.
+        /// </summary>
+        public event onVector2Change OnOriginChange;
+
+        /// <summary>
+        /// Evènement apparaissant quand la taille change.
+        /// </summary>
+        public event onVector2Change OnSizeChange;
+        #endregion
+
         #region Variables privées
         private bool _dblClick = false; // TODO gérer l'évènement double click !
         #endregion
@@ -25,25 +61,6 @@ namespace TankArmageddon.GUI
 
         #region Propriétés
         /// <summary>
-        /// Delegate de fonction quand l'élément est survolé.
-        /// </summary>
-        public OnHover onHover { get; set; }
-        /// <summary>
-        /// Delegate de fonction quand l'élément est cliqué.
-        /// </summary>
-        public OnClick onClick { get; set; }
-        /// <summary>
-        /// [Pas encore implémenté] 
-        /// TODO
-        /// Delegate de fonction quand l'élément est double cliqué.
-        /// </summary>
-        public OnDblClick onDblClick { get; set; }
-        /// <summary>
-        /// Delegate de fonction quand l'élément est relaché.
-        /// </summary>
-        public OnReleased onReleased { get; set; }
-
-        /// <summary>
         /// Zone de l'élément qui permet de gérer les collisions avec la souris
         /// </summary>
         public Rectangle BoundingBox { get; protected set; }
@@ -52,9 +69,9 @@ namespace TankArmageddon.GUI
         /// </summary>
         public bool ShowBoundingBox { get; set; } = false;
 
-        public Vector2 Position { get => _position; set { _position = value; RefreshBoundingBox(); } }
-        public Vector2 Origin { get => _origin; set { _origin = value; } }
-        public Vector2 Size { get => _size;  set { _size = value; RefreshBoundingBox(); } }
+        public Vector2 Position { get => _position; set { if (_position != value) { Vector2 before = _position; _position = value; OnPositionChange?.Invoke(this, before, value); RefreshBoundingBox(); } } }
+        public Vector2 Origin { get => _origin; set { if (_origin != value) { Vector2 before = _origin; _origin = value; OnOriginChange?.Invoke(this, before, value); RefreshBoundingBox(); } } }
+        public Vector2 Size { get => _size; set { if (_size != value) { Vector2 before = _size;  _size = value; OnSizeChange?.Invoke(this, before, value); RefreshBoundingBox(); } } }
         public float Angle { get; set; }
         public float Scale { get; set; }
         public bool Visible { get; set; } = true;
@@ -71,7 +88,7 @@ namespace TankArmageddon.GUI
             Size = pSize;
             Scale = pScale;
             Visible = pVisible;
-            MainGame.gameState.CurrentScene.AddActor(this);
+            MainGame.CurrentScene.AddActor(this);
         }
         #endregion
 
@@ -95,7 +112,7 @@ namespace TankArmageddon.GUI
             MouseState mouseState = Mouse.GetState();
             if (BoundingBox.Contains(mouseState.Position) && !Hover)
             {
-                onHover?.Invoke(this);
+                OnHover?.Invoke(this);
             }
             Hover = BoundingBox.Contains(mouseState.Position);
             #endregion
@@ -112,56 +129,56 @@ namespace TankArmageddon.GUI
                 #region Click gauche
                 if (Input.OnPressed(ClickType.Left))
                 {
-                    onClick?.Invoke(this, ClickType.Left); // Cliqué
+                    OnClick?.Invoke(this, ClickType.Left); // Cliqué
                     Clicked = true;
                 }
                 else if (Input.OnReleased(ClickType.Left))
                 {
-                    onReleased?.Invoke(this, ClickType.Left); // Relaché
+                    OnReleased?.Invoke(this, ClickType.Left); // Relaché
                 }
                 #endregion
 
                 #region Click mollette
                 if (Input.OnPressed(ClickType.Middle))
                 {
-                    onClick?.Invoke(this, ClickType.Middle); // Cliqué
+                    OnClick?.Invoke(this, ClickType.Middle); // Cliqué
                 }
                 else if (Input.OnReleased(ClickType.Middle))
                 {
-                    onReleased?.Invoke(this, ClickType.Middle); // Relaché
+                    OnReleased?.Invoke(this, ClickType.Middle); // Relaché
                 }
                 #endregion
 
                 #region Click droit
                 if (Input.OnPressed(ClickType.Right))
                 {
-                    onClick?.Invoke(this, ClickType.Right); // Cliqué
+                    OnClick?.Invoke(this, ClickType.Right); // Cliqué
                 }
                 else if (Input.OnReleased(ClickType.Right))
                 {
-                    onReleased?.Invoke(this, ClickType.Right); // Relaché
+                    OnReleased?.Invoke(this, ClickType.Right); // Relaché
                 }
                 #endregion
 
                 #region Click sur X1
                 if (Input.OnPressed(ClickType.X1))
                 {
-                    onClick?.Invoke(this, ClickType.X1); // Cliqué
+                    OnClick?.Invoke(this, ClickType.X1); // Cliqué
                 }
                 else if (Input.OnReleased(ClickType.X1))
                 {
-                    onReleased?.Invoke(this, ClickType.X1); // Relaché
+                    OnReleased?.Invoke(this, ClickType.X1); // Relaché
                 }
                 #endregion
 
                 #region Click sur X2
                 if (Input.OnPressed(ClickType.X2))
                 {
-                    onClick?.Invoke(this, ClickType.X2); // Cliqué
+                    OnClick?.Invoke(this, ClickType.X2); // Cliqué
                 }
                 else if (Input.OnReleased(ClickType.X2))
                 {
-                    onReleased?.Invoke(this, ClickType.X2); // Relaché
+                    OnReleased?.Invoke(this, ClickType.X2); // Relaché
                 }
                 #endregion
             }
