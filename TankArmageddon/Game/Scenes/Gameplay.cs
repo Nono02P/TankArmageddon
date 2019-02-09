@@ -574,6 +574,41 @@ namespace TankArmageddon
         }
         #endregion
 
+        #region Vérification de collision entre Tanks (pour le démmarrage)
+        public bool CanAppear(Tank pTank)
+        {
+            bool result = true;
+            for (int i = 0; i < lstActors.Count; i++)
+            {
+                IActor actor = lstActors[i];
+                if (actor is Tank)
+                {
+                    if (utils.Collide(pTank, actor))
+                    {
+                        result = false;
+                        break;
+                    }
+                }
+            }
+            if (result)
+            {
+                for (int i = 0; i < lstBuffer.Count; i++)
+                {
+                    IActor actor = lstBuffer[i];
+                    if (actor is Tank)
+                    {
+                        if (utils.Collide(pTank, actor))
+                        {
+                            result = false;
+                            break;
+                        }
+                    }
+                }
+            }
+            return result;
+        }
+        #endregion
+
         #region Update
         public override void Update(GameTime gameTime)
         {

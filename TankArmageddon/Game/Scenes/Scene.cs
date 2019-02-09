@@ -7,19 +7,16 @@ namespace TankArmageddon
 {
     public abstract class Scene
     {
-        #region Variables privées
-        private List<IActor> _bufferList;
-        #endregion
-
         #region Variables Protected
         protected Song sndMusic;
         protected List<IActor> lstActors;
+        protected List<IActor> lstBuffer;
         #endregion
 
         #region Constructeur
         public Scene()
         {
-            _bufferList = new List<IActor>();
+            lstBuffer = new List<IActor>();
             lstActors = new List<IActor>();
         }
         #endregion
@@ -34,7 +31,7 @@ namespace TankArmageddon
         #region Acteurs
         public void AddActor(IActor actor)
         {
-            _bufferList.Add(actor);
+            lstBuffer.Add(actor);
         }
         #endregion
 
@@ -46,8 +43,8 @@ namespace TankArmageddon
                 IActor actor = lstActors[i];
                 actor.Update(gameTime);
             }
-            lstActors.AddRange(_bufferList);
-            _bufferList.Clear();
+            lstActors.AddRange(lstBuffer);
+            lstBuffer.Clear();
             lstActors.RemoveAll(actor => actor.Remove);
         }
         #endregion

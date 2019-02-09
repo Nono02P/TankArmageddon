@@ -10,6 +10,10 @@ namespace TankArmageddon
 {
     public class Drop : Sprite
     {
+        #region Constantes
+        private const float GRAVITY = 10f;
+        #endregion
+
         #region Enumérations
         public enum eDropType
         {
@@ -21,10 +25,6 @@ namespace TankArmageddon
 
         #region Evènements
         public event onExplosion OnDropExplosion;
-        #endregion
-
-        #region Constantes
-        private const float GRAVITY = 1f;
         #endregion
 
         #region Variables privées
@@ -58,7 +58,7 @@ namespace TankArmageddon
                 default:
                     break;
             }
-            Origin = new Vector2(ImgBox.Value.Center.X / 2, ImgBox.Value.Bottom);
+            Origin = new Vector2(ImgBox.Value.Width / 2, ImgBox.Value.Height);
 
             _parachuteImage = AssetManager.Parachute;
             OnDropExplosion += Parent.CreateExplosion;
@@ -107,6 +107,8 @@ namespace TankArmageddon
             }
             #endregion
 
+            base.Update(gameTime);
+
             #region Collision avec le sol
             if (Parent.IsSolid(Position))
             {
@@ -118,29 +120,13 @@ namespace TankArmageddon
                 Vector2 before = Parent.FindHighestPoint(Position, -20);
                 Vector2 after = Parent.FindHighestPoint(Position, 20);
                 Angle = (float)utils.MathAngle(after - before);
-
-                // Vérifie que le point le plus haut retourné n'est pas plus grand que le tank.
-                // Permet d'empêcher le tank de se téléporter au dessus quand il est dans un trou.
-                if (center.Y > -BoundingBox.Height)
-                {
-                    Position += center;
-                }
-                else if (before.Y > -BoundingBox.Height)
-                {
-                    Position += before;
-                }
-                else if (after.Y > -BoundingBox.Height)
-                {
-                    Position += after;
-                }
+                Position += center;
             }
             else
             {
                 _onFloor = false;
             }
             #endregion
-
-            base.Update(gameTime);
         }
         #endregion
 

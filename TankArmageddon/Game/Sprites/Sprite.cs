@@ -72,7 +72,7 @@ namespace TankArmageddon
         public virtual void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             spriteBatch.Draw(Image, Position, ImgBox, Color.White, Angle, Origin, Scale, Effects, 0);
-            spriteBatch.DrawRectangle(BoundingBox, Color.Red, 2);
+            //spriteBatch.DrawRectangle(BoundingBox, Color.Red, 2);
         }
         #endregion
 
