@@ -8,59 +8,18 @@ using TankArmageddon.GUI;
 
 namespace TankArmageddon
 {
-    public class ButtonBullet : Button
-    {
-        public Tank.eBulletType BulletType { get; private set; }
-        public ButtonBullet(Tank.eBulletType pBulletType, Vector2 pPosition, Vector2 pOrigin, float pScale, bool pVisible, Texture2D pImageDefault, Texture2D pImageHover, Texture2D pImagePressed) : base(pPosition, pOrigin, pScale, pVisible, pImageDefault, pImageHover, pImagePressed)
-        {
-            BulletType = pBulletType;
-        }
-
-        public ButtonBullet(Tank.eBulletType pBulletType, Vector2 pPosition, Vector2 pOrigin, float pScale, bool pVisible, Texture2D pImageDefault, Texture2D pImageHover, Texture2D pImagePressed, SpriteFont pFont, string pText) : base(pPosition, pOrigin, pScale, pVisible, pImageDefault, pImageHover, pImagePressed, pFont, pText)
-        {
-            BulletType = pBulletType;
-        }
-    }
-    public class ButtonItem : Button
-    {
-        public Tank.eItemType ItemType { get; private set; }
-        public ButtonItem(Tank.eItemType pItemType, Vector2 pPosition, Vector2 pOrigin, float pScale, bool pVisible, Texture2D pImageDefault, Texture2D pImageHover, Texture2D pImagePressed) : base(pPosition, pOrigin, pScale, pVisible, pImageDefault, pImageHover, pImagePressed)
-        {
-            ItemType = pItemType;
-        }
-
-        public ButtonItem(Tank.eItemType pItemType, Vector2 pPosition, Vector2 pOrigin, float pScale, bool pVisible, Texture2D pImageDefault, Texture2D pImageHover, Texture2D pImagePressed, SpriteFont pFont, string pText) : base(pPosition, pOrigin, pScale, pVisible, pImageDefault, pImageHover, pImagePressed, pFont, pText)
-        {
-            ItemType = pItemType;
-        }
-    }
-
     public class Gameplay : Scene
     {
         #region Constantes
-        private const int TIME_PER_TOUR = 60;
+        private const int TIME_PER_TOUR = 10;
+        private const int TIME_AFTER_ACTION = 3;
         private const int TIME_BETWEEN_TOUR = 10;
         private const byte NUMBER_OF_TEAMS = 4;
         private const byte NUMBER_OF_TANK_PER_TEAM = 5;
         #endregion
 
         #region Variables privées
-        private Textbox _timerTextBox;
-        private List<Team> _teams;
-        private Textbox _currentTeamTextBox;
-        private Textbox _currentTankTextBox;
-        private Timer _timerSecond;
-        private int _counter = TIME_PER_TOUR;
-        private bool _inTour = true;
-        private Texture2D _mapTexture;
-        private float[] _perlinNoise;
-        private byte _indexTeam;
-        private Image _gameBarImage;
-        private Image _cursorImage;
-        #endregion
-
-        #region Propriétés
-        public List<string> Names { get; } = new List<string>()
+        private List<string> _names = new List<string>()
             {
                 "Almex",
                 "Anata",
@@ -116,7 +75,26 @@ namespace TankArmageddon
                 "Wile",
                 "Zethzer",
             };
+        private Textbox _timerTextBox;
+        private List<Team> _teams;
+        private Textbox _currentTeamTextBox;
+        private Textbox _currentTankTextBox;
+        private Textbox _infoBulle;
+        private Timer _timerSecond;
+        private int _counter = TIME_PER_TOUR;
+        private bool _inTour = true;
+        private Texture2D _mapTexture;
+        private float[] _perlinNoise;
+        private byte _indexTeam;
+        private Image _gameBarImage;
+        private Image _cursorImage;
+        private List<eActions> _lootBag;
+        #endregion
+
+        #region Propriétés
         public Group GUIGroup { get; private set; }
+        public GroupSelection GUIGroupButtons { get; private set; }
+        public int WaterLevel { get { return (int)(MapSize.Y - MapSize.Y * 0.05f); } }
         public Vector2 MapSize { get; private set; } = new Vector2(4096, MainGame.Screen.Height - AssetManager.GameBottomBar.Height);
         public byte[] MapData { get; private set; }
         public Color[] MapColors { get; private set; }
@@ -224,17 +202,43 @@ namespace TankArmageddon
             _cursorImage.SetOriginToCenter();
             GUIGroup.AddElement(_cursorImage);
 
-            _timerTextBox = new Textbox(new Vector2(326, 725), AssetManager.MainFont, TIME_BETWEEN_TOUR.ToString() + "sec");
+            SpriteFont font = AssetManager.MainFont;
+            _timerTextBox = new Textbox(new Vector2(388, 725), font, TIME_BETWEEN_TOUR.ToString() + "sec");
             _timerTextBox.ApplyColor(Color.Green, Color.Black);
             GUIGroup.AddElement(_timerTextBox);
 
-            _currentTeamTextBox = new Textbox(new Vector2(25, 725), AssetManager.MainFont, "Equipe des rouges");
+            _currentTeamTextBox = new Textbox(new Vector2(25, 725), font, "Equipe des rouges");
             GUIGroup.AddElement(_currentTeamTextBox);
 
-            _currentTankTextBox = new Textbox(new Vector2(200, 725), AssetManager.MainFont, ".");
+            _currentTankTextBox = new Textbox(new Vector2(200, 725), font, ".");
+            _currentTankTextBox.ApplyColor(Color.Yellow, Color.Black);
             GUIGroup.AddElement(_currentTankTextBox);
 
+            _infoBulle = new Textbox(new Vector2(925, 725), font, "InfoBulle :");
+            _infoBulle.ApplyColor(Color.Yellow, Color.Black);
+            GUIGroup.AddElement(_infoBulle);
+
+            GUIGroupButtons = new GroupSelection();
+            for (int i = 0; i < Enum.GetValues(typeof(eActions)).Length; i++)
+            {
+                ButtonAction btn;
+                if (i == 0)
+                {
+                    btn = new ButtonAction((eActions)i, Vector2.Zero, Vector2.Zero);
+                }
+                else
+                {
+                    btn = new ButtonAction((eActions)i, new Vector2(450 + 39 * (i - 1), 725), Vector2.Zero);
+                }
+                btn.OnHover += OnButtonHover;
+                btn.OnClick += OnButtonClicked;
+            }
             c.OnPositionChange += OnCameraPositionChange;
+            #endregion
+
+            #region Remplissage du sac à loot
+            _lootBag = new List<eActions>();
+            FillLootBag();
             #endregion
 
             #region Création des équipes
@@ -255,13 +259,38 @@ namespace TankArmageddon
 
             base.Load();
         }
+        #endregion
 
-        public override void UnLoad()
+        #region Boutons d'inventaire
+        public void OnButtonHover(Element pSender)
         {
-            base.UnLoad();
+            ButtonAction btn = (ButtonAction)pSender;
+            _infoBulle.Text = btn.InfoBulle;
+        }
+
+        public void OnButtonClicked(Element pSender, ClickType Clicks)
+        {
+            if (Clicks == ClickType.Left)
+            {
+                ButtonAction btn = (ButtonAction)pSender;
+                GUIGroupButtons.CurrentSelection = GUIGroupButtons.Elements.FindIndex(b => b == btn);
+            }
         }
         #endregion
 
+        #region Calcul de la position de GUI sur changement de la position de Caméra.
+        public void OnCameraPositionChange(object sender, Vector3 previous, Vector3 actual)
+        {
+            int x = (int)(_gameBarImage.Position.X - _gameBarImage.Origin.X + _gameBarImage.Size.X * (actual.X + MainGame.Screen.Width / 2) / MapSize.X);
+            int y = (int)_cursorImage.Position.Y;
+            _cursorImage.Position = GetPositionOnMinimap(actual.X + MainGame.Screen.Width / 2);
+            Vector2 newCamPos = new Vector2(actual.X, actual.Y);
+            GUIGroup.Position = newCamPos;
+            GUIGroupButtons.Position = newCamPos;
+        }
+        #endregion
+
+        #region Gestion des tours et sélections de tanks
         /// <summary>
         /// Evènements du timer (1 sec) pour la gestion des tours.
         /// </summary>
@@ -282,6 +311,8 @@ namespace TankArmageddon
                     _currentTeamTextBox.ApplyColor(t.TeamColor, Color.Black);
                     _timerTextBox.ApplyColor(Color.Red, Color.Black);
                     _currentTankTextBox.Text = t.Tanks[t.IndexTank].Name;
+                    Drop d = new Drop(this, (Drop.eDropType)utils.MathRnd(0, 3), AssetManager.TanksSpriteSheet, new Vector2(utils.MathRnd(20, (int)MapSize.X - 20), 10), Vector2.Zero, Vector2.One);
+                    MainGame.Camera.SetCameraOnActor(d);
                 }
                 else
                 {
@@ -297,18 +328,23 @@ namespace TankArmageddon
             Team t = (Team)sender;
             _currentTankTextBox.Text = t.Tanks[t.IndexTank].Name;
         }
+        #endregion
 
+        #region Explosions
         /// <summary>
         /// Créé une explosion à l'emplacement passé par le missille.
         /// </summary>
         /// <param name="sender"></param>
-        /// <param name="bulletEventArgs"></param>
-        public void CreateExplosion(object sender, Tank.Bullet.BulletEventArgs bulletEventArgs)
+        /// <param name="pExplosionEventArgs"></param>
+        public void CreateExplosion(object sender, ExplosionEventArgs pExplosionEventArgs)
         {
             Color empty = new Color();
-            Vector2 pos = bulletEventArgs.Position;
-            int rad = bulletEventArgs.Radius;
-            int force = bulletEventArgs.Force;
+            Vector2 pos = pExplosionEventArgs.Position;
+            int rad = pExplosionEventArgs.Radius;
+            int force = pExplosionEventArgs.Force;
+            
+            Texture2D particles = new Texture2D(MainGame.graphics.GraphicsDevice, rad, rad);
+            Color[] particlesData = new Color[rad * rad];
             int nMaxParticle = 15;
             int nParticles = 0;
             for (uint x = (uint)(pos.X - rad); x <= (uint)(pos.X + rad); x++)
@@ -323,6 +359,7 @@ namespace TankArmageddon
                             {
                                 if (IsSolid(new Vector2(x, y)))
                                 {
+                                    // TODO recoder la gestion des particules différemment.
                                     int rnd = utils.MathRnd(20, 100);
                                     int rnd2 = utils.MathRnd(0, 100);
                                     if (rnd <= 30 && rnd2 >= 90 && nMaxParticle > nParticles)
@@ -372,6 +409,9 @@ namespace TankArmageddon
             }
             _mapTexture.SetData(MapColors);
         }
+        #endregion
+
+        #region Fonctions d'interraction des éléments avec la map
 
         /// <summary>
         /// Renvoies l'écart entre la position et le premier point le plus haut en Y sur la map à l'offset X.
@@ -427,14 +467,110 @@ namespace TankArmageddon
             return new Vector2(x, y);
         }
 
-        #region Calcul de la position de GUI sur changement de la position de Caméra.
-        public void OnCameraPositionChange(object sender, Vector3 previous, Vector3 actual)
+        private void GenerateParticles(Vector2 pPosition, Texture2D texture)
         {
-            int x = (int)(_gameBarImage.Position.X - _gameBarImage.Origin.X + _gameBarImage.Size.X * (actual.X + MainGame.Screen.Width / 2) / MapSize.X);
-            int y = (int)_cursorImage.Position.Y;
-            _cursorImage.Position = GetPositionOnMinimap(actual.X + MainGame.Screen.Width / 2);
-            Vector2 newCamPos = new Vector2(actual.X, actual.Y);
-            GUIGroup.Position = newCamPos;
+            // TODO Revoir la méthode de génération de particules.
+        }
+        #endregion
+
+        #region Noms de tanks
+        public string GetTankName()
+        {
+            int index = utils.MathRnd(0, _names.Count);
+            string result = _names[index];
+            _names.RemoveAt(index);
+            return result;
+        }
+        #endregion
+
+        #region Gestion du sac à loot
+
+        /// <summary>
+        /// Remplir le sac à loot.
+        /// </summary>
+        private void FillLootBag()
+        {
+            for (int i = 0; i < 25; i++)
+            {
+                _lootBag.Add(eActions.GoldBullet);
+                _lootBag.Add(eActions.GoldBombshell);
+                _lootBag.Add(eActions.Drilling);
+            }
+            for (int i = 0; i < 15; i++)
+            {
+                _lootBag.Add(eActions.Mine);
+                _lootBag.Add(eActions.Grenada);
+            }
+            for (int i = 0; i < 10; i++)
+            {
+                _lootBag.Add(eActions.GrayMissile);
+                _lootBag.Add(eActions.GreenMissile);
+            }
+            for (int i = 0; i < 1; i++)
+            {
+                _lootBag.Add(eActions.SaintGrenada);
+            }
+        }
+
+        /// <summary>
+        /// Récupère le loot sous forme d'un tuple (Type de loot, Quantité).
+        /// </summary>
+        /// <returns>Retourne un tuple représentant (Type de loot, Quantité).</returns>
+        public Tuple<eActions, byte> GetLoot()
+        {
+            int index = utils.MathRnd(0, _lootBag.Count);
+            eActions action = _lootBag[index];
+            _lootBag.RemoveAt(index);
+            if (_lootBag.Count == 0)
+            {
+                FillLootBag();
+            }
+            byte qty = 0;
+            switch (action)
+            {
+                case eActions.GoldBullet:
+                    qty = 5;
+                    break;
+                case eActions.GoldBombshell:
+                    qty = 5;
+                    break;
+                case eActions.GrayMissile:
+                    qty = 2;
+                    break;
+                case eActions.GreenMissile:
+                    qty = 2;
+                    break;
+                case eActions.Mine:
+                    qty = 3;
+                    break;
+                case eActions.Grenada:
+                    qty = 3;
+                    break;
+                case eActions.SaintGrenada:
+                    qty = 1;
+                    break;
+                case eActions.Helicotank:
+                    qty = 1;
+                    break;
+                case eActions.Drilling:
+                    qty = 1;
+                    break;
+                default:
+                    break;
+            }
+            return new Tuple<eActions, byte> (action, qty);
+        }
+
+        #endregion
+
+        #region Fin de tour
+        /// <summary>
+        /// Force la fin du tour.
+        /// </summary>
+        public void FinnishTour()
+        {
+            if (_counter > TIME_AFTER_ACTION)
+                _counter = TIME_AFTER_ACTION;
         }
         #endregion
 
@@ -478,6 +614,8 @@ namespace TankArmageddon
                     _teams[i].Update(gameTime, false);
                 }
             }
+
+            _teams.RemoveAll(t => t.Remove);
             #endregion
 
             base.Update(gameTime);

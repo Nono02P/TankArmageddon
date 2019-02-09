@@ -16,34 +16,8 @@ namespace TankArmageddon
         private const float FUEL_CONSUMPTION = 0.1f;
         #endregion
 
-        #region Enumérations
-        public enum eBulletType : byte
-        {
-            None,
-            GrayBullet,
-            GrayBombshell,
-            GoldBullet,
-            GoldBombshell,
-            GrayMissile,
-            GreenMissile,
-            Mine,
-            Grenada,
-            SaintGrenada,
-        }
-
-        public enum eItemType : byte
-        {
-            None,
-            Helicotank,
-            Drilling,
-            TankBaseBall,
-            WhiteFlag,
-            PassTurn,
-        }
-        #endregion
-
         #region Variables privées
-        private bool onFloor = false;
+        private bool _onFloor = false;
         private eDirection _direction = eDirection.Right;
         private float _minCannonAngle = MathHelper.ToRadians(-90);
         private float _maxCannonAngle = MathHelper.ToRadians(0);
@@ -69,22 +43,22 @@ namespace TankArmageddon
         public Color TeamColor { get; private set; }
         public string Name { get; set; }
         public float AngleCannon { get; set; } = MathHelper.ToRadians(360);
-        public eBulletType SelectedWeapon { get; set; }
+        public eActions SelectedWeapon { get; set; }
         public bool Left { get; set; }
         public bool Right { get; set; }
         public bool Up { get; set; }
         public bool Down { get; set; }
+        public bool Parachute { get; private set; } = true;
         public int Life
         {
             get { return _life; }
-            private set { _life = MathHelper.Clamp(value, 0, 100); _lifeBar.SetProgressiveValue(value, _barSpeed); }
+            set { _life = MathHelper.Clamp(value, 0, 100); _lifeBar.SetProgressiveValue(value, _barSpeed); }
         }
         public float Fuel
         {
             get { return _fuel; }
             set { _fuel = MathHelper.Clamp(value, 0, 100); _fuelBar.SetProgressiveValue(value, _barSpeed); }
         }
-
         #endregion
 
         #region Constructeur
@@ -135,12 +109,7 @@ namespace TankArmageddon
             
         }
 
-        public void SufferDamage(int pDamage)
-        {
-            Life -= pDamage;
-        }
-
-        public void Shoot(byte pForce, eBulletType pBulletType)
+        public void Shoot(byte pForce, eActions pBulletType)
         {
             float cosAngle = (float)Math.Cos(AngleCannon + Angle);
             float sinAngle = (float)Math.Sin(AngleCannon + Angle);
@@ -190,7 +159,7 @@ namespace TankArmageddon
             float vy = Velocity.Y;
             float xSpeed = (float)Math.Cos(Angle) * SPEED;
 
-            if (Left && onFloor)
+            if (Left && _onFloor)
             {
                 if (Fuel > 0)
                 {
@@ -200,7 +169,7 @@ namespace TankArmageddon
                 }
                 Effects = SpriteEffects.FlipHorizontally;
             }
-            if (Right && onFloor)
+            if (Right && _onFloor)
             {
                 if (Fuel > 0)
                 {
@@ -210,11 +179,18 @@ namespace TankArmageddon
                 }
                 Effects = SpriteEffects.None;
             }
+
+            #region Gestion de la gravité en fonction du parachute
             // Applique la gravité uniquement si le tank ne touche pas le sol (permet au tank d'éviter de passer au travers le sol qui n'est pas totalement détruit)
-            if (!onFloor)
+            if (Parachute && !_onFloor)
+            {
+                vy = GRAVITY;
+            }
+            else if (!_onFloor)
             {
                 vy += GRAVITY;
             }
+            #endregion
 
             if (vx > 0)
             {
@@ -258,7 +234,8 @@ namespace TankArmageddon
             Vector2 p = new Vector2(BoundingBox.Center.X, BoundingBox.Bottom);
             if (Parent.Parent.IsSolid(p))
             {
-                onFloor = true;
+                Parachute = false;
+                _onFloor = true;
 
                 // Récupère l'altitude en Y à position.X -20 et +20 afin d'en déterminer l'angle à partir d'un vecteur tracé entre ces deux points.
                 Vector2 center = Parent.Parent.FindHighestPoint(p, 0);
@@ -283,7 +260,7 @@ namespace TankArmageddon
             }
             else
             {
-                onFloor = false;
+                _onFloor = false;
             }
             #endregion
 
@@ -296,6 +273,11 @@ namespace TankArmageddon
             float y = (float)Math.Cos(Angle) * hyp;
             _positionCannon = new Vector2(Position.X + x, Position.Y - y);
             #endregion
+
+            if (Position.Y > Parent.Parent.WaterLevel)
+            {
+                Remove = true;
+            }
         }
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
@@ -308,32 +290,55 @@ namespace TankArmageddon
 
         public class Bullet : Sprite
         {
-            public delegate void onBulletExplosion(object sender, BulletEventArgs e);
-
-            public event onBulletExplosion OnBulletExplosion;
-            public eBulletType BulletType { get; private set; }
+            public event onExplosion OnBulletExplosion;
+            public eActions BulletType { get; private set; }
             public Tank Parent { get; private set; }
 
-            public Bullet(Tank pShooter, Texture2D pImage, Vector2 pPosition, Vector2 pVelocity, eBulletType pBulletType, Vector2 pScale) : base(pImage)
+            public Bullet(Tank pShooter, Texture2D pImage, Vector2 pPosition, Vector2 pVelocity, eActions pBulletType, Vector2 pScale) : base(pImage)
             {
                 Parent = pShooter;
                 Position = pPosition;
                 Velocity = pVelocity;
                 Scale = pScale;
                 BulletType = pBulletType;
-                switch (pBulletType)
+                switch (BulletType)
                 {
-                    case eBulletType.GrayBullet:
+                    case eActions.None:
+                        break;
+                    case eActions.iGrayBullet:
                         ImgBox = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tank_bullet1.png").ImgBox;
                         break;
-                    case eBulletType.GoldBullet:
+                    case eActions.iGrayBombshell:
+                        ImgBox = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tank_bullet2.png").ImgBox;
+                        break;
+                    case eActions.GoldBullet:
+                        ImgBox = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tank_bullet5.png").ImgBox;
+                        break;
+                    case eActions.GoldBombshell:
                         ImgBox = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tank_bullet6.png").ImgBox;
                         break;
-                    case eBulletType.GrayMissile:
+                    case eActions.GrayMissile:
                         ImgBox = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tank_bullet4.png").ImgBox;
                         break;
-                    case eBulletType.GreenMissile:
+                    case eActions.GreenMissile:
                         ImgBox = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tank_bullet3.png").ImgBox;
+                        break;
+                    case eActions.Mine:
+                        ImgBox = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tanks_mineOn.png").ImgBox;
+                        break;
+                    case eActions.Grenada:
+                        break;
+                    case eActions.SaintGrenada:
+                        break;
+                    case eActions.iTankBaseBall:
+                        break;
+                    case eActions.Helicotank:
+                        break;
+                    case eActions.Drilling:
+                        break;
+                    case eActions.iDropFuel:
+                        break;
+                    case eActions.iWhiteFlag:
                         break;
                     default:
                         break;
@@ -355,7 +360,7 @@ namespace TankArmageddon
             private void Explose()
             {
                 // TODO : gérer plusieurs types, avec différentes valeurs de radian et forces en fonction du type de bullet.
-                OnBulletExplosion?.Invoke(this, new BulletEventArgs(Position, 100, 10));
+                OnBulletExplosion?.Invoke(this, new ExplosionEventArgs(Position, 100, 10));
                 Remove = true;
             }
 
@@ -371,20 +376,6 @@ namespace TankArmageddon
             {
                 spriteBatch.DrawRectangle(ImgBox.Value, Color.Red, 2);
                 base.Draw(spriteBatch, gameTime);
-            }
-
-            public class BulletEventArgs : EventArgs
-            {
-                public Vector2 Position { get; private set; }
-                public int Radius { get; private set; }
-                public int Force { get; private set; }
-
-                public BulletEventArgs(Vector2 pPosition, int pRadius, int pForce)
-                {
-                    Position = pPosition;
-                    Radius = pRadius;
-                    Force = pForce;
-                }
             }
         }
     }

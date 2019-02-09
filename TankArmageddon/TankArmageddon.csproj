@@ -41,6 +41,9 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Game\ExplosionEventArgs.cs" />
+    <Compile Include="Game\ButtonAction.cs" />
+    <Compile Include="Game\Sprites\Drop.cs" />
     <Compile Include="Libs\Camera.cs" />
     <Compile Include="Libs\GUI\Image.cs" />
     <Compile Include="Libs\Primitive2D.cs" />
@@ -61,7 +64,7 @@
     <Compile Include="Libs\GUI\Button.cs" />
     <Compile Include="Libs\GUI\Element.cs" />
     <Compile Include="Libs\GUI\Group.cs" />
-    <Compile Include="Libs\GUI\GroupMenu.cs" />
+    <Compile Include="Libs\GUI\GroupSelection.cs" />
     <Compile Include="Libs\GUI\Slider.cs" />
     <Compile Include="Libs\GUI\Textbox.cs" />
     <Compile Include="Game\MainGame.cs" />

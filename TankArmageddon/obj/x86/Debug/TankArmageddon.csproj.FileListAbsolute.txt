@@ -24,7 +24,6 @@ C:\Users\PierArn\Documents\Perso\Jeux Video\_GameJam\4_TankArmageddon\TankArmage
 C:\Users\PierArn\Documents\Perso\Jeux Video\_GameJam\4_TankArmageddon\TankArmageddon\TankArmageddon\obj\x86\Debug\TankArmageddon.exe
 C:\Users\PierArn\Documents\Perso\Jeux Video\_GameJam\4_TankArmageddon\TankArmageddon\TankArmageddon\obj\x86\Debug\TankArmageddon.pdb
 C:\Users\PierArn\Documents\Perso\Jeux Video\_GameJam\4_TankArmageddon\TankArmageddon\TankArmageddon\bin\Windows\x86\Debug\Content\_Tiles\spritesheet_tiles.xnb
-C:\Users\PierArn\Documents\Perso\Jeux Video\_GameJam\4_TankArmageddon\TankArmageddon\TankArmageddon\bin\Windows\x86\Debug\Content\_Tanks\tanks_spritesheetRetina.xnb
 C:\Users\PierArn\Documents\Perso\Jeux Video\_GameJam\4_TankArmageddon\TankArmageddon\TankArmageddon\bin\Windows\x86\Debug\Content\_Font\MainFont.xnb
 C:\Users\PierArn\Documents\Perso\Jeux Video\_GameJam\4_TankArmageddon\TankArmageddon\TankArmageddon\bin\Windows\x86\Debug\Content\_Background\bgElements_spritesheet.xnb
 C:\Users\PierArn\Documents\Perso\Jeux Video\GameJam\4_TankArmageddon\TankArmageddon\TankArmageddon\bin\Windows\x86\Debug\Content\_Tiles\spritesheet_tiles.xnb
@@ -59,3 +58,7 @@ C:\Users\PierArn\Documents\Perso\Jeux Video\GameJam\4_TankArmageddon\TankArmaged
 C:\Users\PierArn\Documents\Perso\Jeux Video\_GameJam\4_TankArmageddon\TankArmageddon\TankArmageddon\bin\Windows\x86\Debug\Content\_Tanks\tanks_spritesheetRetina.xml
 C:\Users\PierArn\Documents\Perso\Jeux Video\_GameJam\4_TankArmageddon\TankArmageddon\TankArmageddon\bin\Windows\x86\Debug\Content\_GUI\Cursor.xnb
 C:\Users\PierArn\Documents\Perso\Jeux Video\_GameJam\4_TankArmageddon\TankArmageddon\TankArmageddon\bin\Windows\x86\Debug\Content\_GUI\GameBottomBar.xnb
+C:\Users\PierArn\Documents\Perso\Jeux Video\_GameJam\4_TankArmageddon\TankArmageddon\TankArmageddon\bin\Windows\x86\Debug\Content\_Game\Grenada.xnb
+C:\Users\PierArn\Documents\Perso\Jeux Video\_GameJam\4_TankArmageddon\TankArmageddon\TankArmageddon\bin\Windows\x86\Debug\Content\_Game\SaintGrenada.xnb
+C:\Users\PierArn\Documents\Perso\Jeux Video\_GameJam\4_TankArmageddon\TankArmageddon\TankArmageddon\bin\Windows\x86\Debug\Content\_Game\tanks_spritesheetRetina.xml
+C:\Users\PierArn\Documents\Perso\Jeux Video\_GameJam\4_TankArmageddon\TankArmageddon\TankArmageddon\bin\Windows\x86\Debug\Content\_Game\tanks_spritesheetRetina.xnb

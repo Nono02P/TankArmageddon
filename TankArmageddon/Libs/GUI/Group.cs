@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 
 namespace TankArmageddon.GUI
@@ -29,7 +30,6 @@ namespace TankArmageddon.GUI
                 }
             }
         }
-
 
         /// <summary>
         /// Liste d'éléments de la GUI.
@@ -70,6 +70,12 @@ namespace TankArmageddon.GUI
         {
             Elements.Remove(pElement);
         }
+        /*
+        public void Execute(Action<Element> action)
+        {
+            Elements.ForEach(action);
+        }
+        */
         #endregion
 
         #region Update

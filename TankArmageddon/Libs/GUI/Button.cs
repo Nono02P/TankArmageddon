@@ -3,32 +3,40 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace TankArmageddon.GUI
 {
-    public class Button : Element
+    public class Button : Element, IIntegrableMenu
     {
         #region Propriétés
         /// <summary>
         /// Image utilisé par défaut (sans survol ni click)
         /// </summary>
-        public Texture2D ImageDefault { get; private set; } = null;
+        public Texture2D ImageDefault { get; protected set; } = null;
         /// <summary>
         /// Image utilisé en cas de survol
         /// </summary>
-        public Texture2D ImageHover { get; private set; } = null;
+        public Texture2D ImageHover { get; protected set; } = null;
         /// <summary>
         /// Image utilisé en cas de click
         /// </summary>
-        public Texture2D ImagePressed { get; private set; } = null;
+        public Texture2D ImagePressed { get; protected set; } = null;
+        /// <summary>
+        /// Image utilisé par défaut (sans survol ni click)
+        /// </summary>
+        public Texture2D ImageSelected { get; protected set; } = null;
         /// <summary>
         /// Objet TextBox intégré au bouton.
         /// </summary>
         public Textbox TextBox { get; private set; }
+        public bool Selected { get; set; }
+        public Color Color_Selected { get => TextBox.Color_Selected; set { TextBox.Color_Selected = value; } }
+        public Color ColorBck_Selected { get => TextBox.ColorBck_Selected; set { TextBox.ColorBck_Selected = value; } }
+        public Color Color_Default { get => TextBox.Color_Default; set { TextBox.Color_Default = value; } }
+        public Color ColorBck_Default { get => TextBox.ColorBck_Default; set { TextBox.ColorBck_Default = value; } }
         #endregion
 
         #region Constructeur
         public Button(Vector2 pPosition, Vector2 pOrigin, float pScale, bool pVisible, Texture2D pImageDefault, Texture2D pImageHover, Texture2D pImagePressed, SpriteFont pFont, string pText)
             : base(pPosition, pOrigin, new Vector2(pImageDefault.Width, pImageDefault.Height), pVisible, pScale)
         {
-            Scale = pScale;
             ImageDefault = pImageDefault;
             ImageHover = pImageHover;
             ImagePressed = pImagePressed;
@@ -39,11 +47,12 @@ namespace TankArmageddon.GUI
         public Button(Vector2 pPosition, Vector2 pOrigin, float pScale, bool pVisible, Texture2D pImageDefault, Texture2D pImageHover, Texture2D pImagePressed)
             : base(pPosition, pOrigin, new Vector2(pImageDefault.Width, pImageDefault.Height), pVisible, pScale)
         {
-            Scale = pScale;
             ImageDefault = pImageDefault;
             ImageHover = pImageHover;
             ImagePressed = pImagePressed;
         }
+
+        protected Button(Vector2 pPosition, Vector2 pOrigin, float pScale, bool pVisible) : base(pPosition, pOrigin, Vector2.Zero, pVisible, pScale) { }
         #endregion
 
         #region Méthodes
@@ -89,7 +98,8 @@ namespace TankArmageddon.GUI
         #region Update
         public override void Update(GameTime gameTime)
         {
-            TextBox.Update(gameTime);
+            if (TextBox != null)
+                TextBox.Update(gameTime);
             base.Update(gameTime);
         }
         #endregion
@@ -110,8 +120,13 @@ namespace TankArmageddon.GUI
             {
                 img = ImageHover;
             }
+            else if (Selected && ImageSelected != null)
+            {
+                img = ImageSelected;
+            }
             spriteBatch.Draw(img, Position, null, Color.White, Angle, Origin, Scale, SpriteEffects.None, 0);
-            TextBox.Draw(spriteBatch, gameTime);
+            if (TextBox != null)
+                TextBox.Draw(spriteBatch, gameTime);
         }
         #endregion
 

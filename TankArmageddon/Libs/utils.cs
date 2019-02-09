@@ -6,7 +6,7 @@ namespace TankArmageddon
     public static class utils
     {
         #region Variables privées
-        private static Random _rnd = new Random(DateTime.Now.Hour + DateTime.Now.Minute ^ 2 + DateTime.Now.Second ^ 4);
+        private static Random _rnd = new Random();
         #endregion
 
         #region Méthodes
@@ -57,12 +57,12 @@ namespace TankArmageddon
 
         #region Math
         /// <summary>
-        /// Choisir un chiffre aléatoire entre Min/Max
+        /// Choisir un chiffre aléatoire entre Min/Max (Max exclu)
         /// </summary>
         public static int MathRnd(int pMin, int pMax)
         {
-            return _rnd.Next(pMin, pMax + 1);
-        }
+            return _rnd.Next(pMin, pMax);
+        }   
 
         /// <summary>
         /// Renvoie l'hypothénus à partir des côtés opposé et adjacent

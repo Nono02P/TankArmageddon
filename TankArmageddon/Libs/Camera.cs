@@ -76,7 +76,7 @@ namespace TankArmageddon
             return Vector2.Transform(pos, Transformation);
         }
 
-        public void CenterOn(IActor actor)
+        public void SetCameraOnActor(IActor actor)
         {
             Position = new Vector3((int)(actor.Position.X - Screen.Width / 2), (int)(actor.Position.Y - Screen.Height / 2), 0);
         }

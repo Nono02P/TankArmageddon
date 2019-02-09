@@ -43,6 +43,8 @@ namespace TankArmageddon
             Image = pImage;
             MainGame.CurrentScene.AddActor(this);
         }
+
+        protected Sprite() { }
         #endregion
 
         #region Méthodes
