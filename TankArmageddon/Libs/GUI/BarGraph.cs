@@ -22,6 +22,11 @@ namespace TankArmageddon.GUI
         public Color BarColor { get; set; } = Color.Green;
         public float MaxValue { get; private set; }
         public float Value { get { return _value; } set { _value = MathHelper.Clamp(value, 0, MaxValue); RefreshRectangles(); } }
+        public Texture2D ImageEmpty { get; private set; } = null;
+        public Rectangle? ImgBoxEmpty { get; set; } = null;
+        public Texture2D ImageFull { get; private set; } = null;
+        public Rectangle? ImgBoxFull { get; set; } = null;
+        public SpriteEffects SpriteEffects { get; set; }
         #endregion
 
         #region Constructeur
@@ -37,6 +42,17 @@ namespace TankArmageddon.GUI
             Value = pValue;
             BckgndColor = pBckgndColor;
             BarColor = pBarColor;
+            OnPositionChange += RectangleChanged;
+            OnSizeChange += RectangleChanged;
+            OnOriginChange += RectangleChanged;
+        }
+
+        public BarGraph(float pValue, float pMaxValue, Vector2 pPosition, Vector2 pOrigin, Vector2 pSize, Texture2D pImageEmpty, Texture2D pImageFull, bool pVisible = true) : base(pPosition, pOrigin, pSize, pVisible)
+        {
+            MaxValue = pMaxValue;
+            Value = pValue;
+            ImageEmpty = pImageEmpty;
+            ImageFull = pImageFull;
             OnPositionChange += RectangleChanged;
             OnSizeChange += RectangleChanged;
             OnOriginChange += RectangleChanged;
@@ -84,8 +100,20 @@ namespace TankArmageddon.GUI
         #region Draw
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            spriteBatch.FillRectangle(_bckgndRect, BckgndColor);
-            spriteBatch.FillRectangle(_frontRect, BarColor);
+            if (Visible)
+            {
+                if (ImageEmpty != null && ImageFull != null)
+                {
+                    spriteBatch.Draw(ImageEmpty, new Rectangle((Position - Origin).ToPoint(), (ImgBoxEmpty.Value.Size.ToVector2() * Scale).ToPoint()), ImgBoxEmpty, Color.White, Angle, Origin, SpriteEffects, 0);
+                    Vector2 s = new Vector2((int)(ImgBoxFull.Value.Size.X * Value / MaxValue), (int)(ImgBoxFull.Value.Size.Y));
+                    spriteBatch.Draw(ImageFull, new Rectangle((Position - Origin).ToPoint(), (s * Scale).ToPoint()), new Rectangle(ImgBoxFull.Value.Location, s.ToPoint()), Color.White, Angle, Origin, SpriteEffects, 0);
+                }
+                else
+                {
+                    spriteBatch.FillRectangle(_bckgndRect, BckgndColor);
+                    spriteBatch.FillRectangle(_frontRect, BarColor);
+                }
+            }
             base.Draw(spriteBatch, gameTime);
         }
         #endregion

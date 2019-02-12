@@ -44,6 +44,12 @@
     <Compile Include="Game\ExplosionEventArgs.cs" />
     <Compile Include="Game\ButtonAction.cs" />
     <Compile Include="Game\Sprites\Drop.cs" />
+    <Compile Include="Game\Sprites\Tank\Actions\HelicoTank.cs" />
+    <Compile Include="Game\Sprites\Tank\Actions\IAction.cs" />
+    <Compile Include="Game\Sprites\Tank\Actions\NormalMove.cs" />
+    <Compile Include="Game\Sprites\Tank\Actions\ShootFromAirplane.cs" />
+    <Compile Include="Game\Sprites\Tank\Actions\ShootFromTank.cs" />
+    <Compile Include="Game\Sprites\Tank\Bullet.cs" />
     <Compile Include="Libs\Camera.cs" />
     <Compile Include="Libs\GUI\Image.cs" />
     <Compile Include="Libs\Primitive2D.cs" />
@@ -57,7 +63,7 @@
     <Compile Include="Libs\PerlingNoise.cs" />
     <Compile Include="Game\Scenes\Scene.cs" />
     <Compile Include="Assets\XmlTextureAtlas.cs" />
-    <Compile Include="Game\Sprites\Tank.cs" />
+    <Compile Include="Game\Sprites\Tank\Tank.cs" />
     <Compile Include="Libs\Tweening.cs" />
     <Compile Include="Libs\utils.cs" />
     <Compile Include="Libs\GUI\BarGraph.cs" />

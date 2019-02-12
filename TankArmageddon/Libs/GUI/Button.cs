@@ -10,27 +10,31 @@ namespace TankArmageddon.GUI
         /// Image utilisé par défaut (sans survol ni click)
         /// </summary>
         public Texture2D ImageDefault { get; protected set; } = null;
+        public Rectangle? ImageBoxDefault { get; set; } = null;
         /// <summary>
         /// Image utilisé en cas de survol
         /// </summary>
         public Texture2D ImageHover { get; protected set; } = null;
+        public Rectangle? ImageBoxHover { get; set; } = null;
         /// <summary>
         /// Image utilisé en cas de click
         /// </summary>
         public Texture2D ImagePressed { get; protected set; } = null;
+        public Rectangle? ImageBoxPressed { get; set; } = null;
         /// <summary>
         /// Image utilisé par défaut (sans survol ni click)
         /// </summary>
         public Texture2D ImageSelected { get; protected set; } = null;
+        public Rectangle? ImageBoxSelected { get; set; } = null;
         /// <summary>
         /// Objet TextBox intégré au bouton.
         /// </summary>
         public Textbox TextBox { get; private set; }
         public bool Selected { get; set; }
-        public Color Color_Selected { get => TextBox.Color_Selected; set { TextBox.Color_Selected = value; } }
-        public Color ColorBck_Selected { get => TextBox.ColorBck_Selected; set { TextBox.ColorBck_Selected = value; } }
-        public Color Color_Default { get => TextBox.Color_Default; set { TextBox.Color_Default = value; } }
-        public Color ColorBck_Default { get => TextBox.ColorBck_Default; set { TextBox.ColorBck_Default = value; } }
+        public Color Color_Selected { get => TextBox.Color_Selected; set { if (TextBox != null) TextBox.Color_Selected = value; }  }
+        public Color ColorBck_Selected { get => TextBox.ColorBck_Selected; set { if (TextBox != null) TextBox.ColorBck_Selected = value; } }
+        public Color Color_Default { get => TextBox.Color_Default; set { if (TextBox != null) TextBox.Color_Default = value; } }
+        public Color ColorBck_Default { get => TextBox.ColorBck_Default; set { if (TextBox != null) TextBox.ColorBck_Default = value; } }
         #endregion
 
         #region Constructeur
@@ -53,6 +57,12 @@ namespace TankArmageddon.GUI
         }
 
         protected Button(Vector2 pPosition, Vector2 pOrigin, float pScale, bool pVisible) : base(pPosition, pOrigin, Vector2.Zero, pVisible, pScale) { }
+
+        protected Button(Vector2 pPosition, Vector2 pOrigin, float pScale, bool pVisible, SpriteFont pFont, string pText) : base(pPosition, pOrigin, Vector2.Zero, pVisible, pScale)
+        {
+            TextBox = new Textbox(pPosition, Vector2.Zero, pFont, pText, false, pVisible);
+            AlignText(HAlign.Center, VAlign.Middle);
+        }
         #endregion
 
         #region Méthodes
@@ -112,19 +122,23 @@ namespace TankArmageddon.GUI
             base.Draw(spriteBatch, gameTime);
             // Détermine l'image à afficher (Par défaut ---> Cliqué --> Survolé)
             Texture2D img = ImageDefault;
+            Rectangle? imgBox = ImageBoxDefault;
             if (Clicked && ImagePressed != null)
             {
                 img = ImagePressed;
+                imgBox = ImageBoxPressed;
             }
             else if (Hover && ImageHover != null)
             {
                 img = ImageHover;
+                imgBox = ImageBoxHover;
             }
             else if (Selected && ImageSelected != null)
             {
                 img = ImageSelected;
+                imgBox = ImageBoxSelected;
             }
-            spriteBatch.Draw(img, Position, null, Color.White, Angle, Origin, Scale, SpriteEffects.None, 0);
+            spriteBatch.Draw(img, Position, imgBox, Color.White, Angle, Origin, Scale, SpriteEffects.None, 0);
             if (TextBox != null)
                 TextBox.Draw(spriteBatch, gameTime);
         }

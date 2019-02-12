@@ -11,16 +11,21 @@ namespace TankArmageddon
 
         #region Variables privées
         private SpriteEffects _effects;
+        private Vector2 _position = Vector2.Zero;
+        private Rectangle? _imgBox = null;
+        private Vector2 _origin = Vector2.Zero;
+        private Vector2 _scale = Vector2.One;
+        private Texture2D _image;
         #endregion
 
         #region Propriétés
-        public Vector2 Position { get; set; }
+        public Vector2 Position { get => _position; set { if (_position != value) { _position = value; RefreshBoundingBox(); } } }
         public Vector2 Velocity { get; set; }
         public Rectangle BoundingBox { get; private set; }
-        public Rectangle? ImgBox { get; protected set; }
-        public Vector2 Origin { get; set; }
-        public Vector2 Scale { get; set; } = Vector2.One;
-        public Texture2D Image { get; private set; }
+        public Rectangle? ImgBox { get => _imgBox; protected set { if (_imgBox != value) { _imgBox = value; RefreshBoundingBox(); } } }
+        public Vector2 Origin { get => _origin; set { if (_origin != value) { _origin = value; RefreshBoundingBox(); } } }
+        public Vector2 Scale { get => _scale; set { if (_scale != value) { _scale = value; RefreshBoundingBox(); } } }
+        public Texture2D Image { get => _image; private set { _image = value; RefreshBoundingBox(); } }
         public float Angle { get; set; }
         public bool Remove { get; set; }
         public SpriteEffects Effects { get { return _effects; } protected set { if (_effects != value) { OnSpriteEffectsChange?.Invoke(this, _effects, value); _effects = value; } } }
@@ -53,10 +58,8 @@ namespace TankArmageddon
         public virtual void TouchedBy(ICollisionnable collisionnable) { }
         #endregion
 
-        #region Update
-        public virtual void Update(GameTime gameTime)
+        public virtual void RefreshBoundingBox()
         {
-            Position += Velocity;
             if (ImgBox == null)
             {
                 BoundingBox = new Rectangle((int)(Position.X - Origin.X * Scale.X), (int)(Position.Y - Origin.Y * Scale.Y), (int)(Image.Width * Scale.X), (int)(Image.Height * Scale.Y));
@@ -65,6 +68,12 @@ namespace TankArmageddon
             {
                 BoundingBox = new Rectangle((int)(Position.X - Origin.X * Scale.X), (int)(Position.Y - Origin.Y * Scale.Y), (int)(ImgBox.Value.Width * Scale.X), (int)(ImgBox.Value.Height * Scale.Y));
             }
+        }
+
+        #region Update
+        public virtual void Update(GameTime gameTime)
+        {
+            Position += Velocity;
         }
         #endregion
 

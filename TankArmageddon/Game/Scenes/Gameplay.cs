@@ -11,7 +11,7 @@ namespace TankArmageddon
     public class Gameplay : Scene
     {
         #region Constantes
-        private const int TIME_PER_TOUR = 10;
+        private const int TIME_PER_TOUR = 60;
         private const int TIME_AFTER_ACTION = 3;
         private const int TIME_BETWEEN_TOUR = 10;
         private const byte NUMBER_OF_TEAMS = 4;
@@ -115,8 +115,6 @@ namespace TankArmageddon
         #region Constructeur
         public Gameplay() { }
         #endregion
-
-        #region Méthodes
 
         #region Load/Unload
         public override void Load()
@@ -224,12 +222,13 @@ namespace TankArmageddon
                 ButtonAction btn;
                 if (i == 0)
                 {
-                    btn = new ButtonAction((eActions)i, Vector2.Zero, Vector2.Zero);
+                    btn = new ButtonAction(this, (eActions)i, Vector2.Zero, Vector2.Zero, AssetManager.MainFont, string.Empty);
                 }
                 else
                 {
-                    btn = new ButtonAction((eActions)i, new Vector2(450 + 39 * (i - 1), 725), Vector2.Zero);
+                    btn = new ButtonAction(this, (eActions)i, new Vector2(450 + 39 * (i - 1), 725), Vector2.Zero, AssetManager.MainFont, string.Empty);
                 }
+                GUIGroupButtons.AddElement((IIntegrableMenu)btn);
                 btn.OnHover += OnButtonHover;
                 btn.OnClick += OnButtonClicked;
             }
@@ -274,6 +273,7 @@ namespace TankArmageddon
             {
                 ButtonAction btn = (ButtonAction)pSender;
                 GUIGroupButtons.CurrentSelection = GUIGroupButtons.Elements.FindIndex(b => b == btn);
+                _teams[_indexTeam].SelectAction(btn.ActionType);
             }
         }
         #endregion
@@ -313,6 +313,8 @@ namespace TankArmageddon
                     _currentTankTextBox.Text = t.Tanks[t.IndexTank].Name;
                     Drop d = new Drop(this, (Drop.eDropType)utils.MathRnd(0, 3), AssetManager.TanksSpriteSheet, new Vector2(utils.MathRnd(20, (int)MapSize.X - 20), 10), Vector2.Zero, Vector2.One);
                     MainGame.Camera.SetCameraOnActor(d);
+                    // TODO : Vérifier que le Garbage Collector soit utile.
+                    GC.Collect();
                 }
                 else
                 {
@@ -549,7 +551,7 @@ namespace TankArmageddon
                 case eActions.SaintGrenada:
                     qty = 1;
                     break;
-                case eActions.Helicotank:
+                case eActions.HelicoTank:
                     qty = 1;
                     break;
                 case eActions.Drilling:
@@ -574,7 +576,7 @@ namespace TankArmageddon
         }
         #endregion
 
-        #region Vérification de collision entre Tanks (pour le démmarrage)
+        #region Vérification de collision entre Tanks (pour le démarrage)
         public bool CanAppear(Tank pTank)
         {
             bool result = true;
@@ -663,8 +665,6 @@ namespace TankArmageddon
             spriteBatch.Draw(_mapTexture, Vector2.Zero, Color.White);
             base.Draw(spriteBatch, gameTime);
         }
-        #endregion
-        
         #endregion
     }
 }

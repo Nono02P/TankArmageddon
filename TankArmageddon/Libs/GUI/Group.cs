@@ -36,6 +36,9 @@ namespace TankArmageddon.GUI
         /// </summary>
         public List<Element> Elements { get; private set; }
         
+        /// <summary>
+        /// Rend Visible/Invisible tous les éléments de la liste d'acteurs.
+        /// </summary>
         public bool Visible
         {
             get { return Visible; }
@@ -46,6 +49,21 @@ namespace TankArmageddon.GUI
                 {
                     Element element = Elements[i];
                     element.Visible = value;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Retires tous les éléments du groupe de la liste d'acteurs.
+        /// </summary>
+        public bool Remove
+        {
+            set
+            {
+                for (int i = 0; i < Elements.Count; i++)
+                {
+                    Element element = Elements[i];
+                    element.Remove = value;
                 }
             }
         }

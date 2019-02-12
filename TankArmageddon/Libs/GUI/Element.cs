@@ -110,11 +110,12 @@ namespace TankArmageddon.GUI
         {
             #region Vérifie si la souris est en survol
             MouseState mouseState = Mouse.GetState();
-            if (BoundingBox.Contains(mouseState.Position) && !Hover)
+            Point mousePosition = new Point((int)(mouseState.Position.X + MainGame.Camera.Position.X), (int)(mouseState.Position.Y + MainGame.Camera.Position.Y));
+            if (BoundingBox.Contains(mousePosition) && !Hover)
             {
                 OnHover?.Invoke(this);
             }
-            Hover = BoundingBox.Contains(mouseState.Position);
+            Hover = BoundingBox.Contains(mousePosition);
             #endregion
 
             #region Evènements sur click
@@ -189,7 +190,7 @@ namespace TankArmageddon.GUI
         #region Draw
         public virtual void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            if (ShowBoundingBox)
+            if (ShowBoundingBox && Visible)
             {
                 Primitives2D.DrawRectangle(spriteBatch, BoundingBox, Color.Aqua);
             }
