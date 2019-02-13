@@ -8,7 +8,7 @@ namespace TankArmageddon
     public partial class Tank : Sprite
     {
         #region Constantes
-        private const float CANNON_SPEED = 0.01f;
+        private const float SPEED_ROTATION = 0.02f;
         private const float SPEED_MAX = 8f;
         private const float SPEED = 8f;
         private const float FRICTION = 4f;
@@ -40,7 +40,8 @@ namespace TankArmageddon
         private IAction _action;
         private NormalMove _normalMove;
         private HelicoTank _helicoTank;
-        private ShootFromTank _shootFromTank;
+        private OneShootFromTank _oneShootFromTank;
+        private MultipleShootFromTank _multipleShootFromTank;
         private ShootFromAirplane _shootFromAirplane;
         #endregion
 
@@ -119,7 +120,8 @@ namespace TankArmageddon
             #region Instanciation des Actions
             _normalMove = new NormalMove(this);
             _helicoTank = new HelicoTank(this);
-            _shootFromTank = new ShootFromTank(this);
+            _oneShootFromTank = new OneShootFromTank(this);
+            _multipleShootFromTank = new MultipleShootFromTank(this);
             _shootFromAirplane = new ShootFromAirplane(this);
             _action = _normalMove;
             #endregion
@@ -177,14 +179,17 @@ namespace TankArmageddon
                         _action = _normalMove;
                     break;
                 case eActions.iGrayBullet:
-                case eActions.iGrayBombshell:
                 case eActions.GoldBullet:
+                    if (!(_action is MultipleShootFromTank))
+                        _action = _multipleShootFromTank;
+                    break;
+                case eActions.iGrayBombshell:
                 case eActions.GoldBombshell:
                 case eActions.Grenada:
                 case eActions.SaintGrenada:
                 case eActions.Mine:
-                    if (!(_action is ShootFromTank))
-                        _action = _shootFromTank;
+                    if (!(_action is OneShootFromTank))
+                        _action = _oneShootFromTank;
                     break;
                 case eActions.GrayMissile:
                 case eActions.GreenMissile:
@@ -199,8 +204,6 @@ namespace TankArmageddon
                         _action = _helicoTank;
                     break;
                 case eActions.Drilling:
-                    break;
-                case eActions.iWhiteFlag:
                     break;
                 default:
                     break;

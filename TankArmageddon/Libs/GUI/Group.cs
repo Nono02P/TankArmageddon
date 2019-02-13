@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using System.Collections.Generic;
 
 namespace TankArmageddon.GUI
@@ -41,7 +40,6 @@ namespace TankArmageddon.GUI
         /// </summary>
         public bool Visible
         {
-            get { return Visible; }
             set
             {
                 Visible = value;

@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 
@@ -22,12 +21,12 @@ namespace TankArmageddon
             {
                 if (Input.IsDown(Keys.Left) && !Parent._onFloor)
                 {
-                    Parent.Angle -= CANNON_SPEED;
+                    Parent.Angle -= SPEED_ROTATION;
                 }
 
                 if (Input.IsDown(Keys.Right) && !Parent._onFloor)
                 {
-                    Parent.Angle += CANNON_SPEED;
+                    Parent.Angle += SPEED_ROTATION;
                 }
 
                 if (Input.IsDown(Keys.Space) && Parent.Fuel > 0)

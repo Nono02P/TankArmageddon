@@ -201,14 +201,14 @@ namespace TankArmageddon
             GUIGroup.AddElement(_cursorImage);
 
             SpriteFont font = AssetManager.MainFont;
-            _timerTextBox = new Textbox(new Vector2(388, 725), font, TIME_BETWEEN_TOUR.ToString() + "sec");
+            _timerTextBox = new Textbox(new Vector2(382, 725), font, TIME_BETWEEN_TOUR.ToString() + "sec");
             _timerTextBox.ApplyColor(Color.Green, Color.Black);
             GUIGroup.AddElement(_timerTextBox);
 
             _currentTeamTextBox = new Textbox(new Vector2(25, 725), font, "Equipe des rouges");
             GUIGroup.AddElement(_currentTeamTextBox);
 
-            _currentTankTextBox = new Textbox(new Vector2(200, 725), font, ".");
+            _currentTankTextBox = new Textbox(new Vector2(196, 725), font, ".");
             _currentTankTextBox.ApplyColor(Color.Yellow, Color.Black);
             GUIGroup.AddElement(_currentTankTextBox);
 
@@ -226,7 +226,8 @@ namespace TankArmageddon
                 }
                 else
                 {
-                    btn = new ButtonAction(this, (eActions)i, new Vector2(450 + 39 * (i - 1), 725), Vector2.Zero, AssetManager.MainFont, string.Empty);
+                    btn = new ButtonAction(this, (eActions)i, new Vector2(442 + 37 * (i - 1), 711), Vector2.Zero, AssetManager.MainFont, string.Empty);
+                    btn.ShowBoundingBox = true;
                 }
                 GUIGroupButtons.AddElement((IIntegrableMenu)btn);
                 btn.OnHover += OnButtonHover;

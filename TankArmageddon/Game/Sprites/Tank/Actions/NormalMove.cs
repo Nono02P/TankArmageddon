@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using System;
 
 namespace TankArmageddon
@@ -23,11 +22,11 @@ namespace TankArmageddon
                 #region Contrôles du canon
                 if (Parent.Up && Parent._direction == eDirection.Right || Parent.Down && Parent._direction == eDirection.Left)
                 {
-                    Parent.AngleCannon -= CANNON_SPEED;
+                    Parent.AngleCannon -= SPEED_ROTATION;
                 }
                 if (Parent.Down && Parent._direction == eDirection.Right || Parent.Up && Parent._direction == eDirection.Left)
                 {
-                    Parent.AngleCannon += CANNON_SPEED;
+                    Parent.AngleCannon += SPEED_ROTATION;
                 }
                 Parent.AngleCannon = MathHelper.Clamp(Parent.AngleCannon, Parent._minCannonAngle, Parent._maxCannonAngle);
                 #endregion

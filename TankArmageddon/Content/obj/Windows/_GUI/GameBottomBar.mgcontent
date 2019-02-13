@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <SourceFile>C:/Users/PierArn/Documents/Perso/Jeux Video/_GameJam/4_TankArmageddon/TankArmageddon/TankArmageddon/Content/_GUI/GameBottomBar.png</SourceFile>
-  <SourceTime>2019-02-08T16:25:58.6227235+01:00</SourceTime>
+  <SourceTime>2019-02-12T19:57:20.5566239+01:00</SourceTime>
   <DestFile>C:/Users/PierArn/Documents/Perso/Jeux Video/_GameJam/4_TankArmageddon/TankArmageddon/TankArmageddon/Content/bin/Windows/_GUI/GameBottomBar.xnb</DestFile>
-  <DestTime>2019-02-09T05:46:04.5329961+01:00</DestTime>
+  <DestTime>2019-02-12T20:05:59.6709419+01:00</DestTime>
   <Importer>TextureImporter</Importer>
   <ImporterTime>2017-03-01T16:05:36+01:00</ImporterTime>
   <Processor>TextureProcessor</Processor>

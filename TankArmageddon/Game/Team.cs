@@ -50,7 +50,6 @@ namespace TankArmageddon
             _inventory[eActions.iGrayBullet] = -1;
             _inventory[eActions.iGrayBombshell] = -1;
             _inventory[eActions.iTankBaseBall] = -1;
-            _inventory[eActions.iWhiteFlag] = -1;
             _inventory[eActions.iDropFuel] = -1;
 
             Parent = pParent;

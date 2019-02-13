@@ -55,8 +55,6 @@ namespace TankArmageddon
                         break;
                     case eActions.iDropFuel:
                         break;
-                    case eActions.iWhiteFlag:
-                        break;
                     default:
                         break;
                 }
@@ -66,6 +64,11 @@ namespace TankArmageddon
 
             public override void Update(GameTime gameTime)
             {
+                float vx = Velocity.X;
+                float vy = Velocity.Y;
+                vy += GRAVITY / 20;
+
+                Velocity = new Vector2(vx, vy);
                 Angle = (float)utils.MathAngle(Velocity);
                 base.Update(gameTime);
                 if (Parent.Parent.Parent.IsSolid(BoundingBox.Center.ToVector2()))

@@ -1,10 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TankArmageddon.GUI;
 
 namespace TankArmageddon
@@ -70,9 +65,6 @@ namespace TankArmageddon
                         break;
                     case eActions.iDropFuel:
                         infoBulle = "Envoi un baril de carburant à l'emplacement spécifié.";
-                        break;
-                    case eActions.iWhiteFlag:
-                        infoBulle = "Equipe qui déclare forfait.";
                         break;
                     default:
                         break;
@@ -141,8 +133,6 @@ namespace TankArmageddon
                     break;
                 case eActions.iDropFuel:
                     break;
-                case eActions.iWhiteFlag:
-                    break;
                 default:
                     break;
             }
@@ -150,6 +140,11 @@ namespace TankArmageddon
             ImageBoxPressed = ImageBoxDefault;
             //ImageBoxSelected = ImageBoxDefault;
             //Texture2D pImageHover, Texture2D pImagePressed
+        }
+
+        public override void Update(GameTime gameTime)
+        {
+            base.Update(gameTime);
         }
     }
 }

@@ -65,8 +65,6 @@ namespace TankArmageddon.GUI
         }
         #endregion
 
-        #region Méthodes
-
         #region Alignement de texte
         public void AlignText(HAlign pHAlign, VAlign pVAlign)
         {
@@ -114,13 +112,12 @@ namespace TankArmageddon.GUI
         }
         #endregion
 
-
         #region Draw
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             base.Draw(spriteBatch, gameTime);
-            // Détermine l'image à afficher (Par défaut ---> Cliqué --> Survolé)
+            // Détermine l'image à afficher (Par défaut ---> Cliqué --> Survolé --> Sélectionné)
             Texture2D img = ImageDefault;
             Rectangle? imgBox = ImageBoxDefault;
             if (Clicked && ImagePressed != null)
@@ -142,8 +139,6 @@ namespace TankArmageddon.GUI
             if (TextBox != null)
                 TextBox.Draw(spriteBatch, gameTime);
         }
-        #endregion
-
         #endregion
     }
 }

@@ -51,6 +51,7 @@ namespace TankArmageddon.GUI
 
         #region Variables privées
         private bool _dblClick = false; // TODO gérer l'évènement double click !
+        private float _scale = 1;
         #endregion
 
         #region Variables protected
@@ -73,7 +74,7 @@ namespace TankArmageddon.GUI
         public Vector2 Origin { get => _origin; set { if (_origin != value) { Vector2 before = _origin; _origin = value; OnOriginChange?.Invoke(this, before, value); RefreshBoundingBox(); } } }
         public Vector2 Size { get => _size; set { if (_size != value) { Vector2 before = _size;  _size = value; OnSizeChange?.Invoke(this, before, value); RefreshBoundingBox(); } } }
         public float Angle { get; set; }
-        public float Scale { get; set; }
+        public float Scale { get => _scale; set { _scale = value; RefreshBoundingBox(); } }
         public bool Visible { get; set; } = true;
         public bool Remove { get; set; } = false;
         public bool Hover { get; protected set; }

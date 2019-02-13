@@ -46,9 +46,10 @@
     <Compile Include="Game\Sprites\Drop.cs" />
     <Compile Include="Game\Sprites\Tank\Actions\HelicoTank.cs" />
     <Compile Include="Game\Sprites\Tank\Actions\IAction.cs" />
+    <Compile Include="Game\Sprites\Tank\Actions\MultipleShootFromTank.cs" />
     <Compile Include="Game\Sprites\Tank\Actions\NormalMove.cs" />
+    <Compile Include="Game\Sprites\Tank\Actions\OneShootFromTank.cs" />
     <Compile Include="Game\Sprites\Tank\Actions\ShootFromAirplane.cs" />
-    <Compile Include="Game\Sprites\Tank\Actions\ShootFromTank.cs" />
     <Compile Include="Game\Sprites\Tank\Bullet.cs" />
     <Compile Include="Libs\Camera.cs" />
     <Compile Include="Libs\GUI\Image.cs" />
