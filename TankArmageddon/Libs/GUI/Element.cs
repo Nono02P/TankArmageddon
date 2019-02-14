@@ -193,7 +193,7 @@ namespace TankArmageddon.GUI
         {
             if (ShowBoundingBox && Visible)
             {
-                Primitives2D.DrawRectangle(spriteBatch, BoundingBox, Color.Aqua);
+                Primitives2D.DrawRectangle(spriteBatch, (Rectangle)BoundingBox, Color.Aqua);
             }
         }
         #endregion

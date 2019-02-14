@@ -32,28 +32,32 @@ namespace TankArmageddon
             {
                 base.Update(gameTime, ref vx, ref vy);
 
-                if (Input.OnPressed(Keys.Space))
+                if (Enable)
                 {
-                    Force = 0;
+                    if (Input.OnPressed(Keys.Space))
+                    {
+                        Force = 0;
+                    }
+                    if (Input.IsDown(Keys.Space))
+                    {
+                        Force++;
+                    }
+                    if (Input.OnReleased(Keys.Space) || Force >= 100)
+                    {
+                        Texture2D img = AssetManager.TanksSpriteSheet;
+                        float cosAngle = (float)Math.Cos(Parent.AngleCannon + Parent.Angle);
+                        float sinAngle = (float)Math.Sin(Parent.AngleCannon + Parent.Angle);
+                        Vector2 p = new Vector2(Parent._imgCannon.Width * Parent.Scale.X * cosAngle, Parent._imgCannon.Width * Parent.Scale.X * sinAngle);
+                        p += Parent._positionCannon;
+                        Bullet b = new Bullet(Parent, img, p, new Vector2(cosAngle * Force, sinAngle * Force), Parent.SelectedAction, Parent.Scale);
+                        Force = 0;
+                        Parent.Parent.Parent.FinnishTour();
+                        Enable = false;
+                    }
+                    LaunchBar.Visible = Input.IsDown(Keys.Space) && Force < 100 && Enable;
+                    LaunchBar.Value = Force;
+                    LaunchBar.Angle = Parent.AngleCannon + Parent.Angle;
                 }
-                if (Input.IsDown(Keys.Space))
-                {
-                    Force++;
-                }
-                if (Input.OnReleased(Keys.Space) || Force >= 100)
-                {
-                    Texture2D img = AssetManager.TanksSpriteSheet;
-                    float cosAngle = (float)Math.Cos(Parent.AngleCannon + Parent.Angle);
-                    float sinAngle = (float)Math.Sin(Parent.AngleCannon + Parent.Angle);
-                    Vector2 p = new Vector2(Parent._imgCannon.Width * Parent.Scale.X * cosAngle, Parent._imgCannon.Width * Parent.Scale.X * sinAngle);
-                    p += Parent._positionCannon;
-                    Bullet b = new Bullet(Parent, img, p, new Vector2(cosAngle * Force, sinAngle * Force), Parent.SelectedAction, Parent.Scale);
-                    Force = 0;
-                    Parent.Parent.Parent.FinnishTour();
-                }
-                LaunchBar.Visible = Input.IsDown(Keys.Space) && Force < 100;
-                LaunchBar.Value = Force;
-                LaunchBar.Angle = Parent.AngleCannon + Parent.Angle;
             }
             #endregion
         }

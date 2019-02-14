@@ -9,10 +9,16 @@ namespace TankArmageddon
     {
         private class MultipleShootFromTank : NormalMove
         {
+            #region Constantes
+            private float FORCE = 12; 
+            #endregion
+
+            #region Variables privées
             private Texture2D _img = AssetManager.TanksSpriteSheet;
             private int _counter = 0;
             private int _timer = 0;
             private int _presetTimer = 300;
+            #endregion
 
             #region Constructeur
             public MultipleShootFromTank(Tank pParent) : base(pParent) { }
@@ -23,30 +29,34 @@ namespace TankArmageddon
             {
                 base.Update(gameTime, ref vx, ref vy);
 
-                if (Input.OnPressed(Keys.Space) && _counter >= 15)
+                if (Enable)
                 {
-                    _counter = 0;
-                }
-                if (Input.IsDown(Keys.Space) && _counter <= 15)
-                {
-                    if (_timer > 0)
+                    if (Input.OnPressed(Keys.Space) && _counter >= 15)
                     {
-                        _timer -= gameTime.ElapsedGameTime.Milliseconds;
+                        _counter = 0;
                     }
-                    else
+                    if (Input.IsDown(Keys.Space) && _counter <= 15)
                     {
-                        _timer = _presetTimer;
-                        _counter++;
-                        float cosAngle = (float)Math.Cos(Parent.AngleCannon + Parent.Angle);
-                        float sinAngle = (float)Math.Sin(Parent.AngleCannon + Parent.Angle);
-                        Vector2 p = new Vector2(Parent._imgCannon.Width * Parent.Scale.X * cosAngle, Parent._imgCannon.Width * Parent.Scale.X * sinAngle);
-                        p += Parent._positionCannon;
-                        Bullet b = new Bullet(Parent, _img, p, new Vector2(cosAngle * SPEED, sinAngle * SPEED), Parent.SelectedAction, Parent.Scale);
+                        if (_timer > 0)
+                        {
+                            _timer -= gameTime.ElapsedGameTime.Milliseconds;
+                        }
+                        else
+                        {
+                            _timer = _presetTimer;
+                            _counter++;
+                            float cosAngle = (float)Math.Cos(Parent.AngleCannon + Parent.Angle);
+                            float sinAngle = (float)Math.Sin(Parent.AngleCannon + Parent.Angle);
+                            Vector2 p = new Vector2(Parent._imgCannon.Width * Parent.Scale.X * cosAngle, Parent._imgCannon.Width * Parent.Scale.X * sinAngle);
+                            p += Parent._positionCannon;
+                            Bullet b = new Bullet(Parent, _img, p, new Vector2(cosAngle * FORCE, sinAngle * FORCE), Parent.SelectedAction, Parent.Scale);
+                        }
                     }
-                }
-                if (_counter >= 15)
-                {
-                    Parent.Parent.Parent.FinnishTour();
+                    if (_counter >= 15)
+                    {
+                        Parent.Parent.Parent.FinnishTour();
+                        Enable = false;
+                    }
                 }
             }
             #endregion

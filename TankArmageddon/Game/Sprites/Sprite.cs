@@ -21,7 +21,7 @@ namespace TankArmageddon
         #region Propriétés
         public Vector2 Position { get => _position; set { if (_position != value) { _position = value; RefreshBoundingBox(); } } }
         public Vector2 Velocity { get; set; }
-        public Rectangle BoundingBox { get; private set; }
+        public Rectangle BoundingBox { get; protected set; }
         public Rectangle? ImgBox { get => _imgBox; protected set { if (_imgBox != value) { _imgBox = value; RefreshBoundingBox(); } } }
         public Vector2 Origin { get => _origin; set { if (_origin != value) { _origin = value; RefreshBoundingBox(); } } }
         public Vector2 Scale { get => _scale; set { if (_scale != value) { _scale = value; RefreshBoundingBox(); } } }

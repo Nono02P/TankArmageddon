@@ -25,6 +25,7 @@ namespace TankArmageddon
     public interface IAction
     {
         Tank Parent { get; }
+        bool Enable { get; set; }
 
         void Update(GameTime gameTime, ref float vx, ref float vy);
     }

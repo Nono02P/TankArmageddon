@@ -60,7 +60,7 @@ namespace TankArmageddon
         }
         #endregion
 
-        #region Fonctions
+        #region Collisions
         public override void TouchedBy(ICollisionnable collisionnable)
         {
             Remove = true;
@@ -87,6 +87,7 @@ namespace TankArmageddon
                 }
             }
         }
+        #endregion
 
         #region Update
         public override void Update(GameTime gameTime)
@@ -102,10 +103,20 @@ namespace TankArmageddon
             }
             #endregion
 
+            Vector2 previousPosLeft = new Vector2(Position.X - ImgBox.Value.Width / 2, Position.Y);
+            Vector2 previousPosMiddle = Position;
+            Vector2 previousPosRight = new Vector2(Position.X + ImgBox.Value.Width / 2, Position.Y);
+
             base.Update(gameTime);
 
             #region Collision avec le sol
-            if (Parent.IsSolid(Position))
+            Vector2 newPosLeft = new Vector2(Position.X - ImgBox.Value.Width / 2, Position.Y);
+            Vector2 newPosMiddle = Position;
+            Vector2 newPosRight = new Vector2(Position.X + ImgBox.Value.Width / 2, Position.Y);
+
+            if (Parent.IsSolid(newPosLeft, previousPosLeft) || 
+                Parent.IsSolid(newPosMiddle, previousPosMiddle) || 
+                Parent.IsSolid(newPosRight, previousPosRight))
             {
                 Parachute = false;
                 _onFloor = true;
@@ -134,8 +145,6 @@ namespace TankArmageddon
             }
             base.Draw(spriteBatch, gameTime);
         }
-        #endregion
-
         #endregion
     }
 }

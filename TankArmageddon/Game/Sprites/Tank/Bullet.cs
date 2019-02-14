@@ -10,6 +10,8 @@ namespace TankArmageddon
             public event onExplosion OnBulletExplosion;
             public eActions BulletType { get; private set; }
             public Tank Parent { get; private set; }
+            public int Radius { get; private set; }
+            public int Force { get; private set; }
 
             public Bullet(Tank pShooter, Texture2D pImage, Vector2 pPosition, Vector2 pVelocity, eActions pBulletType, Vector2 pScale) : base(pImage)
             {
@@ -24,36 +26,28 @@ namespace TankArmageddon
                         break;
                     case eActions.iGrayBullet:
                         ImgBox = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tank_bullet1.png").ImgBox;
+                        Radius = 40;
+                        Force = 10;
                         break;
                     case eActions.iGrayBombshell:
                         ImgBox = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tank_bullet2.png").ImgBox;
+                        Radius = 50;
+                        Force = 40;
                         break;
                     case eActions.GoldBullet:
                         ImgBox = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tank_bullet5.png").ImgBox;
+                        Radius = 40;
+                        Force = 20;
                         break;
                     case eActions.GoldBombshell:
                         ImgBox = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tank_bullet6.png").ImgBox;
+                        Radius = 50;
+                        Force = 60;
                         break;
                     case eActions.GrayMissile:
                         ImgBox = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tank_bullet4.png").ImgBox;
-                        break;
-                    case eActions.GreenMissile:
-                        ImgBox = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tank_bullet3.png").ImgBox;
-                        break;
-                    case eActions.Mine:
-                        ImgBox = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tanks_mineOn.png").ImgBox;
-                        break;
-                    case eActions.Grenada:
-                        break;
-                    case eActions.SaintGrenada:
-                        break;
-                    case eActions.iTankBaseBall:
-                        break;
-                    case eActions.HelicoTank:
-                        break;
-                    case eActions.Drilling:
-                        break;
-                    case eActions.iDropFuel:
+                        Radius = 80;
+                        Force = 60;
                         break;
                     default:
                         break;
@@ -79,8 +73,7 @@ namespace TankArmageddon
 
             private void Explose()
             {
-                // TODO : gérer plusieurs types, avec différentes valeurs de radian et forces en fonction du type de bullet.
-                OnBulletExplosion?.Invoke(this, new ExplosionEventArgs(Position, 100, 10));
+                OnBulletExplosion?.Invoke(this, new ExplosionEventArgs(Position, Radius, Force));
                 Remove = true;
             }
 

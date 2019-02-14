@@ -10,13 +10,14 @@ namespace TankArmageddon
         {
             #region Propriétés
             public Tank Parent { get; private set; }
+            public bool Enable { get; set; }
             #endregion
 
             #region Constructeur
             public HelicoTank(Tank pParent) { Parent = pParent; }
             #endregion
 
-            #region Fonctions
+            #region Update
             public virtual void Update(GameTime gameTime, ref float vx, ref float vy)
             {
                 if (Input.IsDown(Keys.Left) && !Parent._onFloor)
@@ -32,7 +33,7 @@ namespace TankArmageddon
                 if (Input.IsDown(Keys.Space) && Parent.Fuel > 0)
                 {
                     vx += (float)(Math.Sin(Parent.Angle) * SPEED);
-                    vy -= (float)(Math.Cos(Parent.Angle) * SPEED / 2);
+                    vy -= (float)(Math.Cos(Parent.Angle) * SPEED);
                     Parent.Fuel -= FUEL_CONSUMPTION;
                 }
                 Parent.Parent.RefreshCameraOnSelection();

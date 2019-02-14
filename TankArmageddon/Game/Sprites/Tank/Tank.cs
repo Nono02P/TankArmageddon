@@ -41,8 +41,11 @@ namespace TankArmageddon
         private NormalMove _normalMove;
         private HelicoTank _helicoTank;
         private OneShootFromTank _oneShootFromTank;
+        private GrenadaFromTank _grenadaFromTank;
         private MultipleShootFromTank _multipleShootFromTank;
         private ShootFromAirplane _shootFromAirplane;
+        private LetOnFloorFromAirplane _letOnFloorFromAirplane;
+        private LetOnFloorFromTank _letOnFloorFromTank;
         #endregion
 
         #region Propriétés
@@ -121,8 +124,11 @@ namespace TankArmageddon
             _normalMove = new NormalMove(this);
             _helicoTank = new HelicoTank(this);
             _oneShootFromTank = new OneShootFromTank(this);
+            _grenadaFromTank = new GrenadaFromTank(this);
             _multipleShootFromTank = new MultipleShootFromTank(this);
             _shootFromAirplane = new ShootFromAirplane(this);
+            _letOnFloorFromAirplane = new LetOnFloorFromAirplane(this);
+            _letOnFloorFromTank = new LetOnFloorFromTank(this);
             _action = _normalMove;
             #endregion
 
@@ -132,15 +138,7 @@ namespace TankArmageddon
         }
         #endregion
 
-        public void Shoot(byte pForce, eActions pBulletType)
-        {
-            /*float cosAngle = (float)Math.Cos(AngleCannon + Angle);
-            float sinAngle = (float)Math.Sin(AngleCannon + Angle);
-            Vector2 p = new Vector2(_imgCannon.Width * Scale.X * cosAngle, _imgCannon.Width * Scale.X * sinAngle);
-            p += _positionCannon;
-            Bullet b = new Bullet(this, Image, p, new Vector2(cosAngle * pForce, sinAngle * pForce), pBulletType, Scale);*/
-        }
-
+        #region Changement de direction du tank (Gauche <--> Droite)
         /// <summary>
         /// Sur changement du SpriteEffects (flip horizontal), gère les positions d'images et les angles de canon.
         /// </summary>
@@ -165,6 +163,7 @@ namespace TankArmageddon
             }
             AngleCannon = -MathHelper.ToRadians(180) - AngleCannon;
         }
+        #endregion
 
         #region Gestion des actions en fonction de l'item sélectionné
         /// <summary>
@@ -185,39 +184,58 @@ namespace TankArmageddon
                     break;
                 case eActions.iGrayBombshell:
                 case eActions.GoldBombshell:
-                case eActions.Grenada:
-                case eActions.SaintGrenada:
-                case eActions.Mine:
                     if (!(_action is OneShootFromTank))
                         _action = _oneShootFromTank;
                     break;
+                case eActions.Grenada:
+                case eActions.SaintGrenada:
+                    if (!(_action is GrenadaFromTank))
+                        _action = _grenadaFromTank;
+                    break;
                 case eActions.GrayMissile:
-                case eActions.GreenMissile:
                 case eActions.iDropFuel:
                     if (!(_action is ShootFromAirplane))
                         _action = _shootFromAirplane;
                     break;
                 case eActions.iTankBaseBall:
+                    // TODO : Jouer l'animation
                     break;
                 case eActions.HelicoTank:
                     if (!(_action is HelicoTank))
                         _action = _helicoTank;
                     break;
                 case eActions.Drilling:
+                    // TODO : Jouer l'animation
+                    break;
+                case eActions.Mine:
+                    if (!(_action is LetOnFloorFromTank))
+                        _action = _letOnFloorFromTank;
+                    break;
+                case eActions.GreenMissile:
+                    if (!(_action is LetOnFloorFromAirplane))
+                        _action = _letOnFloorFromAirplane;
                     break;
                 default:
                     break;
             }
+            _action.Enable = true;
         }
         #endregion
 
         #region Mort du tank
-        private void Die()
+        private void Die(bool pWithExplosion)
         {
+            if (pWithExplosion)
+            {
+                Parent.Parent.CreateExplosion(this, new ExplosionEventArgs(Position, 50, 50));
+            }
+            _guiGameplayIndex.Remove = true;
+            Parent.Parent.GUIGroup.RemoveElement(_guiGameplayIndex);
             Remove = true;
             _group.Remove = true;
+            Parent.Parent.FinnishTour(true);
         }
-        #endregion*
+        #endregion
 
         #region Update
         public override void Update(GameTime gameTime)
@@ -280,19 +298,45 @@ namespace TankArmageddon
             Velocity = new Vector2(vx, vy);
             #endregion
 
+            #region Récupération de l'ancienne position en 3 points en bas (Gauche / Centre / Droite) pour vérifier les collisions
+            Vector2 previousPosMiddle = new Vector2(BoundingBox.Center.X, BoundingBox.Bottom);
+            Vector2 previousPosLeft = new Vector2(BoundingBox.Left, BoundingBox.Bottom);
+            Vector2 previousPosRight = new Vector2(BoundingBox.Right, BoundingBox.Bottom);
+            #endregion
+
             base.Update(gameTime);
 
             #region Collisions avec le sol et angle du tank
-            Vector2 p = new Vector2(BoundingBox.Center.X, BoundingBox.Bottom);
-            if (Parent.Parent.IsSolid(p))
+            Vector2 newPosLeft = new Vector2(BoundingBox.Left, BoundingBox.Bottom);
+            Vector2 newPosMiddle = new Vector2(BoundingBox.Center.X, BoundingBox.Bottom);
+            Vector2 newPosRight = new Vector2(BoundingBox.Right, BoundingBox.Bottom);
+
+            Gameplay g = Parent.Parent;
+
+            bool collision = g.IsSolid(newPosMiddle, previousPosMiddle) ||  
+                ((g.IsSolid(newPosLeft, previousPosLeft) || g.IsSolid(newPosRight, previousPosRight)) && !(_action is HelicoTank));
+
+            if (collision)
             {
                 Parachute = false;
                 _onFloor = true;
 
                 // Récupère l'altitude en Y à position.X -20 et +20 afin d'en déterminer l'angle à partir d'un vecteur tracé entre ces deux points.
-                Vector2 center = Parent.Parent.FindHighestPoint(p, 0);
-                Vector2 before = Parent.Parent.FindHighestPoint(p, -20);
-                Vector2 after = Parent.Parent.FindHighestPoint(p, 20);
+                Vector2 center;
+                Vector2 before;
+                Vector2 after;
+                if (newPosMiddle.Y > previousPosMiddle.Y)
+                {
+                    center = g.FindHighestPoint(newPosMiddle, 0);
+                    before = g.FindHighestPoint(newPosMiddle, -20);
+                    after = g.FindHighestPoint(newPosMiddle, 20);
+                }
+                else
+                {
+                    center = g.FindHighestPoint(previousPosMiddle, 0);
+                    before = g.FindHighestPoint(previousPosMiddle, -20);
+                    after = g.FindHighestPoint(previousPosMiddle, 20);
+                }
                 Angle = (float)utils.MathAngle(after - before);
 
                 // Vérifie que le point le plus haut retourné n'est pas plus grand que le tank.
@@ -318,7 +362,7 @@ namespace TankArmageddon
 
             #region Positionnement de GUI
             _group.Position = Position;
-            _guiGameplayIndex.Position = Parent.Parent.GetPositionOnMinimap(Position.X);
+            _guiGameplayIndex.Position = g.GetPositionOnMinimap(Position.X);
             #endregion
 
             #region Calcul de la position du canon par rapport à la position et l'angle du tank
@@ -329,9 +373,9 @@ namespace TankArmageddon
             #endregion
 
             #region Mort du tank par chute ou vie à 0
-            if (Position.Y > Parent.Parent.WaterLevel || Life <= 0)
+            if (Position.Y > g.WaterLevel || Life <= 0)
             {
-                Die();
+                Die(Life <= 0);
             }
             #endregion
         }

@@ -10,6 +10,7 @@ namespace TankArmageddon
         {
             #region Propriétés
             public Tank Parent { get; private set; }
+            public bool Enable { get; set; }
             #endregion
 
             #region Constructeur
