@@ -17,6 +17,8 @@ namespace TankArmageddon
         #endregion
 
         #region Variables privées
+        private bool _parachute = true;
+        private Image _imgParachute;
         private bool _onFloor = false;
         private eDirection _direction = eDirection.Right;
         private float _minCannonAngle = MathHelper.ToRadians(-90);
@@ -59,22 +61,10 @@ namespace TankArmageddon
         public bool Down { get; set; }
         public bool Space { get; set; }
         public bool IsControlled { get; set; }
-        public bool Parachute { get; private set; } = true;
-        public eActions SelectedAction
-        {
-            get { return _selectedAction; }
-            set { _selectedAction = value; RefreshActionClass(); }
-        }
-        public int Life
-        {
-            get { return _life; }
-            set { _life = MathHelper.Clamp(value, 0, 100); _lifeBar.SetProgressiveValue(value, _barSpeed); }
-        }
-        public float Fuel
-        {
-            get { return _fuel; }
-            set { _fuel = MathHelper.Clamp(value, 0, 100); _fuelBar.SetProgressiveValue(value, _barSpeed); }
-        }
+        public bool Parachute { get => _parachute; private set { if (_parachute != value) { _parachute = value; _imgParachute.Visible = value; } } } 
+        public eActions SelectedAction { get => _selectedAction; set { _selectedAction = value; RefreshActionClass(); } }
+        public int Life { get => _life; set { _life = MathHelper.Clamp(value, 0, 100); _lifeBar.SetProgressiveValue(value, _barSpeed); } }
+        public float Fuel { get => _fuel; set { _fuel = MathHelper.Clamp(value, 0, 100); _fuelBar.SetProgressiveValue(value, _barSpeed); } }
         #endregion
 
         #region Constructeur
@@ -106,7 +96,11 @@ namespace TankArmageddon
 
             _fuelBar = new BarGraph(Fuel, Fuel, new Vector2(0, -ImgBox.Value.Height * 0.75f), new Vector2(s.X / 2, 0), s, Color.Blue, new Color(240, 105, 105));
             _group.AddElement(_fuelBar);
-
+            
+            Rectangle paraImgBox = AssetManager.ParachutesImgBox[utils.MathRnd(0, AssetManager.ParachutesImgBox.Count)];
+            _imgParachute = new Image(AssetManager.Parachute, paraImgBox, new Vector2(0, -ImgBox.Value.Height / 2 * Scale.Y), new Vector2(paraImgBox.Width / 2, paraImgBox.Height));
+            _group.AddElement(_imgParachute);
+            
             Texture2D cursor = new Texture2D(MainGame.graphics.GraphicsDevice, 15, 10);
             Color[] data = new Color[cursor.Width * cursor.Height];
             Color teamColor = Parent.TeamColor;
@@ -133,7 +127,9 @@ namespace TankArmageddon
             #endregion
 
             #region Abonnement aux évènements
-            OnSpriteEffectsChange += SpriteEffectsChange;
+            OnSpriteEffectsChange += Sprite_OnSpriteEffectsChange;
+            Parent.Parent.OnExplosion += Gameplay_OnExplosion;
+            Parent.Parent.OnTourTimerEnd += Gameplay_OnTourTimerEnd;
             #endregion
         }
         #endregion
@@ -142,7 +138,7 @@ namespace TankArmageddon
         /// <summary>
         /// Sur changement du SpriteEffects (flip horizontal), gère les positions d'images et les angles de canon.
         /// </summary>
-        public void SpriteEffectsChange(object sender, SpriteEffects previous, SpriteEffects after)
+        public void Sprite_OnSpriteEffectsChange(object sender, SpriteEffects previous, SpriteEffects after)
         {
             switch (after)
             {
@@ -171,54 +167,49 @@ namespace TankArmageddon
         /// </summary>
         private void RefreshActionClass()
         {
-            switch (SelectedAction)
+            if (!_action.BlockAction)
             {
-                case eActions.None:
-                    if (!(_action is NormalMove))
+                switch (SelectedAction)
+                {
+                    case eActions.None:
                         _action = _normalMove;
-                    break;
-                case eActions.iGrayBullet:
-                case eActions.GoldBullet:
-                    if (!(_action is MultipleShootFromTank))
+                        break;
+                    case eActions.iGrayBullet:
+                    case eActions.GoldBullet:
                         _action = _multipleShootFromTank;
-                    break;
-                case eActions.iGrayBombshell:
-                case eActions.GoldBombshell:
-                    if (!(_action is OneShootFromTank))
+                        break;
+                    case eActions.iGrayBombshell:
+                    case eActions.GoldBombshell:
                         _action = _oneShootFromTank;
-                    break;
-                case eActions.Grenada:
-                case eActions.SaintGrenada:
-                    if (!(_action is GrenadaFromTank))
+                        break;
+                    case eActions.Grenada:
+                    case eActions.SaintGrenada:
                         _action = _grenadaFromTank;
-                    break;
-                case eActions.GrayMissile:
-                case eActions.iDropFuel:
-                    if (!(_action is ShootFromAirplane))
+                        break;
+                    case eActions.GrayMissile:
+                    case eActions.iDropFuel:
                         _action = _shootFromAirplane;
-                    break;
-                case eActions.iTankBaseBall:
-                    // TODO : Jouer l'animation
-                    break;
-                case eActions.HelicoTank:
-                    if (!(_action is HelicoTank))
+                        break;
+                    case eActions.iTankBaseBall:
+                        // TODO : Jouer l'animation
+                        break;
+                    case eActions.HelicoTank:
                         _action = _helicoTank;
-                    break;
-                case eActions.Drilling:
-                    // TODO : Jouer l'animation
-                    break;
-                case eActions.Mine:
-                    if (!(_action is LetOnFloorFromTank))
+                        break;
+                    case eActions.Drilling:
+                        // TODO : Jouer l'animation
+                        break;
+                    case eActions.Mine:
                         _action = _letOnFloorFromTank;
-                    break;
-                case eActions.GreenMissile:
-                    if (!(_action is LetOnFloorFromAirplane))
+                        break;
+                    case eActions.GreenMissile:
                         _action = _letOnFloorFromAirplane;
-                    break;
-                default:
-                    break;
+                        break;
+                    default:
+                        break;
+                }
+                _action.Enable = true;
             }
-            _action.Enable = true;
         }
         #endregion
 
@@ -234,6 +225,25 @@ namespace TankArmageddon
             Remove = true;
             _group.Remove = true;
             Parent.Parent.FinnishTour(true);
+        }
+        #endregion
+
+        #region Sur explosion sur la map
+        private void Gameplay_OnExplosion(object sender, ExplosionEventArgs pExplosionEventArgs)
+        {
+            Circle c = pExplosionEventArgs.ExplosionCircle;
+            if (c.Intersects(BoundingBox))
+            {
+                int force = pExplosionEventArgs.Force;
+                Life -= force;
+            }
+        }
+        #endregion
+
+        #region Sur fin de tour
+        private void Gameplay_OnTourTimerEnd(object sender, EventArgs e)
+        {
+            _action.BlockAction = false;
         }
         #endregion
 

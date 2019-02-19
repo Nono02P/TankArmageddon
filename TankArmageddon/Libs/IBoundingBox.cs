@@ -1,13 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TankArmageddon
 {
-    /*public interface IBoundingBox : IEquatable<IBoundingBox>
+    public interface IBoundingBox : IEquatable<IBoundingBox>
     {
         #region Propriétés
         Point Location { get; set; }
@@ -28,5 +24,5 @@ namespace TankArmageddon
         bool Intersects(IBoundingBox pOther);
         string ToString();
         #endregion
-    }*/
+    }
 }

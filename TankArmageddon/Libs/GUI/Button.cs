@@ -117,27 +117,30 @@ namespace TankArmageddon.GUI
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             base.Draw(spriteBatch, gameTime);
-            // Détermine l'image à afficher (Par défaut ---> Cliqué --> Survolé --> Sélectionné)
-            Texture2D img = ImageDefault;
-            Rectangle? imgBox = ImageBoxDefault;
-            if (Clicked && ImagePressed != null)
+            if (Visible)
             {
-                img = ImagePressed;
-                imgBox = ImageBoxPressed;
+                // Détermine l'image à afficher (Par défaut ---> Cliqué --> Survolé --> Sélectionné)
+                Texture2D img = ImageDefault;
+                Rectangle? imgBox = ImageBoxDefault;
+                if (Clicked && ImagePressed != null)
+                {
+                    img = ImagePressed;
+                    imgBox = ImageBoxPressed;
+                }
+                else if (Hover && ImageHover != null)
+                {
+                    img = ImageHover;
+                    imgBox = ImageBoxHover;
+                }
+                else if (Selected && ImageSelected != null)
+                {
+                    img = ImageSelected;
+                    imgBox = ImageBoxSelected;
+                }
+                spriteBatch.Draw(img, Position, imgBox, Color.White, Angle, Origin, Scale, SpriteEffects.None, 0);
+                if (TextBox != null)
+                    TextBox.Draw(spriteBatch, gameTime);
             }
-            else if (Hover && ImageHover != null)
-            {
-                img = ImageHover;
-                imgBox = ImageBoxHover;
-            }
-            else if (Selected && ImageSelected != null)
-            {
-                img = ImageSelected;
-                imgBox = ImageBoxSelected;
-            }
-            spriteBatch.Draw(img, Position, imgBox, Color.White, Angle, Origin, Scale, SpriteEffects.None, 0);
-            if (TextBox != null)
-                TextBox.Draw(spriteBatch, gameTime);
         }
         #endregion
     }

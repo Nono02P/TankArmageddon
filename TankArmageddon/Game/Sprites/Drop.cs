@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using TankArmageddon.GUI;
 
 namespace TankArmageddon
 {
@@ -19,19 +20,21 @@ namespace TankArmageddon
         #endregion
 
         #region Evènements
-        public event onExplosion OnDropExplosion;
+        public event ExplosionHandler OnDropExplosion;
         #endregion
 
         #region Variables privées
         private bool _onFloor = false;
-        private Texture2D _parachuteImage;
+        private Image _imgParachute;
+        private Group _group;
+        private bool _parachute = true;
         #endregion
 
         #region Propriétés
         public Gameplay Parent { get; private set; }
         public eDropType DropType { get; private set; }
         public int Value { get; private set; } = utils.MathRnd(50, 100);
-        public bool Parachute { get; private set; } = true;
+        public bool Parachute { get => _parachute; private set { _parachute = value; _imgParachute.Visible = value; } }
         #endregion
 
         #region Constructeur
@@ -55,7 +58,11 @@ namespace TankArmageddon
             }
             Origin = new Vector2(ImgBox.Value.Width / 2, ImgBox.Value.Height);
 
-            _parachuteImage = AssetManager.Parachute;
+            _group = new Group();
+            Rectangle paraImgBox = AssetManager.ParachutesImgBox[utils.MathRnd(0, AssetManager.ParachutesImgBox.Count)];
+            _imgParachute = new Image(AssetManager.Parachute, paraImgBox, new Vector2(0, - ImgBox.Value.Height), new Vector2(paraImgBox.Width / 2, paraImgBox.Height));
+            _group.AddElement(_imgParachute);
+
             OnDropExplosion += Parent.CreateExplosion;
         }
         #endregion
@@ -63,14 +70,15 @@ namespace TankArmageddon
         #region Collisions
         public override void TouchedBy(ICollisionnable collisionnable)
         {
-            Remove = true;
             if (collisionnable is Tank.Bullet)
             {
                 OnDropExplosion?.Invoke(this, new ExplosionEventArgs(Position, 50, 40));
+                Remove = true;
             }
             if (collisionnable is Tank)
             {
                 Tank t = (Tank)collisionnable;
+                Remove = true;
                 switch (DropType)
                 {
                     case eDropType.Weapon:
@@ -86,6 +94,15 @@ namespace TankArmageddon
                         break;
                 }
             }
+            /*if (collisionnable is Drop)
+            {
+                if (!_onFloor)
+                {
+                    Drop d = (Drop)collisionnable;
+                    Position = new Vector2(Position.X, d.BoundingBox.Top);
+                    Angle = d.Angle;
+                }
+            }*/
         }
         #endregion
 
@@ -133,6 +150,12 @@ namespace TankArmageddon
                 _onFloor = false;
             }
             #endregion
+
+            _group.Position = Position;
+            if (Remove)
+            {
+                _group.Remove = true;
+            }
         }
         #endregion
 

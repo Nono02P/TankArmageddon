@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
 namespace TankArmageddon
@@ -23,7 +18,14 @@ namespace TankArmageddon
 
                 if (Input.OnPressed(Keys.Space))
                 {
-
+                    if (Parent.SelectedAction == eActions.Mine)
+                    {
+                        Mine m = new Mine(Parent, Parent.Position);
+                        m.Angle = Parent.Angle;
+                        Parent.Parent.Parent.FinnishTour();
+                        Enable = false;
+                        BlockAction = true;
+                    }
                 }
             }
             #endregion

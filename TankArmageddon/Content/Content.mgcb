@@ -92,6 +92,18 @@
 /processorParam:TextureFormat=Color
 /build:_Game/SaintGrenada.png
 
+#begin _Game/Parachute.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:_Game/Parachute.png
+
 #begin _Game/tanks_spritesheetRetina.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -106,4 +118,22 @@
 
 #begin _Game/tanks_spritesheetRetina.xml
 /copy:_Game/tanks_spritesheetRetina.xml
+
+#begin _Game/Shoot.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:_Game/Shoot.ogg
+
+#begin _Game/Explosion.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:_Game/Explosion.ogg
+
+#begin _Musics/Grandioso.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:_Musics/Grandioso.mp3
 

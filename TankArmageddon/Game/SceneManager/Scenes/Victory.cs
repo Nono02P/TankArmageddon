@@ -15,7 +15,7 @@ namespace TankArmageddon
         #region Load/Unload
         public override void Load()
         {
-            sndMusic = AssetManager.sndMusicVictory;
+            sndMusic = AssetManager.mscVictory;
             MediaPlayer.Play(sndMusic);
             MediaPlayer.IsRepeating = true;
 

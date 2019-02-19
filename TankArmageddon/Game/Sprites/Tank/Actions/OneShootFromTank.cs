@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
@@ -10,6 +11,10 @@ namespace TankArmageddon
     {
         private class OneShootFromTank : NormalMove
         {
+            #region Variables privées
+            private SoundEffect _sndShoot;
+            #endregion
+
             #region Propriétés
             public int Force { get; set; }
             public BarGraph LaunchBar { get; private set; }
@@ -24,6 +29,7 @@ namespace TankArmageddon
                 LaunchBar.ImgBoxEmpty = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tank_arrowEmpty.png").ImgBox;
                 LaunchBar.ImgBoxFull = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tank_arrowFull.png").ImgBox;
                 Parent._group.AddElement(LaunchBar);
+                _sndShoot = AssetManager.sndShoot;
             }
             #endregion
 
@@ -50,9 +56,11 @@ namespace TankArmageddon
                         Vector2 p = new Vector2(Parent._imgCannon.Width * Parent.Scale.X * cosAngle, Parent._imgCannon.Width * Parent.Scale.X * sinAngle);
                         p += Parent._positionCannon;
                         Bullet b = new Bullet(Parent, img, p, new Vector2(cosAngle * Force, sinAngle * Force), Parent.SelectedAction, Parent.Scale);
+                        _sndShoot.Play();
                         Force = 0;
                         Parent.Parent.Parent.FinnishTour();
                         Enable = false;
+                        BlockAction = true;
                     }
                     LaunchBar.Visible = Input.IsDown(Keys.Space) && Force < 100 && Enable;
                     LaunchBar.Value = Force;

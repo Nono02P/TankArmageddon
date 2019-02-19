@@ -87,7 +87,6 @@ namespace TankArmageddon
                 Tank t = new Tank(this, TeamColor, Parent.GetTankName(), pImage, imgTank, imgCannon, imgWheel, new Vector2(utils.MathRnd(40, (int)Parent.MapSize.X - 40), 1), new Vector2(imgTank.Width / 2, imgTank.Height / 2), Vector2.One * 0.5f);
                 while (!Parent.CanAppear(t))
                 {
-                    // TODO Vérifier pourquoi la fonction CanAppear ne fonctionne pas correctement.
                     t.Position = new Vector2(utils.MathRnd(40, (int)Parent.MapSize.X - 40), 1);
                 }
                 Tanks.Add(t);

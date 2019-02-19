@@ -25,7 +25,7 @@ namespace TankArmageddon
         public Rectangle? ImgBox { get => _imgBox; protected set { if (_imgBox != value) { _imgBox = value; RefreshBoundingBox(); } } }
         public Vector2 Origin { get => _origin; set { if (_origin != value) { _origin = value; RefreshBoundingBox(); } } }
         public Vector2 Scale { get => _scale; set { if (_scale != value) { _scale = value; RefreshBoundingBox(); } } }
-        public Texture2D Image { get => _image; private set { _image = value; RefreshBoundingBox(); } }
+        public Texture2D Image { get => _image; protected set { _image = value; RefreshBoundingBox(); } }
         public float Angle { get; set; }
         public bool Remove { get; set; }
         public SpriteEffects Effects { get { return _effects; } protected set { if (_effects != value) { OnSpriteEffectsChange?.Invoke(this, _effects, value); _effects = value; } } }
@@ -49,7 +49,10 @@ namespace TankArmageddon
             MainGame.CurrentScene.AddActor(this);
         }
 
-        protected Sprite() { }
+        protected Sprite()
+        {
+            MainGame.CurrentScene.AddActor(this);
+        }
         #endregion
 
         #region Méthodes

@@ -26,6 +26,7 @@ namespace TankArmageddon
     {
         Tank Parent { get; }
         bool Enable { get; set; }
+        bool BlockAction { get; set; }
 
         void Update(GameTime gameTime, ref float vx, ref float vy);
     }

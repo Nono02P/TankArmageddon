@@ -32,11 +32,11 @@ namespace TankArmageddon
         #region Load/Unload
         public override void Load()
         {
-            sndMusic = AssetManager.sndMusicMenu;
+            sndMusic = AssetManager.mscMenu;
             MediaPlayer.Play(sndMusic);
             MediaPlayer.IsRepeating = true;
 
-            Texture2D img = AssetManager.Button;
+            /*Texture2D img = AssetManager.Button;
             Vector2 position = new Vector2(MainGame.Screen.Width / 2, MainGame.Screen.Height / 2);
             Vector2 origin = new Vector2(img.Width / 2, img.Height / 2);
             _myButton = new GUI.Button(position, origin, 1.0f, true, img, null, null, AssetManager.MainFont, "ESSAIS");
@@ -46,7 +46,7 @@ namespace TankArmageddon
             lstActors.Add(_myButton);
 
             GUI.Slider slider = new GUI.Slider(new Vector2(100), Vector2.Zero, new Vector2(300, 5), new Vector2(5, 10));
-            lstActors.Add(slider);
+            lstActors.Add(slider);*/
 
             base.Load();
         }

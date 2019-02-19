@@ -7,7 +7,7 @@ namespace TankArmageddon
     {
         public class Bullet : Sprite
         {
-            public event onExplosion OnBulletExplosion;
+            public event ExplosionHandler OnBulletExplosion;
             public eActions BulletType { get; private set; }
             public Tank Parent { get; private set; }
             public int Radius { get; private set; }
@@ -69,6 +69,10 @@ namespace TankArmageddon
                 {
                     Explose();
                 }
+                if (Position.Y > Parent.Parent.Parent.WaterLevel)
+                {
+                    Remove = true;
+                }
             }
 
             private void Explose()
@@ -79,7 +83,7 @@ namespace TankArmageddon
 
             public override void TouchedBy(ICollisionnable collisionnable)
             {
-                if (!(collisionnable is Bullet))
+                if (!(collisionnable is Bullet) && !(collisionnable is Particle))
                 {
                     Explose();
                 }

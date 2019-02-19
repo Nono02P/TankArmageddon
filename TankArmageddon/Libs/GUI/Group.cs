@@ -42,7 +42,6 @@ namespace TankArmageddon.GUI
         {
             set
             {
-                Visible = value;
                 for (int i = 0; i < Elements.Count; i++)
                 {
                     Element element = Elements[i];
@@ -85,6 +84,15 @@ namespace TankArmageddon.GUI
         public void RemoveElement(Element pElement)
         {
             Elements.Remove(pElement);
+        }
+
+        public void ToogleVisibility()
+        {
+            for (int i = 0; i < Elements.Count; i++)
+            {
+                Element e = Elements[i];
+                e.Visible = !e.Visible;
+            }
         }
         /*
         public void Execute(Action<Element> action)

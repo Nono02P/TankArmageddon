@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
 using System;
@@ -17,6 +18,11 @@ namespace TankArmageddon
         private const int TIME_BETWEEN_TOUR = 10;
         private const byte NUMBER_OF_TEAMS = 4;
         private const byte NUMBER_OF_TANK_PER_TEAM = 5;
+        #endregion
+
+        #region Evènements
+        public event ExplosionHandler OnExplosion;
+        public event EventHandler OnTourTimerEnd;
         #endregion
 
         #region Variables privées
@@ -83,13 +89,14 @@ namespace TankArmageddon
         private Textbox _infoBulle;
         private Timer _timerSecond;
         private int _counter = TIME_PER_TOUR;
-        private bool _inTour = true;
+        private bool _inTour = false;
         private Texture2D _mapTexture;
         private float[] _perlinNoise;
         private byte _indexTeam;
         private Image _gameBarImage;
         private Image _cursorImage;
         private List<eActions> _lootBag;
+        private SoundEffect _sndexplosion;
         #endregion
 
         #region Propriétés
@@ -121,9 +128,13 @@ namespace TankArmageddon
         public override void Load()
         {
             #region Démarrage des musiques
-            sndMusic = AssetManager.sndMusicGameplay;
+            sndMusic = AssetManager.mscGameplay;
             MediaPlayer.Play(sndMusic);
             MediaPlayer.IsRepeating = true;
+            #endregion
+
+            #region Ajout des bruitages
+            _sndexplosion = AssetManager.sndExplosion;
             #endregion
 
             #region Création de la map
@@ -195,6 +206,7 @@ namespace TankArmageddon
             _timerSecond.Elapsed += OnTimerElapsed;
             _timerSecond.AutoReset = true;
             _timerSecond.Enabled = true;
+            _counter = TIME_BETWEEN_TOUR;
             #endregion
 
             #region Création des éléments de GUI
@@ -211,7 +223,7 @@ namespace TankArmageddon
 
             SpriteFont font = AssetManager.MainFont;
             _timerTextBox = new Textbox(new Vector2(382, 725), font, TIME_BETWEEN_TOUR.ToString() + "sec");
-            _timerTextBox.ApplyColor(Color.Green, Color.Black);
+            _timerTextBox.ApplyColor(Color.Red, Color.Black);
             GUIGroup.AddElement(_timerTextBox);
 
             _currentTeamTextBox = new Textbox(new Vector2(25, 725), font, "Equipe des rouges");
@@ -323,6 +335,7 @@ namespace TankArmageddon
                     _currentTankTextBox.Text = t.Tanks[t.IndexTank].Name;
                     Drop d = new Drop(this, (Drop.eDropType)utils.MathRnd(0, 3), AssetManager.TanksSpriteSheet, new Vector2(utils.MathRnd(20, (int)MapSize.X - 20), 10), Vector2.Zero, Vector2.One);
                     MainGame.Camera.SetCameraOnActor(d);
+                    OnTourTimerEnd?.Invoke(this, EventArgs.Empty);
                     // TODO : Vérifier que le Garbage Collector soit utile.
                     GC.Collect();
                 }
@@ -352,20 +365,19 @@ namespace TankArmageddon
         /// <param name="pExplosionEventArgs"></param>
         public void CreateExplosion(object sender, ExplosionEventArgs pExplosionEventArgs)
         {
+            OnExplosion?.Invoke(sender, pExplosionEventArgs);
+            _sndexplosion.Play();
             Color empty = new Color();
-            Vector2 pos = pExplosionEventArgs.Position;
-            int rad = pExplosionEventArgs.Radius;
+            Vector2 pos = pExplosionEventArgs.ExplosionCircle.Location;
+            int rad = (int)pExplosionEventArgs.ExplosionCircle.Radius;
             int force = pExplosionEventArgs.Force;
-            
-            Texture2D particles = new Texture2D(MainGame.graphics.GraphicsDevice, rad, rad);
-            Color[] particlesData = new Color[rad * rad];
-            int nMaxParticle = 15;
-            int nParticles = 0;
-            for (uint x = (uint)(pos.X - rad); x <= (uint)(pos.X + rad); x++)
+            Texture2D particles = new Texture2D(MainGame.graphics.GraphicsDevice, rad * 2, rad * 2);
+            Color[] particlesData = new Color[particles.Width * particles.Height];
+            for (int x = (int)(pos.X - rad); x <= (int)(pos.X + rad); x++)
             {
                 if (x >= 0 && x < MapSize.X)
                 {
-                    for (uint y = (uint)(pos.Y - rad); y <= (uint)(pos.Y + rad); y++)
+                    for (int y = (int)(pos.Y - rad); y <= (int)(pos.Y + rad); y++)
                     {
                         if (y >= 0 && y < MapSize.Y)
                         {
@@ -373,59 +385,43 @@ namespace TankArmageddon
                             {
                                 if (IsSolid(new Vector2(x, y)))
                                 {
-                                    // TODO recoder la gestion des particules différemment.
-                                    int rnd = utils.MathRnd(20, 100);
-                                    int rnd2 = utils.MathRnd(0, 100);
-                                    if (rnd <= 30 && rnd2 >= 90 && nMaxParticle > nParticles)
-                                    {
-                                        Texture2D particleTexture = new Texture2D(MainGame.graphics.GraphicsDevice, rnd, rnd);
-                                        Color[] colors = new Color[rnd * rnd];
-                                        bool createParticle = false;
-                                        for (int i = 0; i < rnd; i++)
-                                        {
-                                            for (int j = 0; j < rnd; j++)
-                                            {
-                                                if (Math.Pow(pos.X - x - i, 2) + Math.Pow(pos.Y - y - j, 2) < Math.Pow(rnd, 2))
-                                                {
-                                                    Color c = empty;
-                                                    long index = (x + i + (y + j) * (uint)MapSize.X);
-                                                    if (index < 0 || index >= MapColors.Length)
-                                                    {
-                                                        c = empty;
-                                                    }
-                                                    else if (MapColors[index] != empty)
-                                                    {
-                                                        c = MapColors[index];
-                                                        createParticle = true;
-                                                    }
-                                                    colors[i + j * rnd] = c;
-                                                }
-                                            }
-                                        }
-                                        if (createParticle)
-                                        {
-                                            particleTexture.SetData(colors);
-                                            Vector2 p = new Vector2(x, y);
-                                            Particle particle = new Particle(this, particleTexture, null, p, new Vector2(rnd / 2, rnd / 2), Vector2.One);
-                                            float angle = (float)utils.MathAngle(p, pos);
-                                            //particle.Velocity = new Vector2((float)Math.Cos(angle) * force, (float)Math.Sin(angle) * force);
-                                            particle.Velocity = new Vector2(utils.MathRnd(-10, 10), utils.MathRnd(-10, 10));
-                                            nParticles++;
-                                        }
-                                    }
+                                    int x2 = (int)(x + rad - pos.X);
+                                    int y2 = (int)(y + rad - pos.Y);
+                                    int index = (x + y * (int)MapSize.X);
+                                    particlesData[x2 + y2 * rad] = MapColors[index];
                                     MapData[x + y * (int)MapSize.X] = 0;
-                                    MapColors[x + y * (int)MapSize.X] = new Color();
+                                    MapColors[x + y * (int)MapSize.X] = empty;
                                 }
                             }
                         }
                     }
                 } 
             }
+            particles.SetData(particlesData);
+            CreateMapParticles(particles, pos, force);
             _mapTexture.SetData(MapColors);
         }
         #endregion
 
         #region Fonctions d'interraction des éléments avec la map
+
+        public Vector2 Normalisation(Vector2 pPosition)
+        {
+            Vector2 avg = new Vector2();
+            for (int x = (int)pPosition.X - 5; x < pPosition.X + 5; x++)
+            {
+                for (int y = (int)pPosition.Y - 5; y < pPosition.Y + 5; y++)
+                {
+                    Vector2 p = new Vector2(x, y);
+                    if (IsSolid(p))
+                    {
+                        avg -= p;
+                    }
+                }
+            }
+            int length = (int)Math.Sqrt(avg.X * avg.X + avg.Y * avg.Y);
+            return avg / length;
+        }
 
         /// <summary>
         /// Renvoies l'écart entre la position et le premier point le plus haut en Y sur la map à l'offset X.
@@ -468,7 +464,7 @@ namespace TankArmageddon
             bool result = false;
             if (pPosition.X >= 0 && pPosition.X < MapSize.X && pPosition.Y >= 0 && pPosition.Y < MapSize.Y)
             {
-                result = MapData[(uint)(pPosition.X) + (uint)(pPosition.Y * MapSize.X)] > 0;
+                result = MapData[(uint)(pPosition.X) + (uint)(pPosition.Y) * (uint)(MapSize.X)] > 0;
             }
             return result;
         }
@@ -502,9 +498,87 @@ namespace TankArmageddon
             return new Vector2(x, y);
         }
 
-        private void GenerateParticles(Vector2 pPosition, Texture2D texture)
+        private void CreateMapParticles(Texture2D particles, Vector2 pPosition, int pForce)
         {
-            // TODO Revoir la méthode de génération de particules.
+            Color empty = new Color();
+            int partWidth = particles.Width;
+            int partHeight = particles.Height;
+            int offsetX = 0;
+            int offsetY = 0;
+            int rndWidth = 0;
+            int rndHeight = 0;
+            int startX = (int)pPosition.X - partWidth / 2;
+            int startY = (int)pPosition.Y - partHeight / 2;
+            Color[] particlesData = new Color[partWidth * partHeight];
+            particles.GetData(particlesData);
+            for (int l = 0; l < partHeight; l += rndHeight)
+            {
+                offsetY += rndHeight;
+                for (int c = 0; c < partWidth; c += rndWidth)
+                {
+                    if (offsetX > partWidth)
+                    {
+                        offsetX = 0;
+                    }
+                    else
+                    {
+                        offsetX += rndWidth;
+                        rndWidth = utils.MathRnd(10, particles.Width);
+                        rndHeight = utils.MathRnd(10, particles.Height);
+                        Color[] data = new Color[rndWidth * rndHeight];
+                        Texture2D texture = new Texture2D(MainGame.graphics.GraphicsDevice, rndWidth, rndHeight);
+                        int minValX = rndWidth;
+                        int maxValX = 0;
+                        int minValY = rndHeight;
+                        int maxValY = 0;
+                        bool createParticles = false;
+                        for (int x = 0; x < rndWidth; x++)
+                        {
+                            for (int y = 0; y < rndHeight; y++)
+                            {
+                                int particlesIndex = (c + x) + (l + y) * partWidth;
+                                int index = x + y * rndWidth;
+                                if (particlesIndex >= 0 && particlesIndex < particlesData.Length)
+                                {
+                                    if (particlesData[particlesIndex] != empty)
+                                    {
+                                        if (Math.Pow(x, 2) + Math.Pow(y, 2) < Math.Pow((rndWidth + rndHeight) / 2, 2))
+                                        {
+                                            data[index] = particlesData[particlesIndex];
+                                            createParticles = true;
+                                            if (maxValX < x)
+                                            {
+                                                maxValX = x;
+                                            }
+                                            if (minValX > x)
+                                            {
+                                                minValX = x;
+                                            }
+                                            if (maxValY < y)
+                                            {
+                                                maxValY = y;
+                                            }
+                                            if (minValY > y)
+                                            {
+                                                minValY = y;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        if (createParticles)
+                        {
+                            texture.SetData(data);
+                            Vector2 p = new Vector2(startX + c * rndWidth, startY + l * rndHeight);
+                            Particle particle = new Particle(this, texture, null, p, new Vector2((maxValX - minValX) / 2, maxValY), Vector2.One);
+                            float angle = (float)utils.MathAngle(p, pPosition);
+                            particle.Velocity = new Vector2(utils.MathRnd(-10,10), utils.MathRnd(-1, 1));
+                            //particle.Velocity = new Vector2((float)Math.Cos(angle) * pForce, (float)Math.Sin(angle) * pForce);
+                        }
+                    }
+                }
+            }
         }
         #endregion
 
@@ -598,7 +672,7 @@ namespace TankArmageddon
 
         #endregion
 
-        #region Fin de tour
+        #region Forçage de fin de tour
         /// <summary>
         /// Force la fin du tour.
         /// </summary>
@@ -704,6 +778,7 @@ namespace TankArmageddon
         {
             spriteBatch.Draw(_mapTexture, Vector2.Zero, Color.White);
             base.Draw(spriteBatch, gameTime);
+            // TODO dessiner les explosions ici pour que ce soit en premier plan.
         }
         #endregion
     }

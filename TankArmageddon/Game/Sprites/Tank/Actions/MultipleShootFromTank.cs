@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -10,10 +11,11 @@ namespace TankArmageddon
         private class MultipleShootFromTank : NormalMove
         {
             #region Constantes
-            private float FORCE = 12; 
+            private float FORCE = 12;
             #endregion
 
             #region Variables privées
+            private SoundEffect _sndShoot;
             private Texture2D _img = AssetManager.TanksSpriteSheet;
             private int _counter = 0;
             private int _timer = 0;
@@ -21,7 +23,10 @@ namespace TankArmageddon
             #endregion
 
             #region Constructeur
-            public MultipleShootFromTank(Tank pParent) : base(pParent) { }
+            public MultipleShootFromTank(Tank pParent) : base(pParent)
+            {
+                _sndShoot = AssetManager.sndShoot;
+            }
             #endregion
 
             #region Update
@@ -50,6 +55,8 @@ namespace TankArmageddon
                             Vector2 p = new Vector2(Parent._imgCannon.Width * Parent.Scale.X * cosAngle, Parent._imgCannon.Width * Parent.Scale.X * sinAngle);
                             p += Parent._positionCannon;
                             Bullet b = new Bullet(Parent, _img, p, new Vector2(cosAngle * FORCE, sinAngle * FORCE), Parent.SelectedAction, Parent.Scale);
+                            _sndShoot.Play(0.05f, 0, 0);
+                            BlockAction = true;
                         }
                     }
                     if (_counter >= 15)
