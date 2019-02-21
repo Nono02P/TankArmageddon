@@ -59,6 +59,13 @@ namespace TankArmageddon
                 #endregion
             }
             #endregion
+
+            #region Fin du tour
+            public virtual void EndOfTour()
+            {
+                Parent.SelectedAction = eActions.None;
+            }
+            #endregion
         }
     }
 }

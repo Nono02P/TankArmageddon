@@ -49,6 +49,11 @@ namespace TankArmageddon
                         Radius = 80;
                         Force = 60;
                         break;
+                    case eActions.GreenMissile:
+                        ImgBox = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tank_bullet3.png").ImgBox;
+                        Radius = 80;
+                        Force = 70;
+                        break;
                     default:
                         break;
                 }

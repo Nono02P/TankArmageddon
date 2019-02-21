@@ -31,7 +31,7 @@ namespace TankArmageddon.GUI
         /// </summary>
         public Textbox TextBox { get; private set; }
         public bool Selected { get; set; }
-        public Color Color_Selected { get => TextBox.Color_Selected; set { if (TextBox != null) TextBox.Color_Selected = value; }  }
+        public Color Color_Selected { get => TextBox.Color_Selected; set { if (TextBox != null) TextBox.Color_Selected = value; } }
         public Color ColorBck_Selected { get => TextBox.ColorBck_Selected; set { if (TextBox != null) TextBox.ColorBck_Selected = value; } }
         public Color Color_Default { get => TextBox.Color_Default; set { if (TextBox != null) TextBox.Color_Default = value; } }
         public Color ColorBck_Default { get => TextBox.ColorBck_Default; set { if (TextBox != null) TextBox.ColorBck_Default = value; } }
@@ -46,6 +46,7 @@ namespace TankArmageddon.GUI
             ImagePressed = pImagePressed;
             TextBox = new Textbox(pPosition, Vector2.Zero, pFont, pText, false, pVisible);
             AlignText(HAlign.Center, VAlign.Middle);
+            OnPositionChange += Element_OnPositionChanged;
         }
 
         public Button(Vector2 pPosition, Vector2 pOrigin, float pScale, bool pVisible, Texture2D pImageDefault, Texture2D pImageHover, Texture2D pImagePressed)
@@ -62,6 +63,7 @@ namespace TankArmageddon.GUI
         {
             TextBox = new Textbox(pPosition, Vector2.Zero, pFont, pText, false, pVisible);
             AlignText(HAlign.Center, VAlign.Middle);
+            OnPositionChange += Element_OnPositionChanged;
         }
         #endregion
 
@@ -102,6 +104,11 @@ namespace TankArmageddon.GUI
             TextBox.Position = new Vector2(x, y);
         }
         #endregion
+
+        private void Element_OnPositionChanged(object sender, Vector2 previous, Vector2 actual)
+        {
+            TextBox.Position += actual - previous;
+        }
 
         #region Update
         public override void Update(GameTime gameTime)

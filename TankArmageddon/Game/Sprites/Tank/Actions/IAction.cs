@@ -29,5 +29,6 @@ namespace TankArmageddon
         bool BlockAction { get; set; }
 
         void Update(GameTime gameTime, ref float vx, ref float vy);
+        void EndOfTour();
     }
 }

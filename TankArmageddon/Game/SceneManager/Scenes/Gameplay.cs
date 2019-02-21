@@ -115,6 +115,7 @@ namespace TankArmageddon
                 {
                     _indexTeam = (byte)(value % _teams.Count);
                     _teams[value].RefreshCameraOnSelection();
+                    RefreshActionButton();
                 }
             }
         }
@@ -248,7 +249,6 @@ namespace TankArmageddon
                 else
                 {
                     btn = new ButtonAction(this, (eActions)i, new Vector2(442 + 37 * (i - 1), 725), Vector2.Zero, AssetManager.MainFont, string.Empty);
-                    btn.ShowBoundingBox = true;
                 }
                 GUIGroupButtons.AddElement((IIntegrableMenu)btn);
                 btn.OnHover += OnButtonHover;
@@ -276,6 +276,7 @@ namespace TankArmageddon
             t.RefreshCameraOnSelection();
             _currentTeamTextBox.ApplyColor(t.TeamColor, Color.Black);
             _currentTankTextBox.Text = t.Tanks[t.IndexTank].Name;
+            RefreshActionButton();
             #endregion
 
             base.Load();
@@ -294,8 +295,25 @@ namespace TankArmageddon
             if (Clicks == ClickType.Left)
             {
                 ButtonAction btn = (ButtonAction)pSender;
-                GUIGroupButtons.CurrentSelection = GUIGroupButtons.Elements.FindIndex(b => b == btn);
-                _teams[_indexTeam].SelectAction(btn.ActionType);
+                if (btn.Number != 0)
+                {
+                    GUIGroupButtons.CurrentSelection = GUIGroupButtons.Elements.FindIndex(b => b == btn);
+                    _teams[_indexTeam].SelectAction(btn.ActionType);
+                }
+            }
+        }
+
+        private void RefreshActionButton()
+        {
+            int nbBtn = GUIGroupButtons.Elements.Count;
+            for (int i = 0; i < nbBtn; i++)
+            {
+                ButtonAction btn = (ButtonAction)GUIGroupButtons.Elements[i];
+                Dictionary<eActions, int> inv = _teams[_indexTeam].Inventory;
+                if (inv.ContainsKey(btn.ActionType))
+                {
+                    btn.Number = inv[btn.ActionType];
+                }
             }
         }
         #endregion

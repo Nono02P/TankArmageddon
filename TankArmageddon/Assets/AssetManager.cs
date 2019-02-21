@@ -30,7 +30,10 @@ namespace TankArmageddon
         #region Textures
         public static Texture2D GameBottomBar { get; private set; }
         public static Texture2D Cursor { get; private set; }
+        public static Texture2D Crosshair { get; private set; }
         public static Texture2D Parachute { get; private set; }
+        public static Texture2D Grenada { get; private set; }
+        public static Texture2D SaintGrenada { get; private set; }
         public static List<Rectangle> ParachutesImgBox { get; private set; }
         public static Texture2D TanksSpriteSheet { get; private set; }
         public static XmlTextureAtlas TanksAtlas { get; private set; }
@@ -48,6 +51,7 @@ namespace TankArmageddon
             MainFont = pContent.Load<SpriteFont>("_Font/MainFont");
             GameBottomBar = pContent.Load<Texture2D>("_GUI/GameBottomBar");
             Cursor = pContent.Load<Texture2D>("_GUI/Cursor");
+            Crosshair = pContent.Load<Texture2D>("_Game/crosshair184");
             Parachute = pContent.Load<Texture2D>("_Game/Parachute");
             ParachutesImgBox = new List<Rectangle>();
             Rectangle img;
@@ -63,7 +67,8 @@ namespace TankArmageddon
                     ParachutesImgBox.Add(img);
                 }
             }
-
+            Grenada = pContent.Load<Texture2D>("_Game/Grenada");
+            SaintGrenada = pContent.Load<Texture2D>("_Game/SaintGrenada");
             TanksSpriteSheet = pContent.Load<Texture2D>("_Game/tanks_spritesheetRetina");
             XmlSerializer TankSpriteSheetSer = new XmlSerializer(typeof(XmlTextureAtlas));
             MemoryStream stream = new MemoryStream(File.ReadAllBytes("Content/_Game/tanks_spritesheetRetina.xml"));

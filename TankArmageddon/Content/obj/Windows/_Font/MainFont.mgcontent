@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <SourceFile>C:/Users/PierArn/Documents/Perso/Jeux Video/_GameJam/4_TankArmageddon/TankArmageddon/TankArmageddon/Content/_Font/MainFont.spritefont</SourceFile>
-  <SourceTime>2018-11-02T17:46:27.5154403+01:00</SourceTime>
+  <SourceTime>2019-02-21T00:16:19.9562275+01:00</SourceTime>
   <DestFile>C:/Users/PierArn/Documents/Perso/Jeux Video/_GameJam/4_TankArmageddon/TankArmageddon/TankArmageddon/Content/bin/Windows/_Font/MainFont.xnb</DestFile>
-  <DestTime>2019-02-16T21:55:29.1095823+01:00</DestTime>
+  <DestTime>2019-02-21T00:16:39.0803213+01:00</DestTime>
   <Importer>FontDescriptionImporter</Importer>
   <ImporterTime>2017-03-01T16:05:36+01:00</ImporterTime>
   <Processor>FontDescriptionProcessor</Processor>

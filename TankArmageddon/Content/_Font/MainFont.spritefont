@@ -48,12 +48,12 @@ with.
     character from Start to End will be built and made available for drawing. The
     default range is from 32, (ASCII space), to 126, ('~'), covering the basic Latin
     character set. The characters are ordered according to the Unicode standard.
-    See the documentation for more information.
+    See the documentation for more information. &#8734;
     -->
     <CharacterRegions>
       <CharacterRegion>
         <Start>&#32;</Start>
-        <End>&#1200;</End>
+        <End>&#1200;</End> 
       </CharacterRegion>
     </CharacterRegions>
   </Asset>

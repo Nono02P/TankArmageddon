@@ -55,12 +55,29 @@ namespace TankArmageddon
                         float sinAngle = (float)Math.Sin(Parent.AngleCannon + Parent.Angle);
                         Vector2 p = new Vector2(Parent._imgCannon.Width * Parent.Scale.X * cosAngle, Parent._imgCannon.Width * Parent.Scale.X * sinAngle);
                         p += Parent._positionCannon;
-                        Bullet b = new Bullet(Parent, img, p, new Vector2(cosAngle * Force, sinAngle * Force), Parent.SelectedAction, Parent.Scale);
+                        switch (Parent.SelectedAction)
+                        {
+                            case eActions.iGrayBullet:
+                            case eActions.iGrayBombshell:
+                            case eActions.GoldBullet:
+                            case eActions.GoldBombshell:
+                                Bullet b = new Bullet(Parent, img, p, new Vector2(cosAngle * Force, sinAngle * Force), Parent.SelectedAction, Parent.Scale);
+                                break;
+                            case eActions.Grenada:
+                            case eActions.SaintGrenada:
+                                Grenada g = new Grenada(Parent, img, p, new Vector2(cosAngle * Force, sinAngle * Force), Parent.SelectedAction, Parent.Scale);
+                                break;
+                            default:
+                                break;
+                        }
+                        
                         _sndShoot.Play();
                         Force = 0;
                         Parent.Parent.Parent.FinnishTour();
-                        Enable = false;
                         BlockAction = true;
+                        Enable = false;
+                        if (Parent.Parent.Inventory[Parent.SelectedAction] > 0)
+                            Parent.Parent.Inventory[Parent.SelectedAction]--;
                     }
                     LaunchBar.Visible = Input.IsDown(Keys.Space) && Force < 100 && Enable;
                     LaunchBar.Value = Force;

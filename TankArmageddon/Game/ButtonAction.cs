@@ -9,6 +9,22 @@ namespace TankArmageddon
     /// </summary>
     public class ButtonAction : Button
     {
+        private int _number;
+
+        public int Number
+        {
+            get { return _number; }
+            set
+            {
+                _number = value;
+                if (value != -1)
+                { TextBox.Text = value.ToString(); }
+                //else
+                //{ TextBox.Text = "∞"; }
+            }
+        }
+
+
         /// <summary>
         /// Type d'action que réalise le bouton
         /// </summary>
@@ -43,7 +59,7 @@ namespace TankArmageddon
                         infoBulle = "Missile : Dégâts moyens, portée moyenne.";
                         break;
                     case eActions.GreenMissile:
-                        infoBulle = "Missile vert : Rend de la vie, grande portée.";
+                        infoBulle = "Missile : Dégâts importants, portée moyenne.";
                         break;
                     case eActions.Mine:
                         infoBulle = "Mine : Dégâts moyens, faible portée.";
@@ -122,8 +138,12 @@ namespace TankArmageddon
                     ImageBoxDefault = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tanks_mineOn.png").ImgBox;
                     break;
                 case eActions.Grenada:
+                    Scale = 0.12f;
+                    ImageDefault = AssetManager.Grenada;
                     break;
                 case eActions.SaintGrenada:
+                    Scale = 0.07f;
+                    ImageDefault = AssetManager.SaintGrenada;
                     break;
                 case eActions.iTankBaseBall:
                     break;
@@ -132,6 +152,9 @@ namespace TankArmageddon
                 case eActions.Drilling:
                     break;
                 case eActions.iDropFuel:
+                    Scale = 0.25f;
+                    ImageDefault = AssetManager.TanksSpriteSheet;
+                    ImageBoxDefault = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tanks_barrelRed.png").ImgBox;
                     break;
                 default:
                     break;

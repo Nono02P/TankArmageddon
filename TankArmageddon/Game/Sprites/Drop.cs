@@ -33,7 +33,7 @@ namespace TankArmageddon
         #region Propriétés
         public Gameplay Parent { get; private set; }
         public eDropType DropType { get; private set; }
-        public int Value { get; private set; } = utils.MathRnd(50, 100);
+        public int Value { get; set; } = utils.MathRnd(50, 100);
         public bool Parachute { get => _parachute; private set { _parachute = value; _imgParachute.Visible = value; } }
         #endregion
 

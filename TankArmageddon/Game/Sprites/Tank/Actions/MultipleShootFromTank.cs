@@ -63,6 +63,8 @@ namespace TankArmageddon
                     {
                         Parent.Parent.Parent.FinnishTour();
                         Enable = false;
+                        if (Parent.Parent.Inventory[Parent.SelectedAction] > 0)
+                            Parent.Parent.Inventory[Parent.SelectedAction]--;
                     }
                 }
             }

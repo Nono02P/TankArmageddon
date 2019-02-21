@@ -13,11 +13,11 @@ namespace TankArmageddon
         #endregion
 
         #region Variables privées
-        private Dictionary<eActions, int> _inventory;
         private byte _indexTank;
         #endregion
 
         #region Propriétés
+        public Dictionary<eActions, int> Inventory { get; private set; }
         public byte IndexTank
         {
             get { return _indexTank; }
@@ -42,15 +42,15 @@ namespace TankArmageddon
         #region Constructeur
         public Team(Gameplay pParent, Texture2D pImage, int pNumberOfTanks, int pTeamNumber)
         {
-            _inventory = new Dictionary<eActions, int>();
+            Inventory = new Dictionary<eActions, int>();
             for (int i = 1; i < Enum.GetValues(typeof(eActions)).GetLength(0); i++)
             {
-                _inventory.Add((eActions)i, 0);
+                Inventory.Add((eActions)i, 0);
             }
-            _inventory[eActions.iGrayBullet] = -1;
-            _inventory[eActions.iGrayBombshell] = -1;
-            _inventory[eActions.iTankBaseBall] = -1;
-            _inventory[eActions.iDropFuel] = -1;
+            Inventory[eActions.iGrayBullet] = -1;
+            Inventory[eActions.iGrayBombshell] = -1;
+            Inventory[eActions.iTankBaseBall] = -1;
+            Inventory[eActions.iDropFuel] = -1;
 
             Parent = pParent;
             Tanks = new List<Tank>();
@@ -98,7 +98,7 @@ namespace TankArmageddon
         public void OpenLoot()
         {
             Tuple<eActions, byte> loot = Parent.GetLoot();
-            _inventory[loot.Item1] += loot.Item2;
+            Inventory[loot.Item1] += loot.Item2;
         }
         #endregion
 

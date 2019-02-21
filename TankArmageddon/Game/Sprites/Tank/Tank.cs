@@ -43,11 +43,9 @@ namespace TankArmageddon
         private NormalMove _normalMove;
         private HelicoTank _helicoTank;
         private OneShootFromTank _oneShootFromTank;
-        private GrenadaFromTank _grenadaFromTank;
         private MultipleShootFromTank _multipleShootFromTank;
-        private ShootFromAirplane _shootFromAirplane;
-        private LetOnFloorFromAirplane _letOnFloorFromAirplane;
-        private LetOnFloorFromTank _letOnFloorFromTank;
+        private OneShootFromAirplane _oneShootFromAirplane;
+        private LetOnFloor _letOnFloor;
         #endregion
 
         #region Propriétés
@@ -118,11 +116,9 @@ namespace TankArmageddon
             _normalMove = new NormalMove(this);
             _helicoTank = new HelicoTank(this);
             _oneShootFromTank = new OneShootFromTank(this);
-            _grenadaFromTank = new GrenadaFromTank(this);
             _multipleShootFromTank = new MultipleShootFromTank(this);
-            _shootFromAirplane = new ShootFromAirplane(this);
-            _letOnFloorFromAirplane = new LetOnFloorFromAirplane(this);
-            _letOnFloorFromTank = new LetOnFloorFromTank(this);
+            _oneShootFromAirplane = new OneShootFromAirplane(this);
+            _letOnFloor = new LetOnFloor(this);
             _action = _normalMove;
             #endregion
 
@@ -180,15 +176,14 @@ namespace TankArmageddon
                         break;
                     case eActions.iGrayBombshell:
                     case eActions.GoldBombshell:
-                        _action = _oneShootFromTank;
-                        break;
                     case eActions.Grenada:
                     case eActions.SaintGrenada:
-                        _action = _grenadaFromTank;
+                        _action = _oneShootFromTank;
                         break;
                     case eActions.GrayMissile:
+                    case eActions.GreenMissile:
                     case eActions.iDropFuel:
-                        _action = _shootFromAirplane;
+                        _action = _oneShootFromAirplane;
                         break;
                     case eActions.iTankBaseBall:
                         // TODO : Jouer l'animation
@@ -200,10 +195,7 @@ namespace TankArmageddon
                         // TODO : Jouer l'animation
                         break;
                     case eActions.Mine:
-                        _action = _letOnFloorFromTank;
-                        break;
-                    case eActions.GreenMissile:
-                        _action = _letOnFloorFromAirplane;
+                        _action = _letOnFloor;
                         break;
                     default:
                         break;
@@ -244,6 +236,7 @@ namespace TankArmageddon
         private void Gameplay_OnTourTimerEnd(object sender, EventArgs e)
         {
             _action.BlockAction = false;
+            _action.EndOfTour();
         }
         #endregion
 

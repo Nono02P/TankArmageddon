@@ -69,3 +69,4 @@ C:\Users\PierArn\Documents\Perso\Jeux Video\_GameJam\4_TankArmageddon\TankArmage
 C:\Users\PierArn\Documents\Perso\Jeux Video\_GameJam\4_TankArmageddon\TankArmageddon\TankArmageddon\bin\Windows\x86\Debug\Content\_Game\Shoot.xnb
 C:\Users\PierArn\Documents\Perso\Jeux Video\_GameJam\4_TankArmageddon\TankArmageddon\TankArmageddon\bin\Windows\x86\Debug\Content\_Musics\Grandioso.wma
 C:\Users\PierArn\Documents\Perso\Jeux Video\_GameJam\4_TankArmageddon\TankArmageddon\TankArmageddon\bin\Windows\x86\Debug\Content\_Musics\Grandioso.xnb
+C:\Users\PierArn\Documents\Perso\Jeux Video\_GameJam\4_TankArmageddon\TankArmageddon\TankArmageddon\bin\Windows\x86\Debug\Content\_Game\crosshair184.xnb
