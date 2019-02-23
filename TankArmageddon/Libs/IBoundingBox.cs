@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 
 namespace TankArmageddon
@@ -13,7 +14,7 @@ namespace TankArmageddon
         int Left { get; }
         int Width { get; }
         int Height { get; }
-        Point Size { get; set; }
+        Point Size { get; }
         Point Center { get; }
         #endregion
 
@@ -21,8 +22,9 @@ namespace TankArmageddon
         bool Contains(int x, int y);
         bool Contains(Vector2 pLocation);
         bool Contains(Point pLocation);
-        bool Intersects(IBoundingBox pOther);
+        bool Intersects(IBoundingBox other);
         string ToString();
+        void Draw(SpriteBatch spriteBatch, GameTime gameTime);
         #endregion
     }
 }

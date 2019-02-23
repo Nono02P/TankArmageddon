@@ -78,6 +78,7 @@ namespace TankArmageddon
             if (collisionnable is Tank)
             {
                 Tank t = (Tank)collisionnable;
+                Parent.RefreshActionButton();
                 Remove = true;
                 switch (DropType)
                 {

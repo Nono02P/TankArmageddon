@@ -17,7 +17,7 @@ namespace TankArmageddon
         #endregion
 
         #region Propriétés
-        public Dictionary<eActions, int> Inventory { get; private set; }
+        public Dictionary<Action.eActions, int> Inventory { get; private set; }
         public byte IndexTank
         {
             get { return _indexTank; }
@@ -42,15 +42,15 @@ namespace TankArmageddon
         #region Constructeur
         public Team(Gameplay pParent, Texture2D pImage, int pNumberOfTanks, int pTeamNumber)
         {
-            Inventory = new Dictionary<eActions, int>();
-            for (int i = 1; i < Enum.GetValues(typeof(eActions)).GetLength(0); i++)
+            Inventory = new Dictionary<Action.eActions, int>();
+            for (int i = 1; i < Enum.GetValues(typeof(Action.eActions)).GetLength(0); i++)
             {
-                Inventory.Add((eActions)i, 0);
+                Inventory.Add((Action.eActions)i, 0);
             }
-            Inventory[eActions.iGrayBullet] = -1;
-            Inventory[eActions.iGrayBombshell] = -1;
-            Inventory[eActions.iTankBaseBall] = -1;
-            Inventory[eActions.iDropFuel] = -1;
+            Inventory[Action.eActions.iGrayBullet] = -1;
+            Inventory[Action.eActions.iGrayBombshell] = -1;
+            Inventory[Action.eActions.iTankBaseBall] = -1;
+            Inventory[Action.eActions.iDropFuel] = -1;
 
             Parent = pParent;
             Tanks = new List<Tank>();
@@ -97,7 +97,7 @@ namespace TankArmageddon
         #region Acquisition de Loot
         public void OpenLoot()
         {
-            Tuple<eActions, byte> loot = Parent.GetLoot();
+            Tuple<Action.eActions, byte> loot = Parent.GetLoot();
             Inventory[loot.Item1] += loot.Item2;
         }
         #endregion
@@ -135,7 +135,7 @@ namespace TankArmageddon
         #endregion
 
         #region Sélection de l'action.
-        public void SelectAction(eActions actions)
+        public void SelectAction(Action.eActions actions)
         {
             Tank CurrentTank = Tanks[IndexTank];
             CurrentTank.SelectedAction = actions;

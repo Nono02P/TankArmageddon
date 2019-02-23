@@ -52,9 +52,21 @@ namespace TankArmageddon
                             _counter++;
                             float cosAngle = (float)Math.Cos(Parent.AngleCannon + Parent.Angle);
                             float sinAngle = (float)Math.Sin(Parent.AngleCannon + Parent.Angle);
-                            Vector2 p = new Vector2(Parent._imgCannon.Width * Parent.Scale.X * cosAngle, Parent._imgCannon.Width * Parent.Scale.X * sinAngle);
+                            Vector2 p = new Vector2(Parent._imgCannon.Width * 1.25f * Parent.Scale.X * cosAngle, Parent._imgCannon.Width * 1.25f * Parent.Scale.X * sinAngle);
                             p += Parent._positionCannon;
-                            Bullet b = new Bullet(Parent, _img, p, new Vector2(cosAngle * FORCE, sinAngle * FORCE), Parent.SelectedAction, Parent.Scale);
+                            switch (Action.GetCategory(Parent.SelectedAction))
+                            {
+                                case Action.eCategory.None:
+                                case Action.eCategory.Grenada:
+                                case Action.eCategory.Drop:
+                                case Action.eCategory.Mine:
+                                    break;
+                                case Action.eCategory.Bullet:
+                                    Bullet b = new Bullet(Parent, _img, p, new Vector2(cosAngle * FORCE, sinAngle * FORCE), Parent.SelectedAction, Parent.Scale);
+                                    break;
+                                default:
+                                    break;
+                            }
                             _sndShoot.Play(0.05f, 0, 0);
                             BlockAction = true;
                         }
@@ -63,6 +75,7 @@ namespace TankArmageddon
                     {
                         Parent.Parent.Parent.FinnishTour();
                         Enable = false;
+                        _counter = 0;
                         if (Parent.Parent.Inventory[Parent.SelectedAction] > 0)
                             Parent.Parent.Inventory[Parent.SelectedAction]--;
                     }

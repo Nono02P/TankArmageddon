@@ -64,7 +64,7 @@ namespace TankArmageddon.GUI
         /// <summary>
         /// Zone de l'élément qui permet de gérer les collisions avec la souris
         /// </summary>
-        public Rectangle BoundingBox { get; protected set; }
+        public IBoundingBox BoundingBox { get; protected set; } = new RectangleBBox();
         /// <summary>
         /// Afficher le rectangle de collisions
         /// </summary>
@@ -98,7 +98,7 @@ namespace TankArmageddon.GUI
         protected virtual void RefreshBoundingBox()
         {
             Vector2 location = Position - Origin;
-            BoundingBox = new Rectangle(location.ToPoint(), Size.ToPoint());
+            BoundingBox = new RectangleBBox(location.ToPoint(), Size.ToPoint());
         }
 
         public virtual void SetOriginToCenter()
@@ -193,7 +193,7 @@ namespace TankArmageddon.GUI
         {
             if (ShowBoundingBox && Visible)
             {
-                Primitives2D.DrawRectangle(spriteBatch, (Rectangle)BoundingBox, Color.Aqua);
+                Primitives2D.DrawRectangle(spriteBatch, ((RectangleBBox)BoundingBox).Rectangle, Color.Aqua);
             }
         }
         #endregion

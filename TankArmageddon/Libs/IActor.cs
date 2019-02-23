@@ -7,7 +7,7 @@ namespace TankArmageddon
     {
         #region Propriétés
         Vector2 Position { get; }
-        Rectangle BoundingBox { get; }
+        IBoundingBox BoundingBox { get; }
         bool Remove { get; set; }
         #endregion
 

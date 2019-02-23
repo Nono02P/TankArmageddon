@@ -21,8 +21,6 @@ namespace TankArmageddon
         }
         #endregion
 
-        #region Méthodes
-
         #region Load/Unload
         public virtual void Load(){}
         public virtual void UnLoad(){}
@@ -58,8 +56,6 @@ namespace TankArmageddon
                 actor.Draw(spriteBatch, gameTime);
             }
         }
-        #endregion
-
         #endregion
     }
 }

@@ -28,7 +28,7 @@ namespace TankArmageddon
         /// <summary>
         /// Type d'action que réalise le bouton
         /// </summary>
-        public eActions ActionType { get; private set; }
+        public Action.eActions ActionType { get; private set; }
 
         /// <summary>
         /// Texte à afficher dans l'infobulle sur survol de la souris
@@ -40,46 +40,46 @@ namespace TankArmageddon
                 string infoBulle = "";
                 switch (ActionType)
                 {
-                    case eActions.None:
+                    case Action.eActions.None:
                         infoBulle = "";
                         break;
-                    case eActions.iGrayBullet:
+                    case Action.eActions.iGrayBullet:
                         infoBulle = "Mitraillette : Faible dégâts, faible portée.";
                         break;
-                    case eActions.iGrayBombshell:
+                    case Action.eActions.iGrayBombshell:
                         infoBulle = "Obus : Faible dégâts, portée moyenne.";
                         break;
-                    case eActions.GoldBullet:
+                    case Action.eActions.GoldBullet:
                         infoBulle = "Mitraillette doré : Dégâts moyens, faible portée.";
                         break;
-                    case eActions.GoldBombshell:
+                    case Action.eActions.GoldBombshell:
                         infoBulle = "Obus doré : Dégâts moyens, portée moyenne.";
                         break;
-                    case eActions.GrayMissile:
+                    case Action.eActions.GrayMissile:
                         infoBulle = "Missile : Dégâts moyens, portée moyenne.";
                         break;
-                    case eActions.GreenMissile:
+                    case Action.eActions.GreenMissile:
                         infoBulle = "Missile : Dégâts importants, portée moyenne.";
                         break;
-                    case eActions.Mine:
+                    case Action.eActions.Mine:
                         infoBulle = "Mine : Dégâts moyens, faible portée.";
                         break;
-                    case eActions.Grenada:
+                    case Action.eActions.Grenada:
                         infoBulle = "Grenade : Dégâts moyens, portée moyenne.";
                         break;
-                    case eActions.SaintGrenada:
+                    case Action.eActions.SaintGrenada:
                         infoBulle = "Sainte Grenade : Ne vous ratez pas, ça va faire mal !";
                         break;
-                    case eActions.iTankBaseBall:
+                    case Action.eActions.iTankBaseBall:
                         infoBulle = "BaseTank : Transforme le canon en batte de baseball.";
                         break;
-                    case eActions.HelicoTank:
+                    case Action.eActions.HelicoTank:
                         infoBulle = "Hélicotank : Transforme le tank en hélicoptère.";
                         break;
-                    case eActions.Drilling:
+                    case Action.eActions.Drilling:
                         infoBulle = "Foreuse : Permet de creuser sous terre.";
                         break;
-                    case eActions.iDropFuel:
+                    case Action.eActions.iDropFuel:
                         infoBulle = "Envoi un baril de carburant à l'emplacement spécifié.";
                         break;
                     default:
@@ -91,7 +91,7 @@ namespace TankArmageddon
 
         public Gameplay Parent { get; private set; }
 
-        public ButtonAction(Gameplay pParent, eActions pActionType, Vector2 pPosition, Vector2 pOrigin, SpriteFont pFont, string pText, float pScale = 1f, bool pVisible = true) : base(pPosition, pOrigin, pScale, pVisible, pFont, pText)
+        public ButtonAction(Gameplay pParent, Action.eActions pActionType, Vector2 pPosition, Vector2 pOrigin, SpriteFont pFont, string pText, float pScale = 1f, bool pVisible = true) : base(pPosition, pOrigin, pScale, pVisible, pFont, pText)
         {
             Parent = pParent;
             ActionType = pActionType;
@@ -99,59 +99,59 @@ namespace TankArmageddon
             ImageDefault = new Texture2D(MainGame.graphics.GraphicsDevice, (int)Size.X, (int)Size.Y);
             switch (ActionType)
             {
-                case eActions.None:
+                case Action.eActions.None:
                     Size = new Vector2(MainGame.Screen.Width, Parent.MapSize.Y);
                     break;
-                case eActions.iGrayBullet:
+                case Action.eActions.iGrayBullet:
                     Scale = 0.5f;
                     ImageDefault = AssetManager.TanksSpriteSheet;
                     ImageBoxDefault = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tank_bullet1.png").ImgBox;
                     break;
-                case eActions.iGrayBombshell:
+                case Action.eActions.iGrayBombshell:
                     Scale = 0.5f;
                     ImageDefault = AssetManager.TanksSpriteSheet;
                     ImageBoxDefault = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tank_bullet2.png").ImgBox;
                     break;
-                case eActions.GoldBullet:
+                case Action.eActions.GoldBullet:
                     Scale = 0.5f;
                     ImageDefault = AssetManager.TanksSpriteSheet;
                     ImageBoxDefault = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tank_bullet5.png").ImgBox;
                     break;
-                case eActions.GoldBombshell:
+                case Action.eActions.GoldBombshell:
                     Scale = 0.5f;
                     ImageDefault = AssetManager.TanksSpriteSheet;
                     ImageBoxDefault = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tank_bullet6.png").ImgBox;
                     break;
-                case eActions.GrayMissile:
+                case Action.eActions.GrayMissile:
                     Scale = 0.5f;
                     ImageDefault = AssetManager.TanksSpriteSheet;
                     ImageBoxDefault = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tank_bullet4.png").ImgBox;
                     break;
-                case eActions.GreenMissile:
+                case Action.eActions.GreenMissile:
                     Scale = 0.5f;
                     ImageDefault = AssetManager.TanksSpriteSheet;
                     ImageBoxDefault = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tank_bullet3.png").ImgBox;
                     break;
-                case eActions.Mine:
+                case Action.eActions.Mine:
                     Scale = 0.40f;
                     ImageDefault = AssetManager.TanksSpriteSheet;
                     ImageBoxDefault = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tanks_mineOn.png").ImgBox;
                     break;
-                case eActions.Grenada:
+                case Action.eActions.Grenada:
                     Scale = 0.12f;
                     ImageDefault = AssetManager.Grenada;
                     break;
-                case eActions.SaintGrenada:
+                case Action.eActions.SaintGrenada:
                     Scale = 0.07f;
                     ImageDefault = AssetManager.SaintGrenada;
                     break;
-                case eActions.iTankBaseBall:
+                case Action.eActions.iTankBaseBall:
                     break;
-                case eActions.HelicoTank:
+                case Action.eActions.HelicoTank:
                     break;
-                case eActions.Drilling:
+                case Action.eActions.Drilling:
                     break;
-                case eActions.iDropFuel:
+                case Action.eActions.iDropFuel:
                     Scale = 0.25f;
                     ImageDefault = AssetManager.TanksSpriteSheet;
                     ImageBoxDefault = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tanks_barrelRed.png").ImgBox;

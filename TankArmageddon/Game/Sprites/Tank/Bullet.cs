@@ -8,12 +8,12 @@ namespace TankArmageddon
         public class Bullet : Sprite
         {
             public event ExplosionHandler OnBulletExplosion;
-            public eActions BulletType { get; private set; }
+            public Action.eActions BulletType { get; private set; }
             public Tank Parent { get; private set; }
             public int Radius { get; private set; }
             public int Force { get; private set; }
 
-            public Bullet(Tank pShooter, Texture2D pImage, Vector2 pPosition, Vector2 pVelocity, eActions pBulletType, Vector2 pScale) : base(pImage)
+            public Bullet(Tank pShooter, Texture2D pImage, Vector2 pPosition, Vector2 pVelocity, Action.eActions pBulletType, Vector2 pScale) : base(pImage)
             {
                 Parent = pShooter;
                 Position = pPosition;
@@ -22,37 +22,37 @@ namespace TankArmageddon
                 BulletType = pBulletType;
                 switch (BulletType)
                 {
-                    case eActions.None:
+                    case Action.eActions.None:
                         break;
-                    case eActions.iGrayBullet:
+                    case Action.eActions.iGrayBullet:
                         ImgBox = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tank_bullet1.png").ImgBox;
                         Radius = 40;
-                        Force = 10;
+                        Force = 2;
                         break;
-                    case eActions.iGrayBombshell:
+                    case Action.eActions.iGrayBombshell:
                         ImgBox = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tank_bullet2.png").ImgBox;
                         Radius = 50;
-                        Force = 40;
+                        Force = 10;
                         break;
-                    case eActions.GoldBullet:
+                    case Action.eActions.GoldBullet:
                         ImgBox = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tank_bullet5.png").ImgBox;
                         Radius = 40;
-                        Force = 20;
+                        Force = 5;
                         break;
-                    case eActions.GoldBombshell:
+                    case Action.eActions.GoldBombshell:
                         ImgBox = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tank_bullet6.png").ImgBox;
                         Radius = 50;
-                        Force = 60;
+                        Force = 20;
                         break;
-                    case eActions.GrayMissile:
+                    case Action.eActions.GrayMissile:
                         ImgBox = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tank_bullet4.png").ImgBox;
                         Radius = 80;
-                        Force = 60;
+                        Force = 30;
                         break;
-                    case eActions.GreenMissile:
+                    case Action.eActions.GreenMissile:
                         ImgBox = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tank_bullet3.png").ImgBox;
                         Radius = 80;
-                        Force = 70;
+                        Force = 50;
                         break;
                     default:
                         break;

@@ -53,24 +53,23 @@ namespace TankArmageddon
                         Texture2D img = AssetManager.TanksSpriteSheet;
                         float cosAngle = (float)Math.Cos(Parent.AngleCannon + Parent.Angle);
                         float sinAngle = (float)Math.Sin(Parent.AngleCannon + Parent.Angle);
-                        Vector2 p = new Vector2(Parent._imgCannon.Width * Parent.Scale.X * cosAngle, Parent._imgCannon.Width * Parent.Scale.X * sinAngle);
+                        Vector2 p = new Vector2(Parent._imgCannon.Width * 1.25f * Parent.Scale.X * cosAngle, Parent._imgCannon.Width * 1.25f * Parent.Scale.X * sinAngle);
                         p += Parent._positionCannon;
-                        switch (Parent.SelectedAction)
+                        switch (Action.GetCategory(Parent.SelectedAction))
                         {
-                            case eActions.iGrayBullet:
-                            case eActions.iGrayBombshell:
-                            case eActions.GoldBullet:
-                            case eActions.GoldBombshell:
+                            case Action.eCategory.None:
+                            case Action.eCategory.Drop:
+                            case Action.eCategory.Mine:
+                                break;
+                            case Action.eCategory.Bullet:
                                 Bullet b = new Bullet(Parent, img, p, new Vector2(cosAngle * Force, sinAngle * Force), Parent.SelectedAction, Parent.Scale);
                                 break;
-                            case eActions.Grenada:
-                            case eActions.SaintGrenada:
+                            case Action.eCategory.Grenada:
                                 Grenada g = new Grenada(Parent, img, p, new Vector2(cosAngle * Force, sinAngle * Force), Parent.SelectedAction, Parent.Scale);
                                 break;
                             default:
                                 break;
                         }
-                        
                         _sndShoot.Play();
                         Force = 0;
                         Parent.Parent.Parent.FinnishTour();

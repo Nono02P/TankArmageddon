@@ -38,7 +38,7 @@ namespace TankArmageddon
         private TimeSpan _barSpeed = new TimeSpan(0, 0, 0, 0, 250);
         private Group _group;
         private Image _guiGameplayIndex;
-        private eActions _selectedAction;
+        private Action.eActions _selectedAction;
         private IAction _action;
         private NormalMove _normalMove;
         private HelicoTank _helicoTank;
@@ -60,7 +60,7 @@ namespace TankArmageddon
         public bool Space { get; set; }
         public bool IsControlled { get; set; }
         public bool Parachute { get => _parachute; private set { if (_parachute != value) { _parachute = value; _imgParachute.Visible = value; } } } 
-        public eActions SelectedAction { get => _selectedAction; set { _selectedAction = value; RefreshActionClass(); } }
+        public Action.eActions SelectedAction { get => _selectedAction; set { _selectedAction = value; RefreshActionClass(); } }
         public int Life { get => _life; set { _life = MathHelper.Clamp(value, 0, 100); _lifeBar.SetProgressiveValue(value, _barSpeed); } }
         public float Fuel { get => _fuel; set { _fuel = MathHelper.Clamp(value, 0, 100); _fuelBar.SetProgressiveValue(value, _barSpeed); } }
         #endregion
@@ -79,6 +79,7 @@ namespace TankArmageddon
             _originWheelOffset = new Vector2(ImgBox.Value.Width * 0.04f, 0);
             _originWheelNormal = new Vector2(_imgWheel.Width / 2, _imgWheel.Height / 2 - ImgBox.Value.Height / 2.5f);
             _originWheel = _originWheelNormal + _originWheelOffset;
+            BoundingBox = new Circle(Position.ToPoint(), ImgBox.Value.Width / 2 * Scale.X * 0.9f, 50, Color.Red);
             #endregion
 
             #region Créé la GUI
@@ -167,34 +168,34 @@ namespace TankArmageddon
             {
                 switch (SelectedAction)
                 {
-                    case eActions.None:
+                    case Action.eActions.None:
                         _action = _normalMove;
                         break;
-                    case eActions.iGrayBullet:
-                    case eActions.GoldBullet:
+                    case Action.eActions.iGrayBullet:
+                    case Action.eActions.GoldBullet:
                         _action = _multipleShootFromTank;
                         break;
-                    case eActions.iGrayBombshell:
-                    case eActions.GoldBombshell:
-                    case eActions.Grenada:
-                    case eActions.SaintGrenada:
+                    case Action.eActions.iGrayBombshell:
+                    case Action.eActions.GoldBombshell:
+                    case Action.eActions.Grenada:
+                    case Action.eActions.SaintGrenada:
                         _action = _oneShootFromTank;
                         break;
-                    case eActions.GrayMissile:
-                    case eActions.GreenMissile:
-                    case eActions.iDropFuel:
+                    case Action.eActions.GrayMissile:
+                    case Action.eActions.GreenMissile:
+                    case Action.eActions.iDropFuel:
                         _action = _oneShootFromAirplane;
                         break;
-                    case eActions.iTankBaseBall:
+                    case Action.eActions.iTankBaseBall:
                         // TODO : Jouer l'animation
                         break;
-                    case eActions.HelicoTank:
+                    case Action.eActions.HelicoTank:
                         _action = _helicoTank;
                         break;
-                    case eActions.Drilling:
+                    case Action.eActions.Drilling:
                         // TODO : Jouer l'animation
                         break;
-                    case eActions.Mine:
+                    case Action.eActions.Mine:
                         _action = _letOnFloor;
                         break;
                     default:
@@ -216,7 +217,7 @@ namespace TankArmageddon
             Parent.Parent.GUIGroup.RemoveElement(_guiGameplayIndex);
             Remove = true;
             _group.Remove = true;
-            Parent.Parent.FinnishTour(true);
+            //Parent.Parent.FinnishTour(true);
         }
         #endregion
 
@@ -237,6 +238,13 @@ namespace TankArmageddon
         {
             _action.BlockAction = false;
             _action.EndOfTour();
+        }
+        #endregion
+
+        #region BoundingBox
+        public override void RefreshBoundingBox()
+        {
+            BoundingBox.Location = Position.ToPoint();
         }
         #endregion
 

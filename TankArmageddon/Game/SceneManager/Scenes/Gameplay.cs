@@ -92,10 +92,10 @@ namespace TankArmageddon
         private bool _inTour = false;
         private Texture2D _mapTexture;
         private float[] _perlinNoise;
-        private byte _indexTeam;
+        private int _indexTeam = 0;
         private Image _gameBarImage;
         private Image _cursorImage;
-        private List<eActions> _lootBag;
+        private List<Action.eActions> _lootBag;
         private SoundEffect _sndexplosion;
         #endregion
 
@@ -106,15 +106,15 @@ namespace TankArmageddon
         public Vector2 MapSize { get; private set; } = new Vector2(4096, MainGame.Screen.Height - AssetManager.GameBottomBar.Height);
         public byte[] MapData { get; private set; }
         public Color[] MapColors { get; private set; }
-        public byte IndexTeam
+        public int IndexTeam
         {
             get { return _indexTeam; }
             private set
             {
                 if (_teams.Count > 0 && _indexTeam != value)
                 {
-                    _indexTeam = (byte)(value % _teams.Count);
-                    _teams[value].RefreshCameraOnSelection();
+                    _indexTeam = value % _teams.Count;
+                    _teams[_indexTeam].RefreshCameraOnSelection();
                     RefreshActionButton();
                 }
             }
@@ -239,16 +239,16 @@ namespace TankArmageddon
             GUIGroup.AddElement(_infoBulle);
 
             GUIGroupButtons = new GroupSelection();
-            for (int i = 0; i < Enum.GetValues(typeof(eActions)).Length; i++)
+            for (int i = 0; i < Enum.GetValues(typeof(Action.eActions)).Length; i++)
             {
                 ButtonAction btn;
                 if (i == 0)
                 {
-                    btn = new ButtonAction(this, (eActions)i, Vector2.Zero, Vector2.Zero, AssetManager.MainFont, string.Empty);
+                    btn = new ButtonAction(this, (Action.eActions)i, Vector2.Zero, Vector2.Zero, AssetManager.MainFont, string.Empty);
                 }
                 else
                 {
-                    btn = new ButtonAction(this, (eActions)i, new Vector2(442 + 37 * (i - 1), 725), Vector2.Zero, AssetManager.MainFont, string.Empty);
+                    btn = new ButtonAction(this, (Action.eActions)i, new Vector2(442 + 37 * (i - 1), 725), Vector2.Zero, AssetManager.MainFont, string.Empty);
                 }
                 GUIGroupButtons.AddElement((IIntegrableMenu)btn);
                 btn.OnHover += OnButtonHover;
@@ -258,7 +258,7 @@ namespace TankArmageddon
             #endregion
 
             #region Remplissage du sac à loot
-            _lootBag = new List<eActions>();
+            _lootBag = new List<Action.eActions>();
             FillLootBag();
             #endregion
 
@@ -303,13 +303,13 @@ namespace TankArmageddon
             }
         }
 
-        private void RefreshActionButton()
+        public void RefreshActionButton()
         {
             int nbBtn = GUIGroupButtons.Elements.Count;
             for (int i = 0; i < nbBtn; i++)
             {
                 ButtonAction btn = (ButtonAction)GUIGroupButtons.Elements[i];
-                Dictionary<eActions, int> inv = _teams[_indexTeam].Inventory;
+                Dictionary<Action.eActions, int> inv = _teams[_indexTeam].Inventory;
                 if (inv.ContainsKey(btn.ActionType))
                 {
                     btn.Number = inv[btn.ActionType];
@@ -386,7 +386,7 @@ namespace TankArmageddon
             OnExplosion?.Invoke(sender, pExplosionEventArgs);
             _sndexplosion.Play();
             Color empty = new Color();
-            Vector2 pos = pExplosionEventArgs.ExplosionCircle.Location;
+            Vector2 pos = pExplosionEventArgs.ExplosionCircle.Location.ToVector2();
             int rad = (int)pExplosionEventArgs.ExplosionCircle.Radius;
             int force = pExplosionEventArgs.Force;
             Texture2D particles = new Texture2D(MainGame.graphics.GraphicsDevice, rad * 2, rad * 2);
@@ -617,25 +617,25 @@ namespace TankArmageddon
         /// </summary>
         private void FillLootBag()
         {
-            for (int i = 0; i < 25; i++)
+            for (int i = 0; i < 5; i++)
             {
-                _lootBag.Add(eActions.GoldBullet);
-                _lootBag.Add(eActions.GoldBombshell);
-                _lootBag.Add(eActions.Drilling);
+                _lootBag.Add(Action.eActions.GoldBullet);
+                _lootBag.Add(Action.eActions.GoldBombshell);
+                _lootBag.Add(Action.eActions.Drilling);
             }
-            for (int i = 0; i < 15; i++)
+            for (int i = 0; i < 4; i++)
             {
-                _lootBag.Add(eActions.Mine);
-                _lootBag.Add(eActions.Grenada);
+                _lootBag.Add(Action.eActions.Mine);
+                _lootBag.Add(Action.eActions.Grenada);
             }
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 3; i++)
             {
-                _lootBag.Add(eActions.GrayMissile);
-                _lootBag.Add(eActions.GreenMissile);
+                _lootBag.Add(Action.eActions.GrayMissile);
+                _lootBag.Add(Action.eActions.GreenMissile);
             }
             for (int i = 0; i < 1; i++)
             {
-                _lootBag.Add(eActions.SaintGrenada);
+                _lootBag.Add(Action.eActions.SaintGrenada);
             }
         }
 
@@ -643,10 +643,10 @@ namespace TankArmageddon
         /// Récupère le loot sous forme d'un tuple (Type de loot, Quantité).
         /// </summary>
         /// <returns>Retourne un tuple représentant (Type de loot, Quantité).</returns>
-        public Tuple<eActions, byte> GetLoot()
+        public Tuple<Action.eActions, byte> GetLoot()
         {
             int index = utils.MathRnd(0, _lootBag.Count);
-            eActions action = _lootBag[index];
+            Action.eActions action = _lootBag[index];
             _lootBag.RemoveAt(index);
             if (_lootBag.Count == 0)
             {
@@ -655,37 +655,27 @@ namespace TankArmageddon
             byte qty = 0;
             switch (action)
             {
-                case eActions.GoldBullet:
+                case Action.eActions.GoldBullet:
+                case Action.eActions.GoldBombshell:
                     qty = 5;
                     break;
-                case eActions.GoldBombshell:
-                    qty = 5;
-                    break;
-                case eActions.GrayMissile:
+                case Action.eActions.GrayMissile:
+                case Action.eActions.GreenMissile:
                     qty = 2;
                     break;
-                case eActions.GreenMissile:
-                    qty = 2;
-                    break;
-                case eActions.Mine:
+                case Action.eActions.Mine:
+                case Action.eActions.Grenada:
                     qty = 3;
                     break;
-                case eActions.Grenada:
-                    qty = 3;
-                    break;
-                case eActions.SaintGrenada:
-                    qty = 1;
-                    break;
-                case eActions.HelicoTank:
-                    qty = 1;
-                    break;
-                case eActions.Drilling:
+                case Action.eActions.SaintGrenada:
+                case Action.eActions.HelicoTank:
+                case Action.eActions.Drilling:
                     qty = 1;
                     break;
                 default:
                     break;
             }
-            return new Tuple<eActions, byte> (action, qty);
+            return new Tuple<Action.eActions, byte> (action, qty);
         }
 
         #endregion
@@ -703,7 +693,7 @@ namespace TankArmageddon
             }
             else
             {
-                _counter = 0;
+                _counter = TIME_BETWEEN_TOUR;
             }
         }
         #endregion

@@ -10,7 +10,8 @@ namespace TankArmageddon
         {
             #region Constantes
             private const int TIMER_EXPLOSION = 2;
-            private const int RADIUS_EXPLOSION = 25;
+            private const int RADIUS_EXPLOSION = 30;
+            private const int FORCE = 15;
             #endregion
 
             #region Enumérations
@@ -96,7 +97,7 @@ namespace TankArmageddon
                 }
                 if (_counter >= TIMER_EXPLOSION)
                 {
-                    Parent.Parent.Parent.CreateExplosion(this, new ExplosionEventArgs(Position, RADIUS_EXPLOSION, 10));
+                    Parent.Parent.Parent.CreateExplosion(this, new ExplosionEventArgs(Position, RADIUS_EXPLOSION, FORCE));
                     Remove = true;
                     _timerExplosion.Elapsed -= OnTimerExplosionElapsed;
                 }
@@ -121,7 +122,7 @@ namespace TankArmageddon
                 #endregion
 
                 #region Récupération de l'ancienne position en 3 points en bas (Gauche / Centre / Droite) pour vérifier les collisions
-                Vector2 previousPosMiddle = new Vector2(BoundingBox.Center.X, BoundingBox.Bottom);
+                Vector2 previousPosMiddle = new Vector2(BoundingBox.Location.X, BoundingBox.Size.Y);
                 Vector2 previousPosLeft = new Vector2(BoundingBox.Left, BoundingBox.Bottom);
                 Vector2 previousPosRight = new Vector2(BoundingBox.Right, BoundingBox.Bottom);
                 #endregion

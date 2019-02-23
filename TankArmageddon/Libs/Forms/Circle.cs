@@ -1,9 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 
 namespace TankArmageddon
 {
-    public struct Circle //: IBoundingBox
+    public struct Circle : IBoundingBox
     {
         public enum eDrawMode
         {
@@ -30,13 +31,28 @@ namespace TankArmageddon
                 }
             }
         }
-        public Vector2 Location { get; set; }
+        public Point Location { get; set; }
         public float Radius { get; set; }
         public float Thickness { get; set; }
         public int Sides { get; set; }
         public Color Color { get; set; }
+        public Point Size { get => new Point(Width, Height); }
 
-        public Circle(Vector2 pLocation, float pRadius, int pSides, Color pColor, float pThickness = 1, eDrawMode pDrawMode = eDrawMode.Line)
+        public int Bottom => (int)(Location.Y + Radius);
+
+        public int Top => (int)(Location.Y - Radius);
+
+        public int Right => (int)(Location.X + Radius);
+
+        public int Left => (int)(Location.X - Radius);
+
+        public int Width => (int)Radius * 2;
+
+        public int Height => (int)Radius * 2;
+
+        public Point Center => Location;
+
+        public Circle(Point pLocation, float pRadius, int pSides, Color pColor, float pThickness = 1, eDrawMode pDrawMode = eDrawMode.Line)
         {
             Location = pLocation;
             Radius = pRadius;
@@ -57,15 +73,28 @@ namespace TankArmageddon
             }
         }
 
+        #region Contains
         public bool Contains(Point point)
         {
-            Vector2 dist = Location - point.ToVector2();
+            Point dist = Location - point;
             double distX = Math.Pow(Math.Abs(dist.X), 2);
             double distY = Math.Pow(Math.Abs(dist.Y), 2);
             double sumRadius = Math.Pow(Radius, 2);
             return distX + distY < sumRadius;
         }
 
+        public bool Contains(int x, int y)
+        {
+            return Contains(new Point(x, y));
+        }
+
+        public bool Contains(Vector2 pLocation)
+        {
+            return Contains(pLocation.ToPoint());
+        }
+        #endregion
+
+        #region Intersects
         public bool Intersects(Circle circle)
         {
             double distX = Math.Pow(Math.Abs((Location - circle.Location).X), 2);
@@ -82,9 +111,38 @@ namespace TankArmageddon
                     Location.Y - Radius <= rectangle.Location.Y + rectangle.Size.Y;
         }
 
-        public void Draw(GameTime gameTime)
+        public bool Intersects(IBoundingBox other)
         {
-            MainGame.spriteBatch.DrawCircle(Location, Radius, Sides, Color, Thickness);
+            bool result = false;
+            if (other is Circle)
+            {
+                Circle c = (Circle)other;
+                result = Intersects(c);
+            }
+            if (other is RectangleBBox)
+            {
+                RectangleBBox r = (RectangleBBox)other;
+                result = Intersects(r.Rectangle);
+            }
+            return result;
+        }
+        #endregion
+
+        public bool Equals(IBoundingBox other)
+        {
+            bool result = false;
+            if (other is Circle)
+            {
+                Circle c = (Circle)other;
+                result = Location == c.Location &&
+                        Radius == c.Radius;
+            }
+            return result;
+        }
+
+        public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+        {
+            spriteBatch.DrawCircle(Location.ToVector2(), Radius, Sides, Color, Thickness);
         }
     }
 }

@@ -27,15 +27,22 @@ namespace TankArmageddon
                     ShootCursor.Position = Mouse.GetState().Position.ToVector2() + new Vector2(MainGame.Camera.Position.X, MainGame.Camera.Position.Y);
                     if (Input.OnPressed(Keys.Space))
                     {
-                        if (Parent.SelectedAction == eActions.iDropFuel)
+                        switch (Action.GetCategory(Parent.SelectedAction))
                         {
-                            Drop d = new Drop(Parent.Parent.Parent, Drop.eDropType.Fuel, AssetManager.TanksSpriteSheet, new Vector2(ShootCursor.Position.X, 0), Vector2.Zero, Vector2.One);
-                            d.Value = (int)Parent.Fuel / 2;
-                            Parent.Fuel -= d.Value;
-                        }
-                        else
-                        {
-                            Bullet b = new Bullet(Parent, AssetManager.TanksSpriteSheet, new Vector2(ShootCursor.Position.X, 0), Vector2.Zero, Parent.SelectedAction, Vector2.One);
+                            case Action.eCategory.None:
+                            case Action.eCategory.Grenada:
+                            case Action.eCategory.Mine:
+                                break;
+                            case Action.eCategory.Bullet:
+                                Bullet b = new Bullet(Parent, AssetManager.TanksSpriteSheet, new Vector2(ShootCursor.Position.X, 0), Vector2.Zero, Parent.SelectedAction, Vector2.One);
+                                break;
+                            case Action.eCategory.Drop:
+                                Drop d = new Drop(Parent.Parent.Parent, Drop.eDropType.Fuel, AssetManager.TanksSpriteSheet, new Vector2(ShootCursor.Position.X, 0), Vector2.Zero, Vector2.One);
+                                d.Value = (int)Parent.Fuel / 2;
+                                Parent.Fuel -= d.Value;
+                                break;
+                            default:
+                                break;
                         }
                         Parent.Parent.Parent.FinnishTour();
                         ShootCursor.Visible = false;

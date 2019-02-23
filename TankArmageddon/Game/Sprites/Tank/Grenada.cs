@@ -12,7 +12,7 @@ namespace TankArmageddon
     {
         public class Grenada : Bullet
         {
-            public Grenada(Tank pShooter, Texture2D pImage, Vector2 pPosition, Vector2 pVelocity, eActions pBulletType, Vector2 pScale) : base(pShooter, pImage, pPosition, pVelocity, pBulletType, pScale)
+            public Grenada(Tank pShooter, Texture2D pImage, Vector2 pPosition, Vector2 pVelocity, Action.eActions pBulletType, Vector2 pScale) : base(pShooter, pImage, pPosition, pVelocity, pBulletType, pScale)
             {
             }
         }

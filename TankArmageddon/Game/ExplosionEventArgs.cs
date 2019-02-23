@@ -12,7 +12,7 @@ namespace TankArmageddon
 
         public ExplosionEventArgs(Vector2 pPosition, int pRadius, int pForce)
         {
-            ExplosionCircle = new Circle(pPosition, pRadius, 0, Color.White);
+            ExplosionCircle = new Circle(pPosition.ToPoint(), pRadius, 0, Color.White);
             Force = pForce;
         }
     }

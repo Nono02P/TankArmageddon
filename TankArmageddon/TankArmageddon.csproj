@@ -56,6 +56,7 @@
     <Compile Include="Game\Sprites\Tank\Mine.cs" />
     <Compile Include="Libs\Camera.cs" />
     <Compile Include="Libs\Forms\Circle.cs" />
+    <Compile Include="Libs\Forms\RectangleBBox.cs" />
     <Compile Include="Libs\GUI\Image.cs" />
     <Compile Include="Libs\IBoundingBox.cs" />
     <Compile Include="Libs\Forms\Primitive2D.cs" />

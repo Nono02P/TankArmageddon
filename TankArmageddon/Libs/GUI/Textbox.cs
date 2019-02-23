@@ -203,7 +203,7 @@ namespace TankArmageddon.GUI
         protected override void RefreshBoundingBox()
         {
             Vector2 location = Position - Origin + Size * (Vector2.One - UsedArea);
-            BoundingBox = new Rectangle(location.ToPoint(), Size.ToPoint());
+            BoundingBox = new RectangleBBox(location.ToPoint(), Size.ToPoint());
         }
 
         /// <summary>

@@ -21,7 +21,7 @@ namespace TankArmageddon
         #region Propriétés
         public Vector2 Position { get => _position; set { if (_position != value) { _position = value; RefreshBoundingBox(); } } }
         public Vector2 Velocity { get; set; }
-        public Rectangle BoundingBox { get; protected set; }
+        public IBoundingBox BoundingBox { get; protected set; } = new RectangleBBox();
         public Rectangle? ImgBox { get => _imgBox; protected set { if (_imgBox != value) { _imgBox = value; RefreshBoundingBox(); } } }
         public Vector2 Origin { get => _origin; set { if (_origin != value) { _origin = value; RefreshBoundingBox(); } } }
         public Vector2 Scale { get => _scale; set { if (_scale != value) { _scale = value; RefreshBoundingBox(); } } }
@@ -29,6 +29,7 @@ namespace TankArmageddon
         public float Angle { get; set; }
         public bool Remove { get; set; }
         public SpriteEffects Effects { get { return _effects; } protected set { if (_effects != value) { OnSpriteEffectsChange?.Invoke(this, _effects, value); _effects = value; } } }
+        public bool ShowBoundingBox { get; set; } = true;
         #endregion
 
         #region Constructeur
@@ -63,13 +64,14 @@ namespace TankArmageddon
 
         public virtual void RefreshBoundingBox()
         {
+            RectangleBBox r = (RectangleBBox)BoundingBox;
             if (ImgBox == null)
             {
-                BoundingBox = new Rectangle((int)(Position.X - Origin.X * Scale.X), (int)(Position.Y - Origin.Y * Scale.Y), (int)(Image.Width * Scale.X), (int)(Image.Height * Scale.Y));
+                r.Rectangle = new Rectangle((int)(Position.X - Origin.X * Scale.X), (int)(Position.Y - Origin.Y * Scale.Y), (int)(Image.Width * Scale.X), (int)(Image.Height * Scale.Y));
             }
             else
             {
-                BoundingBox = new Rectangle((int)(Position.X - Origin.X * Scale.X), (int)(Position.Y - Origin.Y * Scale.Y), (int)(ImgBox.Value.Width * Scale.X), (int)(ImgBox.Value.Height * Scale.Y));
+                r.Rectangle = new Rectangle((int)(Position.X - Origin.X * Scale.X), (int)(Position.Y - Origin.Y * Scale.Y), (int)(ImgBox.Value.Width * Scale.X), (int)(ImgBox.Value.Height * Scale.Y));
             }
         }
 
@@ -84,7 +86,8 @@ namespace TankArmageddon
         public virtual void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             spriteBatch.Draw(Image, Position, ImgBox, Color.White, Angle, Origin, Scale, Effects, 0);
-            //spriteBatch.DrawRectangle(BoundingBox, Color.Red, 2);
+            if (ShowBoundingBox)
+                BoundingBox.Draw(spriteBatch, gameTime);
         }
         #endregion
 
