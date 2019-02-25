@@ -96,15 +96,6 @@ namespace TankArmageddon
                         break;
                 }
             }
-            /*if (collisionnable is Drop)
-            {
-                if (!_onFloor)
-                {
-                    Drop d = (Drop)collisionnable;
-                    Position = new Vector2(Position.X, d.BoundingBox.Top);
-                    Angle = d.Angle;
-                }
-            }*/
         }
         #endregion
 
@@ -159,11 +150,13 @@ namespace TankArmageddon
             }
             #endregion
 
+            #region Gestion de la GUI
             _group.Position = Position;
             if (Remove)
             {
                 _group.Remove = true;
             }
+            #endregion
         }
         #endregion
 

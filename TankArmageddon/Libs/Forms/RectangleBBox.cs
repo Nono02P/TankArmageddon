@@ -1,17 +1,15 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TankArmageddon
 {
     public class RectangleBBox : IBoundingBox
     {
+        #region Champs
         public Rectangle Rectangle;
+        #endregion
 
+        #region Propriétés
         public Point Location { get => Rectangle.Location; set => Rectangle.Location = value; }
         public Point Size { get => Rectangle.Size; set => Rectangle.Size = value; }
 
@@ -28,7 +26,9 @@ namespace TankArmageddon
         public int Height => Rectangle.Height;
 
         public Point Center => Rectangle.Center;
+        #endregion
 
+        #region Constructeur
         public RectangleBBox()
         {
             Rectangle = new Rectangle();
@@ -43,8 +43,9 @@ namespace TankArmageddon
         {
             Rectangle = new Rectangle(x, y, width, height);
         }
-        
+        #endregion
 
+        #region Contains
         public bool Contains(int x, int y)
         {
             return Rectangle.Contains(x, y);
@@ -59,7 +60,9 @@ namespace TankArmageddon
         {
             return Rectangle.Contains(pLocation);
         }
+        #endregion
 
+        #region Equals
         public bool Equals(IBoundingBox other)
         {
             bool result = false;
@@ -70,7 +73,9 @@ namespace TankArmageddon
             }
             return result;
         }
+        #endregion
 
+        #region Intersects
         public bool Intersects(IBoundingBox other)
         {
             bool result = false;
@@ -85,10 +90,13 @@ namespace TankArmageddon
             }
             return result;
         }
+        #endregion
 
+        #region Draw
         public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             spriteBatch.DrawRectangle(Rectangle, Color.Red, 2);
         }
+        #endregion
     }
 }

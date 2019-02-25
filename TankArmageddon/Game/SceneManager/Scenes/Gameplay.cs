@@ -191,7 +191,7 @@ namespace TankArmageddon
                     }
                     else
                     {
-                        MapColors[index] = Color.Green;
+                        MapColors[index] = Color.Brown;
                     }
                 }
             }
@@ -201,7 +201,7 @@ namespace TankArmageddon
             #region Création de l'eau
             Vector2 p = new Vector2(0, WaterLevel);
             Vector2 s = new Vector2(MainGame.Screen.Width, MapSize.Y - p.Y);
-            _water = new Water(p, s, MainGame.Screen.Width / 4);
+            _water = new Water(this, p, s);
             #endregion
 
             #region Paramétrage de la Caméra
@@ -641,6 +641,7 @@ namespace TankArmageddon
             {
                 _lootBag.Add(Action.eActions.GrayMissile);
                 _lootBag.Add(Action.eActions.GreenMissile);
+                _lootBag.Add(Action.eActions.HelicoTank);
             }
             for (int i = 0; i < 1; i++)
             {
@@ -747,24 +748,20 @@ namespace TankArmageddon
         {
             #region Collisions
             // Gère les collisions entre IActors
-            for (int i = 0; i < lstActors.Count; i++)
+            List<IActor> lstCollisionnable = lstActors.FindAll(actor => actor is ICollisionnable);
+            for (int i = 0; i < lstCollisionnable.Count; i++)
             {
-                IActor actor = lstActors[i];
-                if (actor is ICollisionnable)
+                IActor actor = lstCollisionnable[i];
+
+                for (int j = 0; j < lstCollisionnable.Count; j++)
                 {
-                    for (int j = 0; j < lstActors.Count; j++)
+                    IActor actor2 = lstCollisionnable[j];
+                    ICollisionnable col = (ICollisionnable)actor;
+                    ICollisionnable col2 = (ICollisionnable)actor2;
+                    if (utils.Collide(actor, actor2))
                     {
-                        IActor actor2 = lstActors[j];
-                        if (actor2 is ICollisionnable)
-                        {
-                            ICollisionnable col = (ICollisionnable)actor;
-                            ICollisionnable col2 = (ICollisionnable)actor2;
-                            if (utils.Collide(actor, actor2))
-                            {
-                                col.TouchedBy(col2);
-                                col2.TouchedBy(col);
-                            }
-                        }
+                        col.TouchedBy(col2);
+                        col2.TouchedBy(col);
                     }
                 }
             }
@@ -785,12 +782,7 @@ namespace TankArmageddon
 
             _teams.RemoveAll(t => t.Remove);
             #endregion
-
-            if (Input.OnPressed(ClickType.Left))
-            {
-                _water.Splash(Mouse.GetState().Position.ToVector2() / 4, 50);
-            }
-
+            
             base.Update(gameTime);
         }
         #endregion

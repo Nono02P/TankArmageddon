@@ -9,15 +9,20 @@ namespace TankArmageddon
     {
         private class OneShootFromAirplane : NormalMove
         {
+            #region Propriétés
             public Image ShootCursor { get; set; }
+            #endregion
 
+            #region Constructeur
             public OneShootFromAirplane(Tank pParent) : base(pParent)
             {
                 Vector2 pos = Mouse.GetState().Position.ToVector2() + new Vector2(MainGame.Camera.Position.X, MainGame.Camera.Position.Y);
                 Texture2D img = AssetManager.Crosshair;
                 ShootCursor = new Image(img, pos, new Vector2(img.Width / 2, img.Height / 2), false);
             }
+            #endregion
 
+            #region Update
             public override void Update(GameTime gameTime, ref float vx, ref float vy)
             {
                 base.Update(gameTime, ref vx, ref vy);
@@ -52,12 +57,15 @@ namespace TankArmageddon
                     }
                 }
             }
+            #endregion
 
+            #region Fin de tour
             public override void EndOfTour()
             {
                 base.EndOfTour();
                 ShootCursor.Visible = false;
             }
+            #endregion
         }
     }
 }

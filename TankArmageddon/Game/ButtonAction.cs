@@ -9,8 +9,11 @@ namespace TankArmageddon
     /// </summary>
     public class ButtonAction : Button
     {
+        #region Variables privées
         private int _number;
+        #endregion
 
+        #region Propriétés
         public int Number
         {
             get { return _number; }
@@ -23,7 +26,6 @@ namespace TankArmageddon
                 //{ TextBox.Text = "∞"; }
             }
         }
-
 
         /// <summary>
         /// Type d'action que réalise le bouton
@@ -90,7 +92,9 @@ namespace TankArmageddon
         }
 
         public Gameplay Parent { get; private set; }
+        #endregion
 
+        #region Constructeur
         public ButtonAction(Gameplay pParent, Action.eActions pActionType, Vector2 pPosition, Vector2 pOrigin, SpriteFont pFont, string pText, float pScale = 1f, bool pVisible = true) : base(pPosition, pOrigin, pScale, pVisible, pFont, pText)
         {
             Parent = pParent;
@@ -164,10 +168,13 @@ namespace TankArmageddon
             //ImageBoxSelected = ImageBoxDefault;
             //Texture2D pImageHover, Texture2D pImagePressed
         }
+        #endregion
 
+        #region Update
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
         }
+        #endregion
     }
 }

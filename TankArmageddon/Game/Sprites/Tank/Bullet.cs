@@ -8,12 +8,18 @@ namespace TankArmageddon
     {
         public class Bullet : Sprite
         {
+            #region Evènements
             public event ExplosionHandler OnBulletExplosion;
+            #endregion
+
+            #region Propriétés
             public Action.eActions BulletType { get; protected set; }
             public Tank Parent { get; private set; }
             public int Radius { get; protected set; }
             public int Force { get; protected set; }
+            #endregion
 
+            #region Constructeur
             protected Bullet(Tank pShooter) : base()
             {
                 Parent = pShooter;
@@ -67,19 +73,30 @@ namespace TankArmageddon
                 Origin = new Vector2(ImgBox.Value.Width / 2, ImgBox.Value.Height / 2);
                 OnBulletExplosion += Parent.Parent.Parent.CreateExplosion;
             }
+            #endregion
 
+            #region Update
             public override void Update(GameTime gameTime)
             {
+                #region Application de la gravité
                 float vx = Velocity.X;
                 float vy = Velocity.Y;
                 vy += GRAVITY / 20;
 
                 Velocity = new Vector2(vx, vy);
+                #endregion
+
+                #region Angle de la bullet en fonction de sa direction
                 Angle = (float)utils.MathAngle(Velocity);
+                #endregion
+
+                #region Récupération de l'ancienne position pour vérifier les collisions
                 Vector2 previousPosition = Position;
+                #endregion
 
                 base.Update(gameTime);
 
+                #region Collisions avec le sol
                 Gameplay g = Parent.Parent.Parent;
 
                 bool collision = false;
@@ -98,12 +115,15 @@ namespace TankArmageddon
                 {
                     Die(true, collisionPosition);
                 }
-                if (Position.Y > Parent.Parent.Parent.WaterLevel)
+                if (Position.Y > Parent.Parent.Parent.MapSize.Y)
                 {
                     Die(false, collisionPosition);
                 }
+                #endregion
             }
+            #endregion
 
+            #region Fin de vie de la bullet
             protected void Die(bool pWithExplosion, Vector2 pPosition)
             {
                 if (pWithExplosion)
@@ -113,14 +133,17 @@ namespace TankArmageddon
                 Remove = true;
                 OnBulletExplosion -= Parent.Parent.Parent.CreateExplosion;
             }
+            #endregion
 
+            #region Collisions
             public override void TouchedBy(ICollisionnable collisionnable)
             {
-                if (!(collisionnable is Bullet) && !(collisionnable is Particle))
+                if (collisionnable is Drop || collisionnable is Tank || collisionnable is Mine)
                 {
                     Die(true, Position);
                 }
             }
+            #endregion
         }
     }
 }

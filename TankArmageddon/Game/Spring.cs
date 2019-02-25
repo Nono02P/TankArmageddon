@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TankArmageddon
+﻿namespace TankArmageddon
 {
     public struct Spring
     {
+        #region Propriétés
         /// <summary>
         /// Valeur du ressort au repos.
         /// </summary>
@@ -36,11 +31,14 @@ namespace TankArmageddon
         /// 0.025f pour de l'eau.
         /// </summary>
         public float Dampening { get; set; }
+        #endregion
 
+        #region Update
         public void Update()
         {
             Velocity += - Tension * (Value - TargetValue) - Velocity * Dampening;
             Value += Velocity;
         }
+        #endregion
     }
 }

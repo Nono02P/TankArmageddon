@@ -6,15 +6,19 @@ namespace TankArmageddon
 {
     public struct Circle : IBoundingBox
     {
+        #region Enumérations
         public enum eDrawMode
         {
             Fill,
             Line,
         }
+        #endregion
 
-
+        #region Variables privées
         private eDrawMode _drawMode;
+        #endregion
 
+        #region Propriétés
         public eDrawMode DrawMode
         {
             get { return _drawMode; }
@@ -51,7 +55,9 @@ namespace TankArmageddon
         public int Height => (int)Radius * 2;
 
         public Point Center => Location;
+        #endregion
 
+        #region Constructeur
         public Circle(Point pLocation, float pRadius, int pSides, Color pColor, float pThickness = 1, eDrawMode pDrawMode = eDrawMode.Line)
         {
             Location = pLocation;
@@ -72,6 +78,7 @@ namespace TankArmageddon
                     break;
             }
         }
+        #endregion
 
         #region Contains
         public bool Contains(Point point)
@@ -128,6 +135,7 @@ namespace TankArmageddon
         }
         #endregion
 
+        #region Equals
         public bool Equals(IBoundingBox other)
         {
             bool result = false;
@@ -139,10 +147,13 @@ namespace TankArmageddon
             }
             return result;
         }
+        #endregion
 
+        #region Draw
         public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             spriteBatch.DrawCircle(Location.ToVector2(), Radius, Sides, Color, Thickness);
         }
+        #endregion
     }
 }

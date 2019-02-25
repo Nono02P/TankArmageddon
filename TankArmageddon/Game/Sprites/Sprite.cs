@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace TankArmageddon
 {
-    public class Sprite : IActor , ICollisionnable
+    public class Sprite : ICollisionnable
     {
         #region Evènements
         public event onSpriteEffectsChange OnSpriteEffectsChange;
@@ -55,13 +55,12 @@ namespace TankArmageddon
             MainGame.CurrentScene.AddActor(this);
         }
         #endregion
-
-        #region Méthodes
-
+        
         #region Collisions
         public virtual void TouchedBy(ICollisionnable collisionnable) { }
         #endregion
 
+        #region BoundingBox
         public virtual void RefreshBoundingBox()
         {
             RectangleBBox r = (RectangleBBox)BoundingBox;
@@ -74,6 +73,7 @@ namespace TankArmageddon
                 r.Rectangle = new Rectangle((int)(Position.X - Origin.X * Scale.X), (int)(Position.Y - Origin.Y * Scale.Y), (int)(ImgBox.Value.Width * Scale.X), (int)(ImgBox.Value.Height * Scale.Y));
             }
         }
+        #endregion
 
         #region Update
         public virtual void Update(GameTime gameTime)
@@ -91,8 +91,6 @@ namespace TankArmageddon
         }
 
         public void Draw(PrimitiveBatch primitiveBatch, GameTime gameTime) { }
-        #endregion
-
         #endregion
     }
 }

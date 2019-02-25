@@ -33,9 +33,10 @@ namespace TankArmageddon
         public static bool OutOfScreen(Vector2 pPosition)
         {
             bool result = false;
-
-            if (pPosition.X < 0 || pPosition.X > MainGame.Screen.Width || 
-                pPosition.Y < 0 || pPosition.Y > MainGame.Screen.Height)
+            Vector3 pCam = MainGame.Camera.Position;
+            Vector2 p = new Vector2(pPosition.X - pCam.X, pPosition.Y - pCam.Y);
+            if (p.X < 0 || p.X > MainGame.Screen.Width || 
+                p.Y < 0 || p.Y > MainGame.Screen.Height)
             {
                 result = true;
             }
@@ -44,10 +45,12 @@ namespace TankArmageddon
         public static bool OutOfScreen(MainGame pMainGame, Sprite pSprite)
         {
             bool result = false;
+            Vector3 pCam = MainGame.Camera.Position;
             Vector2 Position = pSprite.Position;
+            Vector2 p = new Vector2(Position.X - pCam.X, Position.Y - pCam.Y);
             Vector2 Origin = pSprite.Origin;
-            if (Position.X - Origin.X < 0 || Position.X - Origin.X > MainGame.Screen.Width ||
-                Position.Y < 0 - Origin.Y || Position.Y - Origin.Y > MainGame.Screen.Height)
+            if (p.X - Origin.X < 0 || p.X - Origin.X > MainGame.Screen.Width ||
+                p.Y < 0 - Origin.Y || p.Y - Origin.Y > MainGame.Screen.Height)
             {
                 result = true;
             }

@@ -1,6 +1,6 @@
 ﻿namespace TankArmageddon
 {
-    public interface ICollisionnable
+    public interface ICollisionnable : IActor
     {
         void TouchedBy(ICollisionnable collisionnable);
     }

@@ -72,8 +72,6 @@ namespace TankArmageddon
         }
         #endregion
 
-        #region Méthodes
-
         #region Load/Unload
         protected override void LoadContent()
         {
@@ -151,8 +149,6 @@ namespace TankArmageddon
 
             base.Draw(gameTime);
         }
-        #endregion
-
         #endregion
     }
 }

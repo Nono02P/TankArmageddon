@@ -265,10 +265,12 @@ namespace TankArmageddon
         }
         #endregion
 
+        #region Mise à jour TextBox 
         private void RefreshGUITextbox()
         {
             _textBox.Text = Name + " : " + Life;
         }
+        #endregion
 
         #region Update
         public override void Update(GameTime gameTime)
@@ -425,7 +427,7 @@ namespace TankArmageddon
             #endregion
 
             #region Mort du tank par chute ou vie à 0
-            if (Position.Y > g.WaterLevel || Life <= 0)
+            if (Position.Y > g.MapSize.Y || Life <= 0)
             {
                 Die(Life <= 0);
             }

@@ -71,6 +71,7 @@ namespace TankArmageddon
                             BlockAction = true;
                         }
                     }
+                    // Si le nombre de tir est atteint
                     if (_counter >= 15)
                     {
                         Parent.Parent.Parent.FinnishTour();

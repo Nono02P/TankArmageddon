@@ -44,6 +44,7 @@
     <Compile Include="Game\ExplosionEventArgs.cs" />
     <Compile Include="Game\ButtonAction.cs" />
     <Compile Include="Game\Spring.cs" />
+    <Compile Include="Game\Sprites\Tank\Actions\Action.cs" />
     <Compile Include="Game\Water.cs" />
     <Compile Include="Game\Sprites\Drop.cs" />
     <Compile Include="Game\Sprites\Tank\Grenada.cs" />

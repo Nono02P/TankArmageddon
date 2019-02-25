@@ -55,10 +55,10 @@ namespace TankArmageddon
                 #region Initialisation du timer d'explosion
                 _timerExplosion = new Timer(1000);
                 _timerExplosion.Enabled = false;
-                _timerExplosion.Elapsed += OnTimerExplosionElapsed;
                 #endregion
 
                 #region Abonnement aux évènements
+                _timerExplosion.Elapsed += OnTimerExplosionElapsed;
                 Parent.Parent.Parent.OnTourTimerEnd += Gameplay_OnTourTimerEnd;
                 #endregion
             }
@@ -103,12 +103,16 @@ namespace TankArmageddon
                     _timerExplosion.Elapsed -= OnTimerExplosionElapsed;
                 }
             }
+            #endregion
 
+            #region BoundingBox
             public override void RefreshBoundingBox()
             {
                 BoundingBox.Location = Position.ToPoint();
             }
+            #endregion
 
+            #region Update
             public override void Update(GameTime gameTime)
             {
                 float vx = Velocity.X;

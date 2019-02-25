@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Timers;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using TankArmageddon.GUI;
 
 namespace TankArmageddon
@@ -13,32 +9,39 @@ namespace TankArmageddon
     {
         public class Grenada : Sprite
         {
-            private Group _group;
+            #region Variables privées
             private Textbox _textBox;
+            private Timer _timer;
+            private int _counter;
+            private int _timerExplosion;
+            #endregion
 
-            public event ExplosionHandler OnBulletExplosion;
+            #region Propriétés
+            public event ExplosionHandler OnExplosion;
             public Action.eActions BulletType { get; protected set; }
             public Tank Parent { get; private set; }
             public int Radius { get; protected set; }
             public int Force { get; protected set; }
-            public int ExplosionTimer { get; set; }
+            #endregion
 
+            #region Constructeur
             public Grenada(Tank pShooter, Vector2 pPosition, Vector2 pVelocity, Action.eActions pBulletType) : base()
             {
+                #region Initialisation des valeurs
                 Parent = pShooter;
                 switch (pBulletType)
                 {
                     case Action.eActions.Grenada:
                         Radius = 80;
-                        Force = 50;
-                        ExplosionTimer = 3;
+                        Force = 25;
+                        _timerExplosion = 3;
                         Image = AssetManager.Grenada;
                         Scale = Vector2.One * 0.1f;
                         break;
                     case Action.eActions.SaintGrenada:
                         Radius = 80;
                         Force = 50;
-                        ExplosionTimer = 5;
+                        _timerExplosion = 5;
                         Image = AssetManager.SaintGrenada;
                         Scale = Vector2.One * 0.08f;
                         break;
@@ -49,16 +52,50 @@ namespace TankArmageddon
                 Velocity = pVelocity;
                 BulletType = pBulletType;
                 Origin = new Vector2(Image.Width / 2, Image.Height);
-                OnBulletExplosion += Parent.Parent.Parent.CreateExplosion;
-            }
+                #endregion
 
+                #region Initialisation de la GUI
+                Vector2 p = new Vector2(BoundingBox.Left, BoundingBox.Top - BoundingBox.Height);
+                _textBox = new Textbox(p, AssetManager.MainFont, _timerExplosion.ToString());
+                _textBox.ApplyColor(Color.Red, Color.White);
+                #endregion
+
+                #region Initialisation du timer d'explosion
+                _timer = new Timer(1000);
+                _timer.Enabled = true;
+                #endregion
+
+                #region Abonnement aux évènements
+                OnExplosion += Parent.Parent.Parent.CreateExplosion;
+                _timer.Elapsed += OnTimerExplosionElapsed;
+                #endregion
+            }
+            #endregion
+
+            #region Evènements du timer d'explosion
+            public void OnTimerExplosionElapsed(object sender, ElapsedEventArgs e)
+            {
+                _counter++;
+                _textBox.Text = (_timerExplosion - _counter).ToString();
+                if (_counter >= _timerExplosion)
+                {
+                    Explose();
+                }
+            }
+            #endregion
+
+            #region Explosion
             protected void Explose()
             {
-                OnBulletExplosion?.Invoke(this, new ExplosionEventArgs(Position, Radius, Force));
+                OnExplosion?.Invoke(this, new ExplosionEventArgs(Position, Radius, Force));
                 Remove = true;
-                OnBulletExplosion -= Parent.Parent.Parent.CreateExplosion;
+                _textBox.Remove = true;
+                OnExplosion -= Parent.Parent.Parent.CreateExplosion;
+                _timer.Elapsed -= OnTimerExplosionElapsed;
             }
+            #endregion
 
+            #region Update
             public override void Update(GameTime gameTime)
             {
                 #region Application de la gravité
@@ -66,42 +103,8 @@ namespace TankArmageddon
                 float vy = Velocity.Y;
 
                 vy += GRAVITY / 4;
-                #endregion
-
-                /*#region Application de la friction
-                if (vx > 0)
-                {
-                    vx -= FRICTION;
-                    if (vx < 0)
-                    {
-                        if (MathHelper.ToDegrees(Angle) < 0)
-                        {
-                            vx = 0;
-                        }
-                        else
-                        {
-                            vx = SPEED_MAX;
-                        }
-                    }
-                }
-                else if (vx < 0)
-                {
-                    vx += FRICTION;
-                    if (vx > 0)
-                    {
-                        if (MathHelper.ToDegrees(Angle) > 0)
-                        {
-                            vx = 0;
-                        }
-                        else
-                        {
-                            vx = -SPEED_MAX;
-                        }
-                    }
-                }
-                #endregion*/
-
                 Velocity = new Vector2(vx, vy);
+                #endregion
 
                 #region Récupération de l'ancienne position pour vérifier les collisions
                 Vector2 previousPosition = Position;
@@ -126,11 +129,25 @@ namespace TankArmageddon
                 } while (!collision && Math.Abs((collisionPosition - Position).X) >= Math.Abs(normalised.X) && Math.Abs((collisionPosition - Position).Y) >= Math.Abs(normalised.Y));
 
                 if (collision)
-                { 
-                    // Récupère l'altitude en Y à position.X -1 et +1 afin d'en déterminer l'angle à partir d'un vecteur tracé entre ces deux points.
-                    Vector2 center = g.FindHighestPoint(collisionPosition, 0);
-                    Vector2 before = g.FindHighestPoint(collisionPosition, -1);
-                    Vector2 after = g.FindHighestPoint(collisionPosition, 1);
+                {
+                    #region Calcul de l'emplacement de la nouvelle position
+                    Vector2 center;
+                    Vector2 before;
+                    Vector2 after;
+                    int delta = 2;
+                    if (collisionPosition.Y > previousPosition.Y)
+                    {
+                        center = g.FindHighestPoint(collisionPosition, 0);
+                        before = g.FindHighestPoint(collisionPosition, -delta);
+                        after = g.FindHighestPoint(collisionPosition, delta);
+                    }
+                    else
+                    {
+                        center = g.FindHighestPoint(previousPosition, 0);
+                        before = g.FindHighestPoint(previousPosition, -delta);
+                        after = g.FindHighestPoint(previousPosition, delta);
+                    }
+                    #endregion
 
                     #region Rebond sur le sol
                     float hyp = (float)utils.MathDist(Vector2.Zero, Velocity) - FRICTION / 2;
@@ -152,7 +169,12 @@ namespace TankArmageddon
                     #endregion
                 }
                 #endregion
+
+                #region Positionnement de la GUI
+                _textBox.Position = new Vector2(BoundingBox.Left, BoundingBox.Top - BoundingBox.Height);
+                #endregion
             }
+            #endregion
         }
     }
 }
