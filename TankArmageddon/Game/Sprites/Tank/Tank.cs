@@ -61,7 +61,7 @@ namespace TankArmageddon
         public bool IsControlled { get; set; }
         public bool Parachute { get => _parachute; private set { if (_parachute != value) { _parachute = value; _imgParachute.Visible = value; } } } 
         public Action.eActions SelectedAction { get => _selectedAction; set { _selectedAction = value; RefreshActionClass(); } }
-        public int Life { get => _life; set { _life = MathHelper.Clamp(value, 0, 100); _lifeBar.SetProgressiveValue(value, _barSpeed); } }
+        public int Life { get => _life; set { _life = MathHelper.Clamp(value, 0, 100); _lifeBar.SetProgressiveValue(value, _barSpeed); RefreshGUITextbox(); } }
         public float Fuel { get => _fuel; set { _fuel = MathHelper.Clamp(value, 0, 100); _fuelBar.SetProgressiveValue(value, _barSpeed); } }
         #endregion
 
@@ -209,15 +209,32 @@ namespace TankArmageddon
         #region Mort du tank
         private void Die(bool pWithExplosion)
         {
+            #region Création d'une explosion
             if (pWithExplosion)
             {
                 Parent.Parent.CreateExplosion(this, new ExplosionEventArgs(Position, 50, 50));
             }
+            #endregion
+
+            #region Suppression du tank et de ses éléments de GUI
             _guiGameplayIndex.Remove = true;
             Parent.Parent.GUIGroup.RemoveElement(_guiGameplayIndex);
             Remove = true;
             _group.Remove = true;
-            //Parent.Parent.FinnishTour(true);
+            #endregion
+
+            #region Fin de tour si le tank est celui sélectionné
+            if (IsControlled)
+            {
+                Parent.Parent.FinnishTour(true);
+            }
+            #endregion
+
+            #region Désabonnement aux évènements
+            OnSpriteEffectsChange -= Sprite_OnSpriteEffectsChange;
+            Parent.Parent.OnExplosion -= Gameplay_OnExplosion;
+            Parent.Parent.OnTourTimerEnd -= Gameplay_OnTourTimerEnd;
+            #endregion
         }
         #endregion
 
@@ -247,6 +264,11 @@ namespace TankArmageddon
             BoundingBox.Location = Position.ToPoint();
         }
         #endregion
+
+        private void RefreshGUITextbox()
+        {
+            _textBox.Text = Name + " : " + Life;
+        }
 
         #region Update
         public override void Update(GameTime gameTime)
@@ -310,8 +332,8 @@ namespace TankArmageddon
             #endregion
 
             #region Récupération de l'ancienne position en 3 points en bas (Gauche / Centre / Droite) pour vérifier les collisions
-            Vector2 previousPosMiddle = new Vector2(BoundingBox.Center.X, BoundingBox.Bottom);
             Vector2 previousPosLeft = new Vector2(BoundingBox.Left, BoundingBox.Bottom);
+            Vector2 previousPosMiddle = new Vector2(BoundingBox.Center.X, BoundingBox.Bottom);
             Vector2 previousPosRight = new Vector2(BoundingBox.Right, BoundingBox.Bottom);
             #endregion
 
@@ -324,9 +346,28 @@ namespace TankArmageddon
 
             Gameplay g = Parent.Parent;
 
-            bool collision = g.IsSolid(newPosMiddle, previousPosMiddle) ||  
-                ((g.IsSolid(newPosLeft, previousPosLeft) || g.IsSolid(newPosRight, previousPosRight)) && !(_action is HelicoTank));
-
+            bool collision = false;
+            Vector2 normalised = Vector2.Normalize(Velocity);
+            Vector2 collisionPosLeft = previousPosLeft;
+            Vector2 collisionPosMiddle = previousPosMiddle;
+            Vector2 collisionPosRight = previousPosRight;
+            do
+            {
+                collisionPosMiddle += normalised;
+                collisionPosLeft += normalised;
+                collisionPosRight += normalised;
+                if (g.IsSolid(collisionPosLeft) || g.IsSolid(collisionPosMiddle) || g.IsSolid(collisionPosRight))
+                {
+                    collision = true;
+                    collisionPosMiddle -= normalised;
+                    collisionPosLeft -= normalised;
+                    collisionPosRight -= normalised;
+                }
+            } while (!collision && 
+            Math.Abs((collisionPosMiddle - newPosMiddle).X) >= Math.Abs(normalised.X) && Math.Abs((collisionPosMiddle - newPosMiddle).Y) >= Math.Abs(normalised.Y) &&
+            Math.Abs((collisionPosLeft - newPosLeft).X) >= Math.Abs(normalised.X) && Math.Abs((collisionPosLeft - newPosLeft).Y) >= Math.Abs(normalised.Y) &&
+            Math.Abs((collisionPosRight - newPosRight).X) >= Math.Abs(normalised.X) && Math.Abs((collisionPosRight - newPosRight).Y) >= Math.Abs(normalised.Y));
+            
             if (collision)
             {
                 Parachute = false;
@@ -336,11 +377,11 @@ namespace TankArmageddon
                 Vector2 center;
                 Vector2 before;
                 Vector2 after;
-                if (newPosMiddle.Y > previousPosMiddle.Y)
+                if (collisionPosMiddle.Y > previousPosMiddle.Y)
                 {
-                    center = g.FindHighestPoint(newPosMiddle, 0);
-                    before = g.FindHighestPoint(newPosMiddle, -20);
-                    after = g.FindHighestPoint(newPosMiddle, 20);
+                    center = g.FindHighestPoint(collisionPosMiddle, 0);
+                    before = g.FindHighestPoint(collisionPosMiddle, -20);
+                    after = g.FindHighestPoint(collisionPosMiddle, 20);
                 }
                 else
                 {

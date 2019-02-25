@@ -10,7 +10,7 @@ namespace TankArmageddon
         {
             #region Constantes
             private const int TIMER_EXPLOSION = 2;
-            private const int RADIUS_EXPLOSION = 30;
+            private const int RADIUS_EXPLOSION = 50;
             private const int FORCE = 15;
             #endregion
 
@@ -49,6 +49,7 @@ namespace TankArmageddon
                 Position = pPosition;
                 Origin = new Vector2(ImgBox.Value.Width / 2, ImgBox.Value.Height);
                 Scale = Vector2.One * 0.5f;
+                BoundingBox = new Circle(Position.ToPoint(), RADIUS_EXPLOSION, 20, Color.White);
                 #endregion
 
                 #region Initialisation du timer d'explosion
@@ -103,6 +104,11 @@ namespace TankArmageddon
                 }
             }
 
+            public override void RefreshBoundingBox()
+            {
+                BoundingBox.Location = Position.ToPoint();
+            }
+
             public override void Update(GameTime gameTime)
             {
                 float vx = Velocity.X;
@@ -152,6 +158,7 @@ namespace TankArmageddon
                 {
                     _onFloor = false;
                 }
+                RefreshBoundingBox();
                 #endregion
             }
             #endregion

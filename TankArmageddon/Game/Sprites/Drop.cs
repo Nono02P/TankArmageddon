@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using TankArmageddon.GUI;
 
 namespace TankArmageddon
@@ -121,20 +122,26 @@ namespace TankArmageddon
             }
             #endregion
 
-            Vector2 previousPosLeft = new Vector2(Position.X - ImgBox.Value.Width / 2, Position.Y);
-            Vector2 previousPosMiddle = Position;
-            Vector2 previousPosRight = new Vector2(Position.X + ImgBox.Value.Width / 2, Position.Y);
+            Vector2 previousPosition = Position;
 
             base.Update(gameTime);
 
             #region Collision avec le sol
-            Vector2 newPosLeft = new Vector2(Position.X - ImgBox.Value.Width / 2, Position.Y);
-            Vector2 newPosMiddle = Position;
-            Vector2 newPosRight = new Vector2(Position.X + ImgBox.Value.Width / 2, Position.Y);
+            Gameplay g = Parent;
 
-            if (Parent.IsSolid(newPosLeft, previousPosLeft) || 
-                Parent.IsSolid(newPosMiddle, previousPosMiddle) || 
-                Parent.IsSolid(newPosRight, previousPosRight))
+            bool collision = false;
+            Vector2 normalised = Vector2.Normalize(Velocity);
+            Vector2 collisionPosition = previousPosition;
+            do
+            {
+                collisionPosition += normalised;
+                if (g.IsSolid(collisionPosition))
+                {
+                    collision = true;
+                    collisionPosition -= normalised;
+                }
+            } while (!collision && Math.Abs((collisionPosition - Position).X) >= Math.Abs(normalised.X) && Math.Abs((collisionPosition - Position).Y) >= Math.Abs(normalised.Y));
+            if (collision)
             {
                 Parachute = false;
                 _onFloor = true;

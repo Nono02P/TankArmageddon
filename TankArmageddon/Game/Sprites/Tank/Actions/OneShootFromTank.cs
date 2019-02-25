@@ -65,7 +65,7 @@ namespace TankArmageddon
                                 Bullet b = new Bullet(Parent, img, p, new Vector2(cosAngle * Force, sinAngle * Force), Parent.SelectedAction, Parent.Scale);
                                 break;
                             case Action.eCategory.Grenada:
-                                Grenada g = new Grenada(Parent, img, p, new Vector2(cosAngle * Force, sinAngle * Force), Parent.SelectedAction, Parent.Scale);
+                                Grenada g = new Grenada(Parent, p, new Vector2(cosAngle * Force, sinAngle * Force) / 4, Parent.SelectedAction);
                                 break;
                             default:
                                 break;

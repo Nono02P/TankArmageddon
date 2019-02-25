@@ -109,10 +109,10 @@ namespace TankArmageddon
         /// <summary>
         /// Renvoie la distance entre les coordonnées de 2 éléments 2D
         /// </summary>
-        public static double MathDist(int x1, int y1, int x2, int y2)
+        public static double MathDist(float x1, float y1, float x2, float y2)
         {
-            int x = (x2 - x1) ^ 2;
-            int y = (y2 - y1) ^ 2;
+            double x = Math.Pow((x2 - x1), 2);
+            double y = Math.Pow((y2 - y1), 2);
             return Math.Pow((x + y), 0.5f);
         }
 
@@ -121,17 +121,17 @@ namespace TankArmageddon
         /// </summary>
         public static double MathDist(Vector2 v1, Vector2 v2)
         {
-            return MathDist((int)v1.X, (int)v1.Y, (int)v2.X, (int)v2.Y);
+            return MathDist(v1.X, v1.Y, v2.X, v2.Y);
         }
 
         /// <summary>
         /// Renvoie la distance entre les coordonnées de 2 éléments 3D
         /// </summary>
-        public static double MathDist(int x1, int y1, int z1, int x2, int y2, int z2)
+        public static double MathDist(float x1, float y1, float z1, float x2, float y2, float z2)
         {
-            int x = (x2 - x1) ^ 2;
-            int y = (y2 - y1) ^ 2;
-            int z = (z2 - z1) ^ 2;
+            double x = Math.Pow((x2 - x1), 2);
+            double y = Math.Pow((y2 - y1), 2);
+            double z = Math.Pow((z2 - z1), 2);
             return Math.Pow((x + y + z), 0.5f);
         }
 
@@ -140,7 +140,7 @@ namespace TankArmageddon
         /// </summary>
         public static double MathDist(Vector3 v1, Vector3 v2)
         {
-            return MathDist((int)v1.X, (int)v1.Y, (int)v1.Z, (int)v2.X, (int)v2.Y, (int)v2.Z);
+            return MathDist(v1.X, v1.Y, v1.Z, v2.X, v2.Y, v2.Z);
         }
         #endregion
 

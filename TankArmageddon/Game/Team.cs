@@ -45,7 +45,7 @@ namespace TankArmageddon
             Inventory = new Dictionary<Action.eActions, int>();
             for (int i = 1; i < Enum.GetValues(typeof(Action.eActions)).GetLength(0); i++)
             {
-                Inventory.Add((Action.eActions)i, 0);
+                Inventory.Add((Action.eActions)i, 10);
             }
             Inventory[Action.eActions.iGrayBullet] = -1;
             Inventory[Action.eActions.iGrayBombshell] = -1;
@@ -147,15 +147,17 @@ namespace TankArmageddon
         {
             if (Tanks.Count > 0)
             {
+                Tank CurrentTank = Tanks[IndexTank];
                 // Sélectionne le tank suivant
                 if (Input.OnPressed(Keys.N) && pCanPlay)
                 {
+                    CurrentTank.IsControlled = false;
                     IndexTank++;
                 }
                 IndexTank = (byte)(IndexTank % Tanks.Count);
 
                 // Si le joueur peut jouer (si c'est son tour) gère les entrées claviers.
-                Tank CurrentTank = Tanks[IndexTank];
+                CurrentTank = Tanks[IndexTank];
                 CurrentTank.IsControlled = pCanPlay;
                 CurrentTank.Space = Input.IsDown(Keys.Space);
                 CurrentTank.Left = Input.IsDown(Keys.Left);

@@ -29,7 +29,7 @@ namespace TankArmageddon
         public float Angle { get; set; }
         public bool Remove { get; set; }
         public SpriteEffects Effects { get { return _effects; } protected set { if (_effects != value) { OnSpriteEffectsChange?.Invoke(this, _effects, value); _effects = value; } } }
-        public bool ShowBoundingBox { get; set; } = true;
+        public bool ShowBoundingBox { get; set; }
         #endregion
 
         #region Constructeur
@@ -89,6 +89,8 @@ namespace TankArmageddon
             if (ShowBoundingBox)
                 BoundingBox.Draw(spriteBatch, gameTime);
         }
+
+        public void Draw(PrimitiveBatch primitiveBatch, GameTime gameTime) { }
         #endregion
 
         #endregion

@@ -12,8 +12,10 @@ namespace TankArmageddon
         #endregion
 
         #region Méthodes
+        void RefreshBoundingBox();
         void Update(GameTime gameTime);
         void Draw(SpriteBatch spriteBatch, GameTime gameTime);
+        void Draw(PrimitiveBatch primitiveBatch, GameTime gameTime);
         #endregion
     }
 }

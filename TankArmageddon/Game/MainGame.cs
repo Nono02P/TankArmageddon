@@ -50,6 +50,7 @@ namespace TankArmageddon
         #region Propriétés
         public static GraphicsDeviceManager graphics { get; private set; }
         public static SpriteBatch spriteBatch { get; private set; }
+        public static PrimitiveBatch primitiveBatch { get; private set; }
         public static Viewport Screen { get; private set; }
         public static Camera Camera { get; private set; }
         public static Scene CurrentScene { get; private set; }
@@ -80,6 +81,7 @@ namespace TankArmageddon
             Camera = new Camera(Screen, Vector3.Zero);
             IsMouseVisible = true;
             spriteBatch = new SpriteBatch(GraphicsDevice);
+            primitiveBatch = new PrimitiveBatch(GraphicsDevice);
             AssetManager.Load(Content);
             ChangeScene(SceneType.Gameplay);
         }
@@ -138,11 +140,15 @@ namespace TankArmageddon
         {
             GraphicsDevice.Clear(Color.Black);
             //spriteBatch.Begin(samplerState: SamplerState.PointClamp); // Avec l'anti-alliasing
+            
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null,null, Camera.Transformation);
             CurrentScene.Draw(spriteBatch, gameTime);
-            spriteBatch.DrawString(AssetManager.MainFont, Camera.Position.ToString(), new Vector2(80, 60) + new Vector2(Camera.Position.X, Camera.Position.Y), Color.White);
-            spriteBatch.DrawString(AssetManager.MainFont, Mouse.GetState().Position.ToString(), new Vector2(80, 80) + new Vector2(Camera.Position.X, Camera.Position.Y), Color.White);
             spriteBatch.End();
+
+            primitiveBatch.Begin(PrimitiveType.TriangleList);
+            CurrentScene.Draw(primitiveBatch, gameTime);
+            primitiveBatch.End();
+
             base.Draw(gameTime);
         }
         #endregion

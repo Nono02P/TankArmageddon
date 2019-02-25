@@ -56,6 +56,15 @@ namespace TankArmageddon
                 actor.Draw(spriteBatch, gameTime);
             }
         }
+
+        public virtual void Draw(PrimitiveBatch primitiveBatch, GameTime gameTime)
+        {
+            for (int i = 0; i < lstActors.Count; i++)
+            {
+                IActor actor = lstActors[i];
+                actor.Draw(primitiveBatch, gameTime);
+            }
+        }
         #endregion
     }
 }

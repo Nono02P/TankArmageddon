@@ -95,7 +95,7 @@ namespace TankArmageddon.GUI
 
         #region Méthodes
 
-        protected virtual void RefreshBoundingBox()
+        public virtual void RefreshBoundingBox()
         {
             Vector2 location = Position - Origin;
             BoundingBox = new RectangleBBox(location.ToPoint(), Size.ToPoint());
@@ -196,6 +196,8 @@ namespace TankArmageddon.GUI
                 Primitives2D.DrawRectangle(spriteBatch, ((RectangleBBox)BoundingBox).Rectangle, Color.Aqua);
             }
         }
+
+        public void Draw(PrimitiveBatch primitiveBatch, GameTime gameTime) { }
         #endregion
 
         #endregion

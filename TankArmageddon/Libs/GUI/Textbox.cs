@@ -200,7 +200,7 @@ namespace TankArmageddon.GUI
         /// <summary>
         /// Raffraichit la BoundingBox (en prenant en compte la "zone morte" définie dans UsedArea)
         /// </summary>
-        protected override void RefreshBoundingBox()
+        public override void RefreshBoundingBox()
         {
             Vector2 location = Position - Origin + Size * (Vector2.One - UsedArea);
             BoundingBox = new RectangleBBox(location.ToPoint(), Size.ToPoint());

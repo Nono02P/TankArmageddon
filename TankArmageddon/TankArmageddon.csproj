@@ -43,6 +43,8 @@
   <ItemGroup>
     <Compile Include="Game\ExplosionEventArgs.cs" />
     <Compile Include="Game\ButtonAction.cs" />
+    <Compile Include="Game\Spring.cs" />
+    <Compile Include="Game\Water.cs" />
     <Compile Include="Game\Sprites\Drop.cs" />
     <Compile Include="Game\Sprites\Tank\Grenada.cs" />
     <Compile Include="Game\Sprites\Tank\Actions\HelicoTank.cs" />
@@ -56,6 +58,7 @@
     <Compile Include="Game\Sprites\Tank\Mine.cs" />
     <Compile Include="Libs\Camera.cs" />
     <Compile Include="Libs\Forms\Circle.cs" />
+    <Compile Include="Libs\Forms\PrimitiveBatch.cs" />
     <Compile Include="Libs\Forms\RectangleBBox.cs" />
     <Compile Include="Libs\GUI\Image.cs" />
     <Compile Include="Libs\IBoundingBox.cs" />

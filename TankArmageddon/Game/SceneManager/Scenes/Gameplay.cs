@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,7 @@ namespace TankArmageddon
     {
         #region Constantes
         private const int TIME_PER_TOUR = 60;
-        private const int TIME_AFTER_ACTION = 3;
+        private const int TIME_AFTER_ACTION = 10;
         private const int TIME_BETWEEN_TOUR = 10;
         private const byte NUMBER_OF_TEAMS = 4;
         private const byte NUMBER_OF_TANK_PER_TEAM = 5;
@@ -97,6 +98,7 @@ namespace TankArmageddon
         private Image _cursorImage;
         private List<Action.eActions> _lootBag;
         private SoundEffect _sndexplosion;
+        private Water _water;
         #endregion
 
         #region Propriétés
@@ -131,6 +133,7 @@ namespace TankArmageddon
             #region Démarrage des musiques
             sndMusic = AssetManager.mscGameplay;
             MediaPlayer.Play(sndMusic);
+            MediaPlayer.Volume = 0.5f;
             MediaPlayer.IsRepeating = true;
             #endregion
 
@@ -188,11 +191,17 @@ namespace TankArmageddon
                     }
                     else
                     {
-                        MapColors[index] = Color.DarkBlue;
+                        MapColors[index] = Color.Green;
                     }
                 }
             }
             _mapTexture.SetData(MapColors);
+            #endregion
+
+            #region Création de l'eau
+            Vector2 p = new Vector2(0, WaterLevel);
+            Vector2 s = new Vector2(MainGame.Screen.Width, MapSize.Y - p.Y);
+            _water = new Water(p, s, MainGame.Screen.Width / 4);
             #endregion
 
             #region Paramétrage de la Caméra
@@ -693,7 +702,7 @@ namespace TankArmageddon
             }
             else
             {
-                _counter = TIME_BETWEEN_TOUR;
+                _counter = 1;
             }
         }
         #endregion
@@ -776,6 +785,11 @@ namespace TankArmageddon
 
             _teams.RemoveAll(t => t.Remove);
             #endregion
+
+            if (Input.OnPressed(ClickType.Left))
+            {
+                _water.Splash(Mouse.GetState().Position.ToVector2() / 4, 50);
+            }
 
             base.Update(gameTime);
         }

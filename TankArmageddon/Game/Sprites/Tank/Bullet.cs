@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 
 namespace TankArmageddon
 {
@@ -8,10 +9,16 @@ namespace TankArmageddon
         public class Bullet : Sprite
         {
             public event ExplosionHandler OnBulletExplosion;
-            public Action.eActions BulletType { get; private set; }
+            public Action.eActions BulletType { get; protected set; }
             public Tank Parent { get; private set; }
-            public int Radius { get; private set; }
-            public int Force { get; private set; }
+            public int Radius { get; protected set; }
+            public int Force { get; protected set; }
+
+            protected Bullet(Tank pShooter) : base()
+            {
+                Parent = pShooter;
+                OnBulletExplosion += Parent.Parent.Parent.CreateExplosion;
+            }
 
             public Bullet(Tank pShooter, Texture2D pImage, Vector2 pPosition, Vector2 pVelocity, Action.eActions pBulletType, Vector2 pScale) : base(pImage)
             {
@@ -69,35 +76,50 @@ namespace TankArmageddon
 
                 Velocity = new Vector2(vx, vy);
                 Angle = (float)utils.MathAngle(Velocity);
+                Vector2 previousPosition = Position;
+
                 base.Update(gameTime);
-                if (Parent.Parent.Parent.IsSolid(BoundingBox.Center.ToVector2()))
+
+                Gameplay g = Parent.Parent.Parent;
+
+                bool collision = false;
+                Vector2 normalised = Vector2.Normalize(Velocity);
+                Vector2 collisionPosition = previousPosition;
+                do
                 {
-                    Explose();
+                    collisionPosition += normalised;
+                    if (g.IsSolid(collisionPosition))
+                    {
+                        collision = true;
+                        collisionPosition -= normalised;
+                    }
+                } while (!collision && Math.Abs((collisionPosition - Position).X) >= Math.Abs(normalised.X) && Math.Abs((collisionPosition - Position).Y) >= Math.Abs(normalised.Y));
+                if (collision)
+                {
+                    Die(true, collisionPosition);
                 }
                 if (Position.Y > Parent.Parent.Parent.WaterLevel)
                 {
-                    Remove = true;
+                    Die(false, collisionPosition);
                 }
             }
 
-            private void Explose()
+            protected void Die(bool pWithExplosion, Vector2 pPosition)
             {
-                OnBulletExplosion?.Invoke(this, new ExplosionEventArgs(Position, Radius, Force));
+                if (pWithExplosion)
+                {
+                    OnBulletExplosion?.Invoke(this, new ExplosionEventArgs(pPosition, Radius, Force));
+                }
                 Remove = true;
+                OnBulletExplosion -= Parent.Parent.Parent.CreateExplosion;
             }
 
             public override void TouchedBy(ICollisionnable collisionnable)
             {
                 if (!(collisionnable is Bullet) && !(collisionnable is Particle))
                 {
-                    Explose();
+                    Die(true, Position);
                 }
-            }
-
-            public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
-            {
-                spriteBatch.DrawRectangle(ImgBox.Value, Color.Red, 2);
-                base.Draw(spriteBatch, gameTime);
             }
         }
     }
