@@ -79,6 +79,7 @@ namespace TankArmageddon.GUI
         public bool Remove { get; set; } = false;
         public bool Hover { get; protected set; }
         public bool Clicked { get; protected set; }
+        public float Layer { get; set; } = 1f;
         #endregion
 
         #region Constructeur
@@ -111,7 +112,9 @@ namespace TankArmageddon.GUI
         {
             #region Vérifie si la souris est en survol
             MouseState mouseState = Mouse.GetState();
-            Point mousePosition = new Point((int)(mouseState.Position.X + MainGame.Camera.Position.X), (int)(mouseState.Position.Y + MainGame.Camera.Position.Y));
+            Camera cam = MainGame.Camera;
+            Vector3 offsetPos = cam.Position - cam.CameraOffset;
+            Point mousePosition = new Point((int)(mouseState.Position.X + offsetPos.X), (int)(mouseState.Position.Y + offsetPos.Y));
             if (BoundingBox.Contains(mousePosition) && !Hover)
             {
                 OnHover?.Invoke(this);

@@ -40,6 +40,7 @@ namespace TankArmageddon
             public Mine(Tank pParent, Vector2 pPosition) : base()
             {
                 #region Initialisation des valeurs
+                Layer += 0.2f;
                 Parent = pParent;
                 Image = AssetManager.TanksSpriteSheet;
                 ImgBox = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tanks_mineOff.png").ImgBox;

@@ -28,21 +28,10 @@ namespace TankArmageddon
     #endregion
 
     #region Enumérations
-    public enum eDirection : byte
-    {
-        Top,
-        Right,
-        Bottom,
-        Left,
-    }
-
-    public enum SceneType
-    {
-        Menu,
-        Gameplay,
-        Gameover,
-        Victory,
-    }
+    public enum eDirection : byte { Top, Right, Bottom, Left }
+    public enum VAlign : byte { None, Top, Middle, Bottom }
+    public enum HAlign : byte { None, Left, Center, Right }
+    public enum SceneType : byte { Menu, Gameplay, Gameover, Victory, }
     #endregion
 
     public class MainGame : Game
@@ -77,6 +66,8 @@ namespace TankArmageddon
         {
             Screen = GraphicsDevice.Viewport;
             Camera = new Camera(Screen, Vector3.Zero);
+            Camera.LimitOnTop = false;
+            Camera.MouseFollowOnTop = false;
             IsMouseVisible = true;
             spriteBatch = new SpriteBatch(GraphicsDevice);
             primitiveBatch = new PrimitiveBatch(GraphicsDevice);

@@ -8,10 +8,14 @@ namespace TankArmageddon
     {
         private class NormalMove : IAction
         {
+            #region Variables privées
+            private bool _blockAction;
+            #endregion
+
             #region Propriétés
             public Tank Parent { get; private set; }
             public bool Enable { get; set; }
-            public bool BlockAction { get; set; }
+            public bool BlockAction { get => _blockAction; set { if (_blockAction != value) { _blockAction = value; if (Parent.Parent.Inventory[Parent.SelectedAction] > 0) { Parent.Parent.Inventory[Parent.SelectedAction]--; Parent.Parent.Parent.RefreshActionButton(); } } } }
             #endregion
 
             #region Constructeur

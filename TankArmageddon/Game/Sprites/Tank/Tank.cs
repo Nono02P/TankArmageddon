@@ -17,6 +17,7 @@ namespace TankArmageddon
         #endregion
 
         #region Variables privées
+        private float _originalLayer;
         private bool _parachute = true;
         private Image _imgParachute;
         private bool _onFloor = false;
@@ -60,7 +61,7 @@ namespace TankArmageddon
         public bool Space { get; set; }
         public bool IsControlled { get; set; }
         public bool Parachute { get => _parachute; private set { if (_parachute != value) { _parachute = value; _imgParachute.Visible = value; } } } 
-        public Action.eActions SelectedAction { get => _selectedAction; set { _selectedAction = value; RefreshActionClass(); } }
+        public Action.eActions SelectedAction { get => _selectedAction; set { if (!_action.BlockAction) { _selectedAction = value; RefreshActionClass(); } } }
         public int Life { get => _life; set { _life = MathHelper.Clamp(value, 0, 100); _lifeBar.SetProgressiveValue(value, _barSpeed); RefreshGUITextbox(); } }
         public float Fuel { get => _fuel; set { _fuel = MathHelper.Clamp(value, 0, 100); _fuelBar.SetProgressiveValue(value, _barSpeed); } }
         #endregion
@@ -69,6 +70,7 @@ namespace TankArmageddon
         public Tank(Team pParent, Color pTeamColor, string pName, Texture2D pImage, Rectangle pTankImage, Rectangle pCannonImage, Rectangle pWheelImage, Vector2 pPosition, Vector2 pOrigin, Vector2 pScale) : base(pImage, pTankImage, pPosition, pOrigin, pScale)
         {
             #region Initialise les valeurs
+            _originalLayer = Layer;
             Angle = MathHelper.ToRadians(360);
             Parent = pParent;
             TeamColor = pTeamColor;
@@ -84,20 +86,21 @@ namespace TankArmageddon
 
             #region Créé la GUI
             _group = new Group();
-            _textBox = new Textbox(new Vector2(0, - ImgBox.Value.Height * 1.25f), AssetManager.MainFont, Name + " : " + Life);
+            _textBox = new Textbox(new Vector2(0, - ImgBox.Value.Height * 1.5f), AssetManager.MainFont, Name + " : " + Life);
             _textBox.ApplyColor(pTeamColor, Color.Black);
             _textBox.SetOriginToCenter();
             _group.AddElement(_textBox);
 
             Vector2 s = new Vector2(100, 15);
-            _lifeBar = new BarGraph(Life, Life, new Vector2(0, -ImgBox.Value.Height), new Vector2(s.X / 2, 0), s, Color.Blue, Color.Green);
+            _lifeBar = new BarGraph(Life, 0, Life, new Vector2(0, -ImgBox.Value.Height * 1.25f), new Vector2(s.X / 2, 0), s, Color.Blue, Color.Green);
             _group.AddElement(_lifeBar);
 
-            _fuelBar = new BarGraph(Fuel, Fuel, new Vector2(0, -ImgBox.Value.Height * 0.75f), new Vector2(s.X / 2, 0), s, Color.Blue, new Color(240, 105, 105));
+            _fuelBar = new BarGraph(Fuel, 0, Fuel, new Vector2(0, -ImgBox.Value.Height), new Vector2(s.X / 2, 0), s, Color.Blue, new Color(240, 105, 105));
             _group.AddElement(_fuelBar);
             
             Rectangle paraImgBox = AssetManager.ParachutesImgBox[utils.MathRnd(0, AssetManager.ParachutesImgBox.Count)];
             _imgParachute = new Image(AssetManager.Parachute, paraImgBox, new Vector2(0, -ImgBox.Value.Height / 2 * Scale.Y), new Vector2(paraImgBox.Width / 2, paraImgBox.Height));
+            _imgParachute.Layer = Layer + 0.1f;
             _group.AddElement(_imgParachute);
             
             Texture2D cursor = new Texture2D(MainGame.graphics.GraphicsDevice, 15, 10);
@@ -164,8 +167,6 @@ namespace TankArmageddon
         /// </summary>
         private void RefreshActionClass()
         {
-            if (!_action.BlockAction)
-            {
                 switch (SelectedAction)
                 {
                     case Action.eActions.None:
@@ -195,14 +196,13 @@ namespace TankArmageddon
                     case Action.eActions.Drilling:
                         // TODO : Jouer l'animation
                         break;
-                    case Action.eActions.Mine:
+                    case Action.eActions.iMine:
                         _action = _letOnFloor;
                         break;
                     default:
                         break;
                 }
                 _action.Enable = true;
-            }
         }
         #endregion
 
@@ -279,7 +279,14 @@ namespace TankArmageddon
             float vx = Velocity.X;
             float vy = Velocity.Y;
             if (IsControlled)
+            {
                 _action.Update(gameTime, ref vx, ref vy);
+                Layer = _originalLayer + 0.1f;
+            }
+            else
+            {
+                Layer = _originalLayer;
+            }
             #endregion
 
             #region Gestion de la gravité en fonction du parachute
@@ -416,6 +423,7 @@ namespace TankArmageddon
 
             #region Positionnement de GUI
             _group.Position = Position;
+            _group.Layer = Layer;
             _guiGameplayIndex.Position = g.GetPositionOnMinimap(Position.X);
             #endregion
 

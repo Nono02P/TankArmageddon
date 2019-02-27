@@ -33,8 +33,8 @@ namespace TankArmageddon
                                 Parent.Parent.Parent.FinnishTour();
                                 BlockAction = true;
                                 Enable = false;
-                                if (Parent.Parent.Inventory[Parent.SelectedAction] > 0)
-                                    Parent.Parent.Inventory[Parent.SelectedAction]--;
+                                //if (Parent.Parent.Inventory[Parent.SelectedAction] > 0)
+                                //    Parent.Parent.Inventory[Parent.SelectedAction]--;
                                 break;
                             default:
                                 break;

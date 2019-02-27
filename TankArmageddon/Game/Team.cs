@@ -45,10 +45,13 @@ namespace TankArmageddon
             Inventory = new Dictionary<Action.eActions, int>();
             for (int i = 1; i < Enum.GetValues(typeof(Action.eActions)).GetLength(0); i++)
             {
-                Inventory.Add((Action.eActions)i, 10);
+                Inventory.Add((Action.eActions)i, 0);
             }
+            Inventory[Action.eActions.Grenada] = 6;
+            Inventory[Action.eActions.GoldBullet] = 2;
             Inventory[Action.eActions.iGrayBullet] = -1;
             Inventory[Action.eActions.iGrayBombshell] = -1;
+            Inventory[Action.eActions.iMine] = -1;
             Inventory[Action.eActions.iTankBaseBall] = -1;
             Inventory[Action.eActions.iDropFuel] = -1;
 
@@ -102,11 +105,29 @@ namespace TankArmageddon
         }
         #endregion
 
-        #region Déplace la caméra
+        #region Déplace la caméra sur le tank sélectionné
         public void RefreshCameraOnSelection()
         {
             if (Tanks.Count > 0 && IndexTank < Tanks.Count)
-                MainGame.Camera.SetCameraOnActor(Tanks[IndexTank]);
+            {
+                Tank t = Tanks[IndexTank];
+                Camera cam = MainGame.Camera;
+                if (cam.Position.Y < 0 && t.Position.Y - t.BoundingBox.Height > 0)
+                {
+                    cam.SetCameraOnActor(t, HAlign.Center, VAlign.Bottom);
+                }
+                else
+                {
+                    cam.SetCameraOnActor(t, true, t.Position.Y - t.BoundingBox.Height < 0 || cam.Position.Y < 0);
+                }
+            }
+        }
+        #endregion
+
+        #region Sélectionne le tank suivant
+        public void NextTank()
+        {
+            IndexTank++;
         }
         #endregion
 
@@ -134,7 +155,7 @@ namespace TankArmageddon
         }
         #endregion
 
-        #region Sélection de l'action.
+        #region Sélection de l'action
         public void SelectAction(Action.eActions actions)
         {
             Tank CurrentTank = Tanks[IndexTank];

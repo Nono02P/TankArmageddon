@@ -4,13 +4,17 @@ namespace TankArmageddon
 {
     public class PerlinNoise
     {
-        public static float[] Generate1DMap(int pMapSize, float pScale)
+        public static float[] Generate1DMap(int pMapSize, float pScale, int? pSeed = null)
         {
             if (pScale <= 0)
             {
                 pScale = 0.00001f;
             }
-            int offset = utils.MathRnd(0, 5000);
+            if (pSeed == null)
+            {
+                pSeed = utils.MathRnd(0, 5000);
+            }
+            int offset = (int)pSeed;
             float[] result = new float[(uint)(pMapSize)];
 
             for (uint x = 0; x < pMapSize; x++)

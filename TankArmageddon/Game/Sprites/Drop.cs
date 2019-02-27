@@ -65,17 +65,34 @@ namespace TankArmageddon
             _group.AddElement(_imgParachute);
 
             OnDropExplosion += Parent.CreateExplosion;
+            Parent.OnExplosion += Gameplay_OnExplosion;
+        }
+        #endregion
+
+        #region Explosion
+        private void Explode()
+        {
+            // Le désabonnement se fait avant de créer l'explosion, pour éviter qu'il vérifie qu'il soit dans son rayon d'explosion.
+            Parent.OnExplosion -= Gameplay_OnExplosion;
+            
+            OnDropExplosion?.Invoke(this, new ExplosionEventArgs(Position, 50 + Value, 40 + Value / 10));
+            Remove = true;
+            OnDropExplosion -= Parent.CreateExplosion;
+        }
+        #endregion
+
+        #region Sur explosion sur la map
+        private void Gameplay_OnExplosion(object sender, ExplosionEventArgs e)
+        {
+            Circle c = e.ExplosionCircle;
+            if (c.Intersects(BoundingBox))
+                Explode();
         }
         #endregion
 
         #region Collisions
         public override void TouchedBy(ICollisionnable collisionnable)
         {
-            if (collisionnable is Tank.Bullet)
-            {
-                OnDropExplosion?.Invoke(this, new ExplosionEventArgs(Position, 50, 40));
-                Remove = true;
-            }
             if (collisionnable is Tank)
             {
                 Tank t = (Tank)collisionnable;

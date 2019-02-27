@@ -4,9 +4,6 @@ using System.Text;
 
 namespace TankArmageddon.GUI
 {
-    public enum VAlign { Top, Middle, Bottom }
-    public enum HAlign { Left, Center, Right }
-
     // TODO Gérer des évènements sur changement de taille, afin d'affecter l'origine dans le button.
 
     public class Textbox : Element, IIntegrableMenu

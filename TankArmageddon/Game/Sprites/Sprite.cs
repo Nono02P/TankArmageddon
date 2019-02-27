@@ -30,6 +30,7 @@ namespace TankArmageddon
         public bool Remove { get; set; }
         public SpriteEffects Effects { get { return _effects; } protected set { if (_effects != value) { OnSpriteEffectsChange?.Invoke(this, _effects, value); _effects = value; } } }
         public bool ShowBoundingBox { get; set; }
+        public float Layer { get; set; } = 0f;
         #endregion
 
         #region Constructeur

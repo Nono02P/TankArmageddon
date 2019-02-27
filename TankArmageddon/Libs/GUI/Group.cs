@@ -6,10 +6,16 @@ namespace TankArmageddon.GUI
 {
     public class Group
     {
-        #region Propriétés
-
+        #region Variables privées
         private Vector2 _position = Vector2.Zero;
+        private float _layer = 0f;
+        #endregion
 
+        #region Propriétés
+        /// <summary>
+        /// Liste d'éléments de la GUI.
+        /// </summary>
+        public List<Element> Elements { get; private set; }
         public Vector2 Position
         {
             get
@@ -29,12 +35,6 @@ namespace TankArmageddon.GUI
                 }
             }
         }
-
-        /// <summary>
-        /// Liste d'éléments de la GUI.
-        /// </summary>
-        public List<Element> Elements { get; private set; }
-        
         /// <summary>
         /// Rend Visible/Invisible tous les éléments de la liste d'acteurs.
         /// </summary>
@@ -49,7 +49,6 @@ namespace TankArmageddon.GUI
                 }
             }
         }
-
         /// <summary>
         /// Retires tous les éléments du groupe de la liste d'acteurs.
         /// </summary>
@@ -61,6 +60,28 @@ namespace TankArmageddon.GUI
                 {
                     Element element = Elements[i];
                     element.Remove = value;
+                }
+            }
+        }
+        /// <summary>
+        /// Modifies le layer de tous les éléments du groupe.
+        /// </summary>
+        public float Layer
+        {
+            get
+            {
+                return _layer;
+            }
+            set
+            {
+                if (_layer != value)
+                {
+                    for (int i = 0; i < Elements.Count; i++)
+                    {
+                        Element element = Elements[i];
+                        element.Layer += value - _layer;
+                    }
+                    _layer = value;
                 }
             }
         }

@@ -20,6 +20,7 @@ namespace TankArmageddon.GUI
         public int Thickness { get; set; } = 2;
         public Color BckgndColor { get; set; } = Color.LawnGreen;
         public Color BarColor { get; set; } = Color.Green;
+        public float MinValue { get; private set; }
         public float MaxValue { get; private set; }
         public float Value { get { return _value; } set { _value = MathHelper.Clamp(value, 0, MaxValue); RefreshRectangles(); } }
         public Texture2D ImageEmpty { get; private set; } = null;
@@ -30,14 +31,16 @@ namespace TankArmageddon.GUI
         #endregion
 
         #region Constructeur
-        public BarGraph(float pValue, float pMaxValue, Vector2 pPosition, Vector2 pOrigin, Vector2 pSize, bool pVisible = true) : base(pPosition, pOrigin, pSize, pVisible)
+        public BarGraph(float pValue, float pMinValue, float pMaxValue, Vector2 pPosition, Vector2 pOrigin, Vector2 pSize, bool pVisible = true) : base(pPosition, pOrigin, pSize, pVisible)
         {
+            MinValue = pMinValue;
             MaxValue = pMaxValue;
             Value = pValue;
         }
 
-        public BarGraph(float pValue, float pMaxValue, Vector2 pPosition, Vector2 pOrigin, Vector2 pSize, Color pBckgndColor, Color pBarColor, bool pVisible = true) : base(pPosition, pOrigin, pSize, pVisible)
+        public BarGraph(float pValue, float pMinValue, float pMaxValue, Vector2 pPosition, Vector2 pOrigin, Vector2 pSize, Color pBckgndColor, Color pBarColor, bool pVisible = true) : base(pPosition, pOrigin, pSize, pVisible)
         {
+            MinValue = pMinValue;
             MaxValue = pMaxValue;
             Value = pValue;
             BckgndColor = pBckgndColor;
@@ -47,8 +50,9 @@ namespace TankArmageddon.GUI
             OnOriginChange += RectangleChanged;
         }
 
-        public BarGraph(float pValue, float pMaxValue, Vector2 pPosition, Vector2 pOrigin, Vector2 pSize, Texture2D pImageEmpty, Texture2D pImageFull, bool pVisible = true) : base(pPosition, pOrigin, pSize, pVisible)
+        public BarGraph(float pValue, float pMinValue, float pMaxValue, Vector2 pPosition, Vector2 pOrigin, Vector2 pSize, Texture2D pImageEmpty, Texture2D pImageFull, bool pVisible = true) : base(pPosition, pOrigin, pSize, pVisible)
         {
+            MinValue = pMinValue;
             MaxValue = pMaxValue;
             Value = pValue;
             ImageEmpty = pImageEmpty;
@@ -63,7 +67,7 @@ namespace TankArmageddon.GUI
         private void RefreshRectangles()
         {
             _bckgndRect = new Rectangle((Position - Origin).ToPoint(), Size.ToPoint());
-            _frontRect = new Rectangle(new Point((int)(Position.X - Origin.X) + Thickness, (int)(Position.Y - Origin.Y) + Thickness), new Point((int)((Size.X - 2 * Thickness) * Value / MaxValue), (int)Size.Y - 2 * Thickness));
+            _frontRect = new Rectangle(new Point((int)(Position.X - Origin.X) + Thickness, (int)(Position.Y - Origin.Y) + Thickness), new Point((int)((Size.X - 2 * Thickness) * (Value - MinValue) / (MaxValue - MinValue)), (int)Size.Y - 2 * Thickness));
         }
 
         public void SetProgressiveValue(float pDesiredValue, TimeSpan pTimeSpan)
@@ -105,7 +109,7 @@ namespace TankArmageddon.GUI
                 if (ImageEmpty != null && ImageFull != null)
                 {
                     spriteBatch.Draw(ImageEmpty, new Rectangle((Position - Origin).ToPoint(), (ImgBoxEmpty.Value.Size.ToVector2() * Scale).ToPoint()), ImgBoxEmpty, Color.White, Angle, Origin, SpriteEffects, 0);
-                    Vector2 s = new Vector2((int)(ImgBoxFull.Value.Size.X * Value / MaxValue), (int)(ImgBoxFull.Value.Size.Y));
+                    Vector2 s = new Vector2((int)(ImgBoxFull.Value.Size.X * (Value - MinValue) / (MaxValue - MinValue)), (int)(ImgBoxFull.Value.Size.Y));
                     spriteBatch.Draw(ImageFull, new Rectangle((Position - Origin).ToPoint(), (s * Scale).ToPoint()), new Rectangle(ImgBoxFull.Value.Location, s.ToPoint()), Color.White, Angle, Origin, SpriteEffects, 0);
                 }
                 else

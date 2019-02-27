@@ -6,7 +6,6 @@
   <SourceFiles>
     <File>C:/Users/PierArn/Documents/Perso/Jeux Video/_GameJam/4_TankArmageddon/TankArmageddon/TankArmageddon/Content/_Background/bgElements_spritesheet.png</File>
     <File>C:/Users/PierArn/Documents/Perso/Jeux Video/_GameJam/4_TankArmageddon/TankArmageddon/TankArmageddon/Content/_Font/MainFont.spritefont</File>
-    <File>C:/Users/PierArn/Documents/Perso/Jeux Video/_GameJam/4_TankArmageddon/TankArmageddon/TankArmageddon/Content/_Tiles/spritesheet_tiles.png</File>
     <File>C:/Users/PierArn/Documents/Perso/Jeux Video/_GameJam/4_TankArmageddon/TankArmageddon/TankArmageddon/Content/_GUI/Cursor.png</File>
     <File>C:/Users/PierArn/Documents/Perso/Jeux Video/_GameJam/4_TankArmageddon/TankArmageddon/TankArmageddon/Content/_GUI/GameBottomBar.png</File>
     <File>C:/Users/PierArn/Documents/Perso/Jeux Video/_GameJam/4_TankArmageddon/TankArmageddon/TankArmageddon/Content/_Game/Grenada.png</File>
@@ -17,5 +16,6 @@
     <File>C:/Users/PierArn/Documents/Perso/Jeux Video/_GameJam/4_TankArmageddon/TankArmageddon/TankArmageddon/Content/_Game/Explosion.ogg</File>
     <File>C:/Users/PierArn/Documents/Perso/Jeux Video/_GameJam/4_TankArmageddon/TankArmageddon/TankArmageddon/Content/_Musics/Grandioso.mp3</File>
     <File>C:/Users/PierArn/Documents/Perso/Jeux Video/_GameJam/4_TankArmageddon/TankArmageddon/TankArmageddon/Content/_Game/crosshair184.png</File>
+    <File>C:/Users/PierArn/Documents/Perso/Jeux Video/_GameJam/4_TankArmageddon/TankArmageddon/TankArmageddon/Content/_Game/Hallelujah.ogg</File>
   </SourceFiles>
 </SourceFileCollection>

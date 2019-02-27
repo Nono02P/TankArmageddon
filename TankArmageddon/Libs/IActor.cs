@@ -9,6 +9,7 @@ namespace TankArmageddon
         Vector2 Position { get; }
         IBoundingBox BoundingBox { get; }
         bool Remove { get; set; }
+        float Layer { get; set; }
         #endregion
 
         #region Méthodes

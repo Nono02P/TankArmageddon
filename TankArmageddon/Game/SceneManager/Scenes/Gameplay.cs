@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using System;
 using System.Collections.Generic;
@@ -92,6 +91,8 @@ namespace TankArmageddon
         private int _counter = TIME_PER_TOUR;
         private bool _inTour = false;
         private Texture2D _mapTexture;
+        private Texture2D _skyTexture;
+        private int _skyHeight = 3000;
         private float[] _perlinNoise;
         private int _indexTeam = 0;
         private Image _gameBarImage;
@@ -141,57 +142,74 @@ namespace TankArmageddon
             _sndexplosion = AssetManager.sndExplosion;
             #endregion
 
+            #region Création du ciel
+            _skyTexture = new Texture2D(MainGame.spriteBatch.GraphicsDevice, (int)MapSize.X, _skyHeight);
+            Color[] skyData = new Color[_skyTexture.Width * _skyTexture.Height];
+            int skyH = _skyTexture.Height;
+            int skyW = _skyTexture.Width;
+            for (int y = 0; y < skyH; y++)
+            {
+                Color skyColor = Color.Lerp(Color.Black, new Color(119, 181, 254), (float)y / skyH);
+                for (int x = 0; x < skyW; x++)
+                {
+                    skyData[x + y * skyW] = skyColor;
+                }
+            }
+            _skyTexture.SetData(skyData);
+            #endregion
+
             #region Création de la map
             _perlinNoise = PerlinNoise.Generate1DMap((int)MapSize.X, 550f);
-            //
-            //float[] perlinLuminosity = PerlinNoise.Generate2DMap(MapSize, 550f);
-            /*float[] perlinColor1 = PerlinNoise.Generate1DMap((int)MapSize.X, 100f);
-            float[] perlinColor2 = PerlinNoise.Generate1DMap((int)MapSize.X, 300f);
-            float[] perlinColor3 = PerlinNoise.Generate1DMap((int)MapSize.X, 5000f);*/
-
             _mapTexture = new Texture2D(MainGame.spriteBatch.GraphicsDevice, (int)MapSize.X, (int)MapSize.Y);
             MapData = new byte[(int)(MapSize.X * MapSize.Y)];
             MapColors = new Color[MapData.Length];
             for (ushort i = 0; i < _perlinNoise.Length; i++)
             {
-                //
                 float noiseVal = _perlinNoise[i];
-                /*float noiseVal1 = perlinColor1[i];
-                float noiseVal2 = perlinColor2[i];
-                float noiseVal3 = perlinColor3[i];*/
-                
                 ushort x = (ushort)(i % MapSize.X);
                 ushort h = (ushort)Math.Floor((noiseVal + 1) * MapSize.Y * 0.5f);
                 h = (ushort)MathHelper.Clamp(h, 0, WaterLevel + 1);
-                /*ushort h1 = (ushort)Math.Floor((noiseVal1 + 1) * MapSize.Y * 0.5f);
-                ushort h2 = (ushort)Math.Floor((noiseVal2 + 1) * MapSize.Y * 0.5f);
-                ushort h3 = (ushort)Math.Floor((noiseVal3 + 1) * MapSize.Y * 0.5f);*/
-                //for (ushort y = h; y < MapSize.Y; y++)
-                for (ushort y = h; y < MapSize.Y; y++)
+                int min = (int)Math.Floor((_perlinNoise.Min() + 1) * MapSize.Y * 0.5f);
+                int dif = (int)MapSize.Y - min;
+                for (ushort y = 0; y < MapSize.Y; y++)
                 {
-                    /*float max = (new List<float>() { h1, h2, h3 }).Max();
-                    Color color;
-                    if (max == h1)
-                    {
-                        color = Color.Lerp(Color.WhiteSmoke, Color.White, _perlinNoise[y]);
-                    }
-                    else if (max == h2)
-                    {
-                        color = Color.Lerp(Color.DarkGray, Color.Gray, _perlinNoise[y]);
-                    }
-                    else
-                    {
-                        color = Color.Lerp(Color.DarkGreen, Color.Green, _perlinNoise[y]);
-                    }*/
                     uint index = (uint)(x + y * MapSize.X);
-                    if (y <= WaterLevel)
+                    if (y < h)
                     {
-                        MapColors[index] = Color.Green; //color;
-                        MapData[index] = 1;
+                        MapColors[index] = Color.Transparent;
                     }
                     else
                     {
-                        MapColors[index] = Color.Brown;
+                        if (y <= WaterLevel)
+                        {
+                            float pourcent = (float)(y - min) / dif;
+                            float p1 = 0.25f;
+                            float p2 = 0.5f;
+                            float p3 = 0.75f;
+                            float p4 = 1f;
+                            if (pourcent < p1)
+                            {
+                                MapColors[index] = Color.Lerp(Color.White, Color.Green, pourcent / p1);
+                            }
+                            else if (pourcent < p2)
+                            {
+                                MapColors[index] = Color.Lerp(Color.Green, Color.DarkGreen, (pourcent - p1) / (p2 - p1));
+                            }
+                            else if (pourcent < p3)
+                            {
+                                MapColors[index] = Color.Lerp(Color.DarkGreen, new Color(160, 82, 45), (pourcent - p2) / (p3 - p2));
+                            }
+                            else if (pourcent < p4)
+                            {
+                                MapColors[index] = Color.Lerp(new Color(160, 82, 45), Color.DarkRed, (pourcent - p3) / (p4 - p3));
+                            }
+                            //MapColors[index] = Color.Green;
+                            MapData[index] = 1;
+                        }
+                        else
+                        {
+                            MapColors[index] = Color.Brown;
+                        }
                     }
                 }
             }
@@ -200,13 +218,14 @@ namespace TankArmageddon
 
             #region Création de l'eau
             Vector2 p = new Vector2(0, WaterLevel);
-            Vector2 s = new Vector2(MainGame.Screen.Width, MapSize.Y - p.Y);
+            Vector2 s = new Vector2(MapSize.X, MapSize.Y - p.Y);
             _water = new Water(this, p, s);
             #endregion
 
             #region Paramétrage de la Caméra
             Camera c = MainGame.Camera;
-            c.MapSize = new Vector3(MapSize.X, MapSize.Y, 0);
+            c.CameraSize = new Vector3(MapSize.X, MapSize.Y, 0);
+            c.CameraOffset = new Vector3(0, MapSize.Y - MainGame.Screen.Height, 0);
             c.Enable = true;
             c.Speed = 10;
             #endregion
@@ -223,6 +242,7 @@ namespace TankArmageddon
             GUIGroup = new Group();
             Texture2D texture = AssetManager.GameBottomBar;
             _gameBarImage = new Image(texture, new Vector2(MainGame.Screen.Width / 2 , MainGame.Screen.Height - texture.Height / 2));
+            _gameBarImage.Layer -= 0.1f;
             _gameBarImage.SetOriginToCenter();
             GUIGroup.AddElement(_gameBarImage);
 
@@ -315,10 +335,10 @@ namespace TankArmageddon
         public void RefreshActionButton()
         {
             int nbBtn = GUIGroupButtons.Elements.Count;
+            Dictionary<Action.eActions, int> inv = _teams[_indexTeam].Inventory;
             for (int i = 0; i < nbBtn; i++)
             {
                 ButtonAction btn = (ButtonAction)GUIGroupButtons.Elements[i];
-                Dictionary<Action.eActions, int> inv = _teams[_indexTeam].Inventory;
                 if (inv.ContainsKey(btn.ActionType))
                 {
                     btn.Number = inv[btn.ActionType];
@@ -330,12 +350,14 @@ namespace TankArmageddon
         #region Calcul de la position de GUI sur changement de la position de Caméra
         public void OnCameraPositionChange(object sender, Vector3 previous, Vector3 actual)
         {
+            Camera cam = (Camera)sender;
             int x = (int)(_gameBarImage.Position.X - _gameBarImage.Origin.X + _gameBarImage.Size.X * (actual.X + MainGame.Screen.Width / 2) / MapSize.X);
             int y = (int)_cursorImage.Position.Y;
             _cursorImage.Position = GetPositionOnMinimap(actual.X + MainGame.Screen.Width / 2);
             Vector2 newCamPos = new Vector2(actual.X, actual.Y);
-            GUIGroup.Position = newCamPos;
-            GUIGroupButtons.Position = newCamPos;
+            Vector2 camOffset = new Vector2(cam.CameraOffset.X, cam.CameraOffset.Y);
+            GUIGroup.Position = newCamPos - camOffset;
+            GUIGroupButtons.Position = newCamPos - camOffset;
         }
         #endregion
 
@@ -360,22 +382,44 @@ namespace TankArmageddon
                     _currentTeamTextBox.ApplyColor(t.TeamColor, Color.Black);
                     _timerTextBox.ApplyColor(Color.Red, Color.Black);
                     _currentTankTextBox.Text = t.Tanks[t.IndexTank].Name;
-                    Drop d = new Drop(this, (Drop.eDropType)utils.MathRnd(0, 3), AssetManager.TanksSpriteSheet, new Vector2(utils.MathRnd(20, (int)MapSize.X - 20), 10), Vector2.Zero, Vector2.One);
-                    MainGame.Camera.SetCameraOnActor(d);
+                    Drop d = new Drop(this, (Drop.eDropType)utils.MathRnd(0, 3), AssetManager.TanksSpriteSheet, new Vector2(utils.MathRnd(20, (int)MapSize.X - 20), 1), Vector2.Zero, Vector2.One);
+                    while (!CanAppear(d))
+                    {
+                        d.Position = new Vector2(utils.MathRnd(20, (int)MapSize.X - 20), 1);
+                    }
+                    MainGame.Camera.SetCameraOnActor(d, true, false);
                     OnTourTimerEnd?.Invoke(this, EventArgs.Empty);
-                    // TODO : Vérifier que le Garbage Collector soit utile.
-                    GC.Collect();
+                    //GC.Collect(2, GCCollectionMode.Optimized, false);
                 }
                 else
                 {
                     _counter = TIME_PER_TOUR;
                     _timerTextBox.ApplyColor(Color.Green, Color.Black);
                     Team t = _teams[IndexTeam];
+                    t.NextTank();
                     t.RefreshCameraOnSelection();
                 }
                 _inTour = !_inTour;
             }
         }
+
+        #region Forçage de fin de tour
+        /// <summary>
+        /// Force la fin du tour.
+        /// </summary>
+        public void FinnishTour(bool pFinnishNow = false)
+        {
+            if (!pFinnishNow)
+            {
+                if (_counter > TIME_AFTER_ACTION)
+                    _counter = TIME_AFTER_ACTION;
+            }
+            else
+            {
+                _counter = 1;
+            }
+        }
+        #endregion
 
         public void OnTankSelectionChange(object sender, byte before, byte value)
         {
@@ -431,23 +475,13 @@ namespace TankArmageddon
         #endregion
 
         #region Fonctions d'interraction des éléments avec la map
-
-        public Vector2 Normalisation(Vector2 pPosition)
+        /// <summary>
+        /// Renvoies true si l'acteur se situe en dehors de la map (le ciel est considéré comme dans la map)
+        /// </summary>
+        /// <param name="actor">Acteur concerné.</param>
+        public bool OutOfMap(IActor actor)
         {
-            Vector2 avg = new Vector2();
-            for (int x = (int)pPosition.X - 5; x < pPosition.X + 5; x++)
-            {
-                for (int y = (int)pPosition.Y - 5; y < pPosition.Y + 5; y++)
-                {
-                    Vector2 p = new Vector2(x, y);
-                    if (IsSolid(p))
-                    {
-                        avg -= p;
-                    }
-                }
-            }
-            int length = (int)Math.Sqrt(avg.X * avg.X + avg.Y * avg.Y);
-            return avg / length;
+            return actor.Position.X < 0 || actor.Position.X > MapSize.X || actor.Position.Y > MapSize.Y;
         }
 
         /// <summary>
@@ -634,7 +668,6 @@ namespace TankArmageddon
             }
             for (int i = 0; i < 4; i++)
             {
-                _lootBag.Add(Action.eActions.Mine);
                 _lootBag.Add(Action.eActions.Grenada);
             }
             for (int i = 0; i < 3; i++)
@@ -673,7 +706,6 @@ namespace TankArmageddon
                 case Action.eActions.GreenMissile:
                     qty = 2;
                     break;
-                case Action.eActions.Mine:
                 case Action.eActions.Grenada:
                     qty = 3;
                     break;
@@ -690,34 +722,16 @@ namespace TankArmageddon
 
         #endregion
 
-        #region Forçage de fin de tour
-        /// <summary>
-        /// Force la fin du tour.
-        /// </summary>
-        public void FinnishTour(bool pFinnishNow = false)
-        {
-            if (!pFinnishNow)
-            {
-                if (_counter > TIME_AFTER_ACTION)
-                    _counter = TIME_AFTER_ACTION;
-            }
-            else
-            {
-                _counter = 1;
-            }
-        }
-        #endregion
-
-        #region Vérification de collision entre Tanks (pour le démarrage)
-        public bool CanAppear(Tank pTank)
+        #region Vérification qu'un acteur peut apparaitre sur la carte (sans tomber dans l'eau à son apparition).
+        public bool CanAppear(IActor pActor)
         {
             bool result = true;
             for (int i = 0; i < lstActors.Count; i++)
             {
-                IActor actor = lstActors[i];
-                if (actor is Tank)
+                IActor other = lstActors[i];
+                if (other is Tank)
                 {
-                    if (utils.Collide(pTank, actor))
+                    if (utils.Collide(pActor, other))
                     {
                         result = false;
                         break;
@@ -728,16 +742,21 @@ namespace TankArmageddon
             {
                 for (int i = 0; i < lstBuffer.Count; i++)
                 {
-                    IActor actor = lstBuffer[i];
-                    if (actor is Tank)
+                    IActor other = lstBuffer[i];
+                    if (other is Tank)
                     {
-                        if (utils.Collide(pTank, actor))
+                        if (utils.Collide(pActor, other))
                         {
                             result = false;
                             break;
                         }
                     }
                 }
+            }
+            if (result)
+            {
+                // Permet d'empêcher d'apparaitre au dessus de l'eau.
+                result = FindHighestPoint(pActor.Position, 0).Y < MapSize.Y - 5;
             }
             return result;
         }
@@ -790,6 +809,7 @@ namespace TankArmageddon
         #region Draw
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
+            spriteBatch.Draw(_skyTexture, new Vector2(0, MainGame.Screen.Height - _skyHeight), Color.White);
             spriteBatch.Draw(_mapTexture, Vector2.Zero, Color.White);
             base.Draw(spriteBatch, gameTime);
             // TODO dessiner les explosions ici pour que ce soit en premier plan.

@@ -21,9 +21,7 @@ namespace TankArmageddon
             Position2 = new Vector2(Image.Width, 0);
         }
         #endregion
-
-        #region Méthodes
-
+        
         #region Update
         public void Update(GameTime gameTime)
         {
@@ -51,8 +49,6 @@ namespace TankArmageddon
             spriteBatch.Draw(Image, Position1, Color.White);
             spriteBatch.Draw(Image, Position2, Color.White);
         }
-        #endregion
-
         #endregion
     }
 }

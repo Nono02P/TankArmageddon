@@ -15,6 +15,7 @@ namespace TankArmageddon
         #endregion
 
         #region Propriétés
+        public float Layer { get; set; } = 1f;
         public Gameplay Parent { get; private set; }
         public Spring[] Springs { get; private set; }
         public IBoundingBox BoundingBox { get; private set; }
@@ -105,7 +106,7 @@ namespace TankArmageddon
         {
             if (e.ExplosionCircle.Bottom > WaterLevel)
             {
-                Splash(e.ExplosionCircle.Location.ToVector2() / WaveWidth, e.Force * 10);
+                Splash(e.ExplosionCircle.Location.ToVector2() / WaveWidth, e.Force * 20);
             }
         }
         #endregion
@@ -167,18 +168,19 @@ namespace TankArmageddon
         {
             Color midnightBlue = new Color(0, 15, 40) * 0.9f;
             Color lightBlue = new Color(0.2f, 0.5f, 1f) * 0.8f;
-            
-            float bottom = Position.Y + Size.Y;
+            Camera cam = MainGame.Camera;
+            Vector3 offsetPos = cam.Position - cam.CameraOffset;
+            float bottom = Position.Y + offsetPos.Y + Size.Y;
 
-            float scale = (Position + Size).X / (Springs.Length - 1f); // be sure to use float division
+            float scale = (Position.X + offsetPos.X + Size.X) / (Springs.Length - 1f); // be sure to use float division
 
             for (int i = 0; i < Springs.Length - 1; i++)
             {
                 Spring s1 = Springs[i];
                 Spring s2 = Springs[i + 1];
                 
-                Vector2 p1 = new Vector2(i * scale, s1.Value);
-                Vector2 p2 = new Vector2((i + 1) * scale, s2.Value);
+                Vector2 p1 = new Vector2(i * scale, s1.Value - offsetPos.Y);
+                Vector2 p2 = new Vector2((i + 1) * scale, s2.Value - offsetPos.Y);
                 Vector2 p3 = new Vector2(p2.X, bottom);
                 Vector2 p4 = new Vector2(p1.X, bottom);
 

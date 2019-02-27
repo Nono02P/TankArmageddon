@@ -21,6 +21,7 @@ namespace TankArmageddon
         #region Sons
         public static SoundEffect sndShoot { get; private set; }
         public static SoundEffect sndExplosion { get; private set; }
+        public static SoundEffect sndSaintGrenada { get; private set; }
         #endregion
 
         #region Font
@@ -48,6 +49,7 @@ namespace TankArmageddon
             mscVictory = pContent.Load<Song>("cool");*/
             sndShoot = pContent.Load<SoundEffect>("_Game/Shoot");
             sndExplosion = pContent.Load<SoundEffect>("_Game/Explosion");
+            sndSaintGrenada = pContent.Load<SoundEffect>("_Game/Hallelujah");
             MainFont = pContent.Load<SpriteFont>("_Font/MainFont");
             GameBottomBar = pContent.Load<Texture2D>("_GUI/GameBottomBar");
             Cursor = pContent.Load<Texture2D>("_GUI/Cursor");

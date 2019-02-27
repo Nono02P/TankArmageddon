@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Timers;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using TankArmageddon.GUI;
 
 namespace TankArmageddon
@@ -22,19 +23,21 @@ namespace TankArmageddon
             public Tank Parent { get; private set; }
             public int Radius { get; protected set; }
             public int Force { get; protected set; }
+            public bool FocusCamera { get; set; }
             #endregion
 
             #region Constructeur
             public Grenada(Tank pShooter, Vector2 pPosition, Vector2 pVelocity, Action.eActions pBulletType) : base()
             {
                 #region Initialisation des valeurs
+                Layer += 0.2f;
                 Parent = pShooter;
                 switch (pBulletType)
                 {
                     case Action.eActions.Grenada:
                         Radius = 80;
                         Force = 25;
-                        _timerExplosion = 3;
+                        _timerExplosion = 5;
                         Image = AssetManager.Grenada;
                         Scale = Vector2.One * 0.1f;
                         break;
@@ -79,15 +82,18 @@ namespace TankArmageddon
                 _textBox.Text = (_timerExplosion - _counter).ToString();
                 if (_counter >= _timerExplosion)
                 {
-                    Explose();
+                    Die(true);
                 }
             }
             #endregion
 
-            #region Explosion
-            protected void Explose()
+            #region Fin de vie de la bullet
+            protected void Die(bool pWithExplosion)
             {
-                OnExplosion?.Invoke(this, new ExplosionEventArgs(Position, Radius, Force));
+                if (pWithExplosion)
+                {
+                    OnExplosion?.Invoke(this, new ExplosionEventArgs(Position, Radius, Force));
+                }
                 Remove = true;
                 _textBox.Remove = true;
                 OnExplosion -= Parent.Parent.Parent.CreateExplosion;
@@ -98,11 +104,26 @@ namespace TankArmageddon
             #region Update
             public override void Update(GameTime gameTime)
             {
+                #region Prend le focus de la caméra
+                if (FocusCamera)
+                {
+                    Camera cam = MainGame.Camera;
+                    if (cam.Position.Y < 0 && Position.Y - BoundingBox.Height > 0)
+                    {
+                        cam.SetCameraOnActor(this, HAlign.Center, VAlign.Bottom);
+                    }
+                    else
+                    {
+                        cam.SetCameraOnActor(this, true, Position.Y - BoundingBox.Height < 0 || cam.Position.Y < 0);
+                    }
+                }
+                #endregion
+
                 #region Application de la gravité
                 float vx = Velocity.X;
                 float vy = Velocity.Y;
 
-                vy += GRAVITY / 4;
+                vy += GRAVITY / 10;
                 Velocity = new Vector2(vx, vy);
                 #endregion
 
@@ -172,6 +193,13 @@ namespace TankArmageddon
 
                 #region Positionnement de la GUI
                 _textBox.Position = new Vector2(BoundingBox.Left, BoundingBox.Top - BoundingBox.Height);
+                #endregion
+
+                #region Sortie de map
+                if (Parent.Parent.Parent.OutOfMap(this))
+                {
+                    Die(false);
+                }
                 #endregion
             }
             #endregion

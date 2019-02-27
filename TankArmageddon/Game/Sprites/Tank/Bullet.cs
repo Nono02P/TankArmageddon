@@ -17,17 +17,13 @@ namespace TankArmageddon
             public Tank Parent { get; private set; }
             public int Radius { get; protected set; }
             public int Force { get; protected set; }
+            public bool FocusCamera { get; set; }
             #endregion
 
             #region Constructeur
-            protected Bullet(Tank pShooter) : base()
-            {
-                Parent = pShooter;
-                OnBulletExplosion += Parent.Parent.Parent.CreateExplosion;
-            }
-
             public Bullet(Tank pShooter, Texture2D pImage, Vector2 pPosition, Vector2 pVelocity, Action.eActions pBulletType, Vector2 pScale) : base(pImage)
             {
+                Layer += 0.2f;
                 Parent = pShooter;
                 Position = pPosition;
                 Velocity = pVelocity;
@@ -45,22 +41,22 @@ namespace TankArmageddon
                     case Action.eActions.iGrayBombshell:
                         ImgBox = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tank_bullet2.png").ImgBox;
                         Radius = 50;
-                        Force = 10;
+                        Force = 15;
                         break;
                     case Action.eActions.GoldBullet:
                         ImgBox = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tank_bullet5.png").ImgBox;
                         Radius = 40;
-                        Force = 5;
+                        Force = 4;
                         break;
                     case Action.eActions.GoldBombshell:
                         ImgBox = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tank_bullet6.png").ImgBox;
                         Radius = 50;
-                        Force = 20;
+                        Force = 25;
                         break;
                     case Action.eActions.GrayMissile:
                         ImgBox = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tank_bullet4.png").ImgBox;
                         Radius = 80;
-                        Force = 30;
+                        Force = 40;
                         break;
                     case Action.eActions.GreenMissile:
                         ImgBox = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tank_bullet3.png").ImgBox;
@@ -75,9 +71,46 @@ namespace TankArmageddon
             }
             #endregion
 
+            #region Fin de vie de la bullet
+            protected void Die(bool pWithExplosion, Vector2? pPosition = null)
+            {
+                if (pWithExplosion)
+                {
+                    OnBulletExplosion?.Invoke(this, new ExplosionEventArgs((Vector2)pPosition, Radius, Force));
+                }
+                Remove = true;
+                OnBulletExplosion -= Parent.Parent.Parent.CreateExplosion;
+            }
+            #endregion
+
+            #region Collisions
+            public override void TouchedBy(ICollisionnable collisionnable)
+            {
+                if (collisionnable is Drop || collisionnable is Tank || collisionnable is Mine)
+                {
+                    Die(true, Position);
+                }
+            }
+            #endregion
+
             #region Update
             public override void Update(GameTime gameTime)
             {
+                #region Prend le focus de la caméra
+                if (FocusCamera)
+                {
+                    Camera cam = MainGame.Camera;
+                    if (cam.Position.Y < 0 && Position.Y - BoundingBox.Height > 0)
+                    {
+                        cam.SetCameraOnActor(this, HAlign.Center, VAlign.Bottom);
+                    }
+                    else
+                    {
+                        cam.SetCameraOnActor(this, true, Position.Y - BoundingBox.Height < 0 || cam.Position.Y < 0);
+                    }
+                }
+                #endregion
+
                 #region Application de la gravité
                 float vx = Velocity.X;
                 float vy = Velocity.Y;
@@ -120,28 +153,13 @@ namespace TankArmageddon
                     Die(false, collisionPosition);
                 }
                 #endregion
-            }
-            #endregion
 
-            #region Fin de vie de la bullet
-            protected void Die(bool pWithExplosion, Vector2 pPosition)
-            {
-                if (pWithExplosion)
+                #region Sortie de map
+                if (Parent.Parent.Parent.OutOfMap(this))
                 {
-                    OnBulletExplosion?.Invoke(this, new ExplosionEventArgs(pPosition, Radius, Force));
+                    Die(false);
                 }
-                Remove = true;
-                OnBulletExplosion -= Parent.Parent.Parent.CreateExplosion;
-            }
-            #endregion
-
-            #region Collisions
-            public override void TouchedBy(ICollisionnable collisionnable)
-            {
-                if (collisionnable is Drop || collisionnable is Tank || collisionnable is Mine)
-                {
-                    Die(true, Position);
-                }
+                #endregion
             }
             #endregion
         }

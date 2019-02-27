@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PipelineBuildEvent xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <SourceFile>C:/Users/PierArn/Documents/Perso/Jeux Video/_GameJam/4_TankArmageddon/TankArmageddon/TankArmageddon/Content/_Game/Hallelujah.ogg</SourceFile>
+  <SourceTime>2019-02-27T01:26:24.8519393+01:00</SourceTime>
+  <DestFile>C:/Users/PierArn/Documents/Perso/Jeux Video/_GameJam/4_TankArmageddon/TankArmageddon/TankArmageddon/Content/bin/Windows/_Game/Hallelujah.xnb</DestFile>
+  <DestTime>2019-02-27T01:27:27.3826983+01:00</DestTime>
+  <Importer>OggImporter</Importer>
+  <ImporterTime>2017-03-01T16:05:36+01:00</ImporterTime>
+  <Processor>SoundEffectProcessor</Processor>
+  <ProcessorTime>2017-03-01T16:05:36+01:00</ProcessorTime>
+  <Parameters>
+    <Key>Quality</Key>
+    <Value>Best</Value>
+  </Parameters>
+  <Dependencies />
+  <BuildAsset />
+  <BuildOutput />
+</PipelineBuildEvent>

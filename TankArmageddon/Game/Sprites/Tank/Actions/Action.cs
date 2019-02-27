@@ -12,7 +12,7 @@
             GoldBombshell,
             GrayMissile,
             GreenMissile,
-            Mine,
+            iMine,
             Grenada,
             SaintGrenada,
             iTankBaseBall,
@@ -43,7 +43,7 @@
                 case eActions.GrayMissile:
                 case eActions.GreenMissile:
                     return eCategory.Bullet;
-                case eActions.Mine:
+                case eActions.iMine:
                     return eCategory.Mine;
                 case eActions.Grenada:
                 case eActions.SaintGrenada:

@@ -11,7 +11,8 @@ namespace TankArmageddon
         private class MultipleShootFromTank : NormalMove
         {
             #region Constantes
-            private float FORCE = 12;
+            private const byte FORCE = 12;
+            private const byte NB_SHOOT = 10;
             #endregion
 
             #region Variables privées
@@ -72,13 +73,13 @@ namespace TankArmageddon
                         }
                     }
                     // Si le nombre de tir est atteint
-                    if (_counter >= 15)
+                    if (_counter >= NB_SHOOT)
                     {
                         Parent.Parent.Parent.FinnishTour();
                         Enable = false;
                         _counter = 0;
-                        if (Parent.Parent.Inventory[Parent.SelectedAction] > 0)
-                            Parent.Parent.Inventory[Parent.SelectedAction]--;
+                        //if (Parent.Parent.Inventory[Parent.SelectedAction] > 0)
+                        //    Parent.Parent.Inventory[Parent.SelectedAction]--;
                     }
                 }
             }

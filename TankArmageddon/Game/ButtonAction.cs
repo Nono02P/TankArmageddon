@@ -63,7 +63,7 @@ namespace TankArmageddon
                     case Action.eActions.GreenMissile:
                         infoBulle = "Missile : Dégâts importants, portée moyenne.";
                         break;
-                    case Action.eActions.Mine:
+                    case Action.eActions.iMine:
                         infoBulle = "Mine : Dégâts moyens, faible portée.";
                         break;
                     case Action.eActions.Grenada:
@@ -136,7 +136,7 @@ namespace TankArmageddon
                     ImageDefault = AssetManager.TanksSpriteSheet;
                     ImageBoxDefault = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tank_bullet3.png").ImgBox;
                     break;
-                case Action.eActions.Mine:
+                case Action.eActions.iMine:
                     Scale = 0.40f;
                     ImageDefault = AssetManager.TanksSpriteSheet;
                     ImageBoxDefault = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tanks_mineOn.png").ImgBox;
@@ -167,13 +167,6 @@ namespace TankArmageddon
             ImageBoxPressed = ImageBoxDefault;
             //ImageBoxSelected = ImageBoxDefault;
             //Texture2D pImageHover, Texture2D pImagePressed
-        }
-        #endregion
-
-        #region Update
-        public override void Update(GameTime gameTime)
-        {
-            base.Update(gameTime);
         }
         #endregion
     }

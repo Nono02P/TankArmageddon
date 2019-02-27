@@ -32,18 +32,6 @@
 /processorParam:TextureFormat=Compressed
 /build:_Font/MainFont.spritefont
 
-#begin _Tiles/spritesheet_tiles.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:_Tiles/spritesheet_tiles.png
-
 #begin _GUI/Cursor.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -148,4 +136,10 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:_Game/crosshair184.png
+
+#begin _Game/Hallelujah.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:_Game/Hallelujah.ogg
 
