@@ -31,7 +31,7 @@ namespace TankArmageddon
     public enum eDirection : byte { Top, Right, Bottom, Left }
     public enum VAlign : byte { None, Top, Middle, Bottom }
     public enum HAlign : byte { None, Left, Center, Right }
-    public enum SceneType : byte { Menu, Gameplay, Gameover, Victory, }
+    public enum SceneType : byte { Menu, Gameplay, Gameover, Victory, HowToPlay, }
     #endregion
 
     public class MainGame : Game
@@ -43,6 +43,7 @@ namespace TankArmageddon
         public static Viewport Screen { get; private set; }
         public static Camera Camera { get; private set; }
         public static Scene CurrentScene { get; private set; }
+        public static bool ExitGame { get;  set; }
 
         public static readonly bool UsingMouse = true;
         public static readonly bool UsingKeyboard = true;
@@ -72,7 +73,7 @@ namespace TankArmageddon
             spriteBatch = new SpriteBatch(GraphicsDevice);
             primitiveBatch = new PrimitiveBatch(GraphicsDevice);
             AssetManager.Load(Content);
-            ChangeScene(SceneType.Gameplay);
+            ChangeScene(SceneType.Menu);
         }
         
         protected override void UnloadContent() { }
@@ -100,6 +101,9 @@ namespace TankArmageddon
                 case SceneType.Victory:
                     CurrentScene = new Victory();
                     break;
+                case SceneType.HowToPlay:
+                    CurrentScene = new HowToPlay();
+                    break;
                 default:
                     break;
             }
@@ -112,7 +116,7 @@ namespace TankArmageddon
         #region Update
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            if (ExitGame)
                 Exit();
 
             Input.Update();
@@ -137,7 +141,7 @@ namespace TankArmageddon
             primitiveBatch.Begin(PrimitiveType.TriangleList);
             CurrentScene.Draw(primitiveBatch, gameTime);
             primitiveBatch.End();
-
+            
             base.Draw(gameTime);
         }
         #endregion

@@ -67,7 +67,7 @@ namespace TankArmageddon.GUI
         }
         #endregion
 
-        #region Alignement de texte
+        #region Gestion du texte
         public void AlignText(HAlign pHAlign, VAlign pVAlign)
         {
             float x = 0;
@@ -102,6 +102,12 @@ namespace TankArmageddon.GUI
                     break;
             }
             TextBox.Position = new Vector2(x, y);
+        }
+
+
+        public void ApplyColor(Color pFrontColor, Color pBackColor)
+        {
+            TextBox.ApplyColor(pFrontColor, pBackColor);
         }
         #endregion
 

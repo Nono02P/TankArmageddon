@@ -72,14 +72,17 @@ namespace TankArmageddon
                     case Action.eActions.SaintGrenada:
                         infoBulle = "Sainte Grenade : Ne vous ratez pas, ça va faire mal !";
                         break;
-                    case Action.eActions.iTankBaseBall:
-                        infoBulle = "BaseTank : Transforme le canon en batte de baseball.";
-                        break;
+                    //case Action.eActions.iTankBaseBall:
+                    //    infoBulle = "BaseTank : Transforme le canon en batte de baseball.";
+                    //    break;
                     case Action.eActions.HelicoTank:
                         infoBulle = "Hélicotank : Transforme le tank en hélicoptère.";
                         break;
                     case Action.eActions.Drilling:
                         infoBulle = "Foreuse : Permet de creuser sous terre.";
+                        break;
+                    case Action.eActions.DropHealth:
+                        infoBulle = "Envoi des réparations à l'emplacement spécifié.";
                         break;
                     case Action.eActions.iDropFuel:
                         infoBulle = "Envoi un baril de carburant à l'emplacement spécifié.";
@@ -100,71 +103,102 @@ namespace TankArmageddon
             Parent = pParent;
             ActionType = pActionType;
             Size = new Vector2(30, 30);
-            ImageDefault = new Texture2D(MainGame.graphics.GraphicsDevice, (int)Size.X, (int)Size.Y);
+            ImageDefault = AssetManager.IconsSpriteSheet;
+            ImageSelected = ImageDefault;
             switch (ActionType)
             {
                 case Action.eActions.None:
+                    ImageDefault = new Texture2D(MainGame.graphics.GraphicsDevice, (int)Size.X, (int)Size.Y);
+                    ImageSelected = ImageDefault;
                     Size = new Vector2(MainGame.Screen.Width, Parent.MapSize.Y);
                     break;
                 case Action.eActions.iGrayBullet:
-                    Scale = 0.5f;
+                    ImageBoxDefault = new Rectangle(0, 0, 30, 30);
+                    ImageBoxSelected = new Rectangle(0, 30, 30, 30);
+                    /*Scale = 0.5f;
                     ImageDefault = AssetManager.TanksSpriteSheet;
-                    ImageBoxDefault = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tank_bullet1.png").ImgBox;
+                    ImageBoxDefault = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tank_bullet1.png").ImgBox;*/
                     break;
                 case Action.eActions.iGrayBombshell:
-                    Scale = 0.5f;
+                    ImageBoxDefault = new Rectangle(30, 0, 30, 30);
+                    ImageBoxSelected = new Rectangle(30, 30, 30, 30);
+                    /*Scale = 0.5f;
                     ImageDefault = AssetManager.TanksSpriteSheet;
-                    ImageBoxDefault = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tank_bullet2.png").ImgBox;
+                    ImageBoxDefault = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tank_bullet2.png").ImgBox;*/
                     break;
                 case Action.eActions.GoldBullet:
-                    Scale = 0.5f;
+                    ImageBoxDefault = new Rectangle(60, 0, 30, 30);
+                    ImageBoxSelected = new Rectangle(60, 30, 30, 30);
+                    /*Scale = 0.5f;
                     ImageDefault = AssetManager.TanksSpriteSheet;
-                    ImageBoxDefault = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tank_bullet5.png").ImgBox;
+                    ImageBoxDefault = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tank_bullet5.png").ImgBox;*/
                     break;
                 case Action.eActions.GoldBombshell:
-                    Scale = 0.5f;
+                    ImageBoxDefault = new Rectangle(90, 0, 30, 30);
+                    ImageBoxSelected = new Rectangle(90, 30, 30, 30);
+                    /*Scale = 0.5f;
                     ImageDefault = AssetManager.TanksSpriteSheet;
-                    ImageBoxDefault = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tank_bullet6.png").ImgBox;
+                    ImageBoxDefault = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tank_bullet6.png").ImgBox;*/
                     break;
                 case Action.eActions.GrayMissile:
-                    Scale = 0.5f;
+                    ImageBoxDefault = new Rectangle(120, 0, 30, 30);
+                    ImageBoxSelected = new Rectangle(120, 30, 30, 30);
+                    /*Scale = 0.5f;
                     ImageDefault = AssetManager.TanksSpriteSheet;
-                    ImageBoxDefault = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tank_bullet4.png").ImgBox;
+                    ImageBoxDefault = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tank_bullet4.png").ImgBox;*/
                     break;
                 case Action.eActions.GreenMissile:
-                    Scale = 0.5f;
+                    ImageBoxDefault = new Rectangle(150, 0, 30, 30);
+                    ImageBoxSelected = new Rectangle(150, 30, 30, 30);
+                    /*Scale = 0.5f;
                     ImageDefault = AssetManager.TanksSpriteSheet;
-                    ImageBoxDefault = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tank_bullet3.png").ImgBox;
+                    ImageBoxDefault = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tank_bullet3.png").ImgBox;*/
                     break;
                 case Action.eActions.iMine:
-                    Scale = 0.40f;
+                    ImageBoxDefault = new Rectangle(180, 0, 30, 30);
+                    ImageBoxSelected = new Rectangle(180, 30, 30, 30);
+                    /*Scale = 0.40f;
                     ImageDefault = AssetManager.TanksSpriteSheet;
-                    ImageBoxDefault = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tanks_mineOn.png").ImgBox;
+                    ImageBoxDefault = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tanks_mineOn.png").ImgBox;*/
                     break;
                 case Action.eActions.Grenada:
-                    Scale = 0.12f;
-                    ImageDefault = AssetManager.Grenada;
+                    ImageBoxDefault = new Rectangle(210, 0, 30, 30);
+                    ImageBoxSelected = new Rectangle(210, 30, 30, 30);
+                    /*Scale = 0.12f;
+                    ImageDefault = AssetManager.Grenada;*/
                     break;
                 case Action.eActions.SaintGrenada:
-                    Scale = 0.07f;
-                    ImageDefault = AssetManager.SaintGrenada;
+                    ImageBoxDefault = new Rectangle(240, 0, 30, 30);
+                    ImageBoxSelected = new Rectangle(240, 30, 30, 30);
+                    /*Scale = 0.07f;
+                    ImageDefault = AssetManager.SaintGrenada;*/
                     break;
-                case Action.eActions.iTankBaseBall:
-                    break;
+                //case Action.eActions.iTankBaseBall:
+                //    break;
                 case Action.eActions.HelicoTank:
+                    ImageBoxDefault = new Rectangle(270, 0, 30, 30);
+                    ImageBoxSelected = new Rectangle(270, 30, 30, 30);
                     break;
                 case Action.eActions.Drilling:
+                    ImageBoxDefault = new Rectangle(300, 0, 30, 30);
+                    ImageBoxSelected = new Rectangle(300, 30, 30, 30);
+                    break;
+                case Action.eActions.DropHealth:
+                    ImageBoxDefault = new Rectangle(330, 0, 30, 30);
+                    ImageBoxSelected = new Rectangle(330, 30, 30, 30);
                     break;
                 case Action.eActions.iDropFuel:
-                    Scale = 0.25f;
+                    ImageBoxDefault = new Rectangle(360, 0, 30, 30);
+                    ImageBoxSelected = new Rectangle(360, 30, 30, 30);
+                    /*Scale = 0.25f;
                     ImageDefault = AssetManager.TanksSpriteSheet;
-                    ImageBoxDefault = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tanks_barrelRed.png").ImgBox;
+                    ImageBoxDefault = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tanks_barrelRed.png").ImgBox;*/
                     break;
                 default:
                     break;
             }
-            ImageBoxHover = ImageBoxDefault;
-            ImageBoxPressed = ImageBoxDefault;
+            //ImageBoxHover = ImageBoxDefault;
+            //ImageBoxPressed = ImageBoxDefault;
             //ImageBoxSelected = ImageBoxDefault;
             //Texture2D pImageHover, Texture2D pImagePressed
         }

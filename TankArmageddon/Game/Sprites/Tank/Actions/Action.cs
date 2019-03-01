@@ -15,9 +15,10 @@
             iMine,
             Grenada,
             SaintGrenada,
-            iTankBaseBall,
+            //iTankBaseBall,
             HelicoTank,
             Drilling,
+            DropHealth,
             iDropFuel,
         }
 
@@ -49,6 +50,7 @@
                 case eActions.SaintGrenada:
                     return eCategory.Grenada;
                 case eActions.iDropFuel:
+                case eActions.DropHealth:
                     return eCategory.Drop;
                 default:
                     return eCategory.None;

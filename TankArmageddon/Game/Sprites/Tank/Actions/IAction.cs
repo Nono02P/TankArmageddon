@@ -12,6 +12,7 @@ namespace TankArmageddon
 
         #region Méthodes
         void Update(GameTime gameTime, ref float vx, ref float vy);
+        void BeforeActionChange();
         void EndOfTour();
         #endregion
     }

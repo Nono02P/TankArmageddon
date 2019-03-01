@@ -193,7 +193,7 @@ namespace TankArmageddon
             int primitiveCount = positionInBuffer / numVertsPerPrimitive;
 
             // submit the draw call to the graphics card
-            device.DrawUserPrimitives<VertexPositionColor>(primitiveType, vertices, 0,
+            device.DrawUserPrimitives(primitiveType, vertices, 0,
                 primitiveCount);
 
             // now that we've drawn, it's ok to reset positionInBuffer back to zero,

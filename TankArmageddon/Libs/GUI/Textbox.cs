@@ -237,28 +237,31 @@ namespace TankArmageddon.GUI
 
         #region Draw
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
-        {   
+        {
             base.Draw(spriteBatch, gameTime);
-            // Détermine les couleurs à afficher (Par défaut ---> Cliqué --> Selectionné --> Survolé)
-            Color colorBck = ColorBck_Default;      
-            Color color = Color_Default;
-            if (Clicked)
+            if (Visible)
             {
-                colorBck = ColorBck_Clicked;
-                color = Color_Clicked;
+                // Détermine les couleurs à afficher (Par défaut ---> Cliqué --> Selectionné --> Survolé)
+                Color colorBck = ColorBck_Default;
+                Color color = Color_Default;
+                if (Clicked)
+                {
+                    colorBck = ColorBck_Clicked;
+                    color = Color_Clicked;
+                }
+                else if (Selected)
+                {
+                    colorBck = ColorBck_Selected;
+                    color = Color_Selected;
+                }
+                else if (Hover)
+                {
+                    colorBck = ColorBck_Hover;
+                    color = Color_Hover;
+                }
+                MainGame.spriteBatch.DrawString(Font, Text, Position + PositionBck, colorBck, Angle, Origin, Scale, SpriteEffects.None, 1);
+                MainGame.spriteBatch.DrawString(Font, Text, Position, color, Angle, Origin, Scale, SpriteEffects.None, 0);
             }
-            else if (Selected)
-            {
-                colorBck = ColorBck_Selected;
-                color = Color_Selected;
-            }
-            else if (Hover)
-            {
-                colorBck = ColorBck_Hover;
-                color = Color_Hover;
-            }
-            MainGame.spriteBatch.DrawString(Font, Text, Position + PositionBck, colorBck, Angle, Origin, Scale, SpriteEffects.None, 1);
-            MainGame.spriteBatch.DrawString(Font, Text, Position, color, Angle, Origin, Scale, SpriteEffects.None, 0);
         }
         #endregion
         

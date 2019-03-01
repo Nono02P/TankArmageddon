@@ -171,7 +171,7 @@ namespace TankArmageddon
                     #endregion
 
                     #region Rebond sur le sol
-                    float hyp = (float)utils.MathDist(Vector2.Zero, Velocity) - FRICTION / 2;
+                    float hyp = (float)utils.MathDist(Vector2.Zero, Velocity) - FRICTION / 3;
 
                     if (hyp > 0)
                     {

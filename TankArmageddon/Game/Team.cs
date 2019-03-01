@@ -45,14 +45,14 @@ namespace TankArmageddon
             Inventory = new Dictionary<Action.eActions, int>();
             for (int i = 1; i < Enum.GetValues(typeof(Action.eActions)).GetLength(0); i++)
             {
-                Inventory.Add((Action.eActions)i, 0);
+                Inventory.Add((Action.eActions)i, 10);
             }
             Inventory[Action.eActions.Grenada] = 6;
             Inventory[Action.eActions.GoldBullet] = 2;
             Inventory[Action.eActions.iGrayBullet] = -1;
             Inventory[Action.eActions.iGrayBombshell] = -1;
             Inventory[Action.eActions.iMine] = -1;
-            Inventory[Action.eActions.iTankBaseBall] = -1;
+            //Inventory[Action.eActions.iTankBaseBall] = -1;
             Inventory[Action.eActions.iDropFuel] = -1;
 
             Parent = pParent;

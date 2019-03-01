@@ -167,42 +167,44 @@ namespace TankArmageddon
         /// </summary>
         private void RefreshActionClass()
         {
-                switch (SelectedAction)
-                {
-                    case Action.eActions.None:
-                        _action = _normalMove;
-                        break;
-                    case Action.eActions.iGrayBullet:
-                    case Action.eActions.GoldBullet:
-                        _action = _multipleShootFromTank;
-                        break;
-                    case Action.eActions.iGrayBombshell:
-                    case Action.eActions.GoldBombshell:
-                    case Action.eActions.Grenada:
-                    case Action.eActions.SaintGrenada:
-                        _action = _oneShootFromTank;
-                        break;
-                    case Action.eActions.GrayMissile:
-                    case Action.eActions.GreenMissile:
-                    case Action.eActions.iDropFuel:
-                        _action = _oneShootFromAirplane;
-                        break;
-                    case Action.eActions.iTankBaseBall:
-                        // TODO : Jouer l'animation
-                        break;
-                    case Action.eActions.HelicoTank:
-                        _action = _helicoTank;
-                        break;
-                    case Action.eActions.Drilling:
-                        // TODO : Jouer l'animation
-                        break;
-                    case Action.eActions.iMine:
-                        _action = _letOnFloor;
-                        break;
-                    default:
-                        break;
-                }
-                _action.Enable = true;
+            _action.BeforeActionChange();
+            switch (SelectedAction)
+            {
+                case Action.eActions.None:
+                    _action = _normalMove;
+                    break;
+                case Action.eActions.iGrayBullet:
+                case Action.eActions.GoldBullet:
+                    _action = _multipleShootFromTank;
+                    break;
+                case Action.eActions.iGrayBombshell:
+                case Action.eActions.GoldBombshell:
+                case Action.eActions.Grenada:
+                case Action.eActions.SaintGrenada:
+                    _action = _oneShootFromTank;
+                    break;
+                case Action.eActions.GrayMissile:
+                case Action.eActions.GreenMissile:
+                case Action.eActions.DropHealth:
+                case Action.eActions.iDropFuel:
+                    _action = _oneShootFromAirplane;
+                    break;
+                //case Action.eActions.iTankBaseBall:
+                    // TODO : Jouer l'animation
+                    //break;
+                case Action.eActions.HelicoTank:
+                    _action = _helicoTank;
+                    break;
+                case Action.eActions.Drilling:
+                    // TODO : Jouer l'animation
+                    break;
+                case Action.eActions.iMine:
+                    _action = _letOnFloor;
+                    break;
+                default:
+                    break;
+            }
+            _action.Enable = true;
         }
         #endregion
 
@@ -347,6 +349,10 @@ namespace TankArmageddon
             #endregion
 
             base.Update(gameTime);
+
+            #region Empêche de sortir de la map
+            Position = new Vector2(MathHelper.Clamp(Position.X, Origin.X, Parent.Parent.MapSize.X - Origin.X), Position.Y);
+            #endregion
 
             #region Collisions avec le sol et angle du tank
             Vector2 newPosLeft = new Vector2(BoundingBox.Left, BoundingBox.Bottom);

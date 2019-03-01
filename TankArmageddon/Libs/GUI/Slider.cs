@@ -63,7 +63,6 @@ namespace TankArmageddon.GUI
         }
         #endregion
 
-
         #region Méthodes
 
         private void RefreshSize()
@@ -95,9 +94,12 @@ namespace TankArmageddon.GUI
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             base.Draw(spriteBatch, gameTime);
-            Primitives2D.FillRectangle(MainGame.spriteBatch, Position, BarSize, Color.Gray, Angle);
-            Primitives2D.FillRectangle(MainGame.spriteBatch, Position, new Vector2((BarSize.X * Value)/100, BarSize.Y) , Color.Blue, Angle);
-            Primitives2D.FillRectangle(MainGame.spriteBatch, CursorPosition, CursorSize, Color.White, Angle);
+            if (Visible)
+            {
+                Primitives2D.FillRectangle(MainGame.spriteBatch, Position, BarSize, Color.Gray, Angle);
+                Primitives2D.FillRectangle(MainGame.spriteBatch, Position, new Vector2((BarSize.X * Value) / 100, BarSize.Y), Color.Blue, Angle);
+                Primitives2D.FillRectangle(MainGame.spriteBatch, CursorPosition, CursorSize, Color.White, Angle);
+            }
         }
         #endregion
 

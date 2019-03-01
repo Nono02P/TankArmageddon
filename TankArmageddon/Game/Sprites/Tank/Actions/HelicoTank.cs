@@ -45,6 +45,8 @@ namespace TankArmageddon
             }
             #endregion
 
+            public virtual void BeforeActionChange() { Enable = false; }
+
             #region Fin du tour
             public virtual void EndOfTour()
             {

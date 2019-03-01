@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="Game\ExplosionEventArgs.cs" />
     <Compile Include="Game\ButtonAction.cs" />
+    <Compile Include="Game\SceneManager\Scenes\HowToPlay.cs" />
     <Compile Include="Game\Spring.cs" />
     <Compile Include="Game\Sprites\Tank\Actions\Action.cs" />
     <Compile Include="Game\Water.cs" />

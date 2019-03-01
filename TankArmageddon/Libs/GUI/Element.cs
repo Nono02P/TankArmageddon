@@ -1,11 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 
 namespace TankArmageddon.GUI
 {
     #region Delegates
-    public delegate void onHover(Element pSender);
+    public delegate void onHover(Element pSender, EventArgs e);
     public delegate void onClick(Element pSender, ClickType Clicks);
     public delegate void onDblClick(Element pSender, ClickType Clicks);
     public delegate void onReleased(Element pSender, ClickType Clicks);
@@ -83,14 +84,15 @@ namespace TankArmageddon.GUI
         #endregion
 
         #region Constructeur
-        public Element(Vector2 pPosition, Vector2 pOrigin, Vector2 pSize, bool pVisible, float pScale = 1.0f)
+        public Element(Vector2 pPosition, Vector2 pOrigin, Vector2 pSize, bool pVisible, float pScale = 1.0f, bool pAddToScene = true)
         {
             Position = pPosition;
             Origin = pOrigin;
             Size = pSize;
             Scale = pScale;
             Visible = pVisible;
-            MainGame.CurrentScene.AddActor(this);
+            if (pAddToScene)
+                MainGame.CurrentScene.AddActor(this);
         }
         #endregion
 
@@ -117,7 +119,7 @@ namespace TankArmageddon.GUI
             Point mousePosition = new Point((int)(mouseState.Position.X + offsetPos.X), (int)(mouseState.Position.Y + offsetPos.Y));
             if (BoundingBox.Contains(mousePosition) && !Hover)
             {
-                OnHover?.Invoke(this);
+                OnHover?.Invoke(this, EventArgs.Empty);
             }
             Hover = BoundingBox.Contains(mousePosition);
             #endregion

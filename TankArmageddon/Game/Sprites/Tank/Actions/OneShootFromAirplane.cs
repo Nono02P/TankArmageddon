@@ -42,9 +42,20 @@ namespace TankArmageddon
                                 Bullet b = new Bullet(Parent, AssetManager.TanksSpriteSheet, new Vector2(ShootCursor.Position.X, 0), Vector2.Zero, Parent.SelectedAction, Vector2.One);
                                 break;
                             case Action.eCategory.Drop:
-                                Drop d = new Drop(Parent.Parent.Parent, Drop.eDropType.Fuel, AssetManager.TanksSpriteSheet, new Vector2(ShootCursor.Position.X, 0), Vector2.Zero, Vector2.One);
-                                d.Value = (int)Parent.Fuel / 2;
-                                Parent.Fuel -= d.Value;
+                                Drop d;
+                                switch (Parent.SelectedAction)
+                                {
+                                    case Action.eActions.DropHealth:
+                                        d = new Drop(Parent.Parent.Parent, Drop.eDropType.Health, AssetManager.TanksSpriteSheet, new Vector2(ShootCursor.Position.X, 0), Vector2.Zero, Vector2.One);
+                                        break;
+                                    case Action.eActions.iDropFuel:
+                                        d = new Drop(Parent.Parent.Parent, Drop.eDropType.Fuel, AssetManager.TanksSpriteSheet, new Vector2(ShootCursor.Position.X, 0), Vector2.Zero, Vector2.One);
+                                        d.Value = (int)Parent.Fuel / 2;
+                                        Parent.Fuel -= d.Value;
+                                        break;
+                                    default:
+                                        break;
+                                }
                                 break;
                             default:
                                 break;
@@ -56,6 +67,14 @@ namespace TankArmageddon
                         //    Parent.Parent.Inventory[Parent.SelectedAction]--;
                     }
                 }
+            }
+            #endregion
+
+            #region Avant le passage sur une autre action
+            public override void BeforeActionChange()
+            {
+                ShootCursor.Visible = false;
+                base.BeforeActionChange();                
             }
             #endregion
 

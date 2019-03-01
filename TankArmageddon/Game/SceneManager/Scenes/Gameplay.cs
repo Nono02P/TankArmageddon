@@ -83,6 +83,7 @@ namespace TankArmageddon
                 "Zethzer",
             };
         private Textbox _timerTextBox;
+        private Textbox _bigTimerTextBox;
         private List<Team> _teams;
         private Textbox _currentTeamTextBox;
         private Textbox _currentTankTextBox;
@@ -251,7 +252,15 @@ namespace TankArmageddon
             _cursorImage.SetOriginToCenter();
             GUIGroup.AddElement(_cursorImage);
 
-            SpriteFont font = AssetManager.MainFont;
+            Viewport screen = MainGame.Screen;
+            SpriteFont font = AssetManager.MenuFont;
+            _bigTimerTextBox = new Textbox(new Vector2((screen.Width - font.MeasureString("3").X) / 2, (screen.Height - font.MeasureString("3").Y) / 2), font, "3");
+            _bigTimerTextBox.ApplyColor(Color.Green, Color.Black);
+            _bigTimerTextBox.Visible = false;
+            _bigTimerTextBox.Layer += 0.2f;
+            GUIGroup.AddElement(_bigTimerTextBox);
+
+            font = AssetManager.MainFont;
             _timerTextBox = new Textbox(new Vector2(382, 725), font, TIME_BETWEEN_TOUR.ToString() + "sec");
             _timerTextBox.ApplyColor(Color.Red, Color.Black);
             GUIGroup.AddElement(_timerTextBox);
@@ -313,15 +322,15 @@ namespace TankArmageddon
         #endregion
 
         #region Boutons d'inventaire
-        public void OnButtonHover(Element pSender)
+        public void OnButtonHover(object sender, EventArgs e)
         {
-            ButtonAction btn = (ButtonAction)pSender;
+            ButtonAction btn = (ButtonAction)sender;
             _infoBulle.Text = btn.InfoBulle;
         }
 
         public void OnButtonClicked(Element pSender, ClickType Clicks)
         {
-            if (Clicks == ClickType.Left)
+            if (Clicks == ClickType.Left && _inTour)
             {
                 ButtonAction btn = (ButtonAction)pSender;
                 if (btn.Number != 0)
@@ -371,8 +380,14 @@ namespace TankArmageddon
         {
             _counter--;
             _timerTextBox.Text = _counter.ToString() + " sec";
+            if (_counter <= 3)
+            {
+                _bigTimerTextBox.Text = _counter.ToString();
+                _bigTimerTextBox.Visible = true;
+            }
             if (_counter <= 0)
             {
+                _bigTimerTextBox.Visible = false;
                 if (_inTour)
                 {
                     _counter = TIME_BETWEEN_TOUR;
@@ -381,6 +396,7 @@ namespace TankArmageddon
                     _currentTeamTextBox.Text = t.ToString();
                     _currentTeamTextBox.ApplyColor(t.TeamColor, Color.Black);
                     _timerTextBox.ApplyColor(Color.Red, Color.Black);
+                    _bigTimerTextBox.ApplyColor(Color.Green, Color.Black);
                     _currentTankTextBox.Text = t.Tanks[t.IndexTank].Name;
                     Drop d = new Drop(this, (Drop.eDropType)utils.MathRnd(0, 3), AssetManager.TanksSpriteSheet, new Vector2(utils.MathRnd(20, (int)MapSize.X - 20), 1), Vector2.Zero, Vector2.One);
                     while (!CanAppear(d))
@@ -389,12 +405,12 @@ namespace TankArmageddon
                     }
                     MainGame.Camera.SetCameraOnActor(d, true, false);
                     OnTourTimerEnd?.Invoke(this, EventArgs.Empty);
-                    //GC.Collect(2, GCCollectionMode.Optimized, false);
                 }
                 else
                 {
                     _counter = TIME_PER_TOUR;
                     _timerTextBox.ApplyColor(Color.Green, Color.Black);
+                    _bigTimerTextBox.ApplyColor(Color.Orange, Color.Black);
                     Team t = _teams[IndexTeam];
                     t.NextTank();
                     t.RefreshCameraOnSelection();
@@ -409,6 +425,7 @@ namespace TankArmageddon
         /// </summary>
         public void FinnishTour(bool pFinnishNow = false)
         {
+            _timerTextBox.ApplyColor(Color.Orange, Color.Black);
             if (!pFinnishNow)
             {
                 if (_counter > TIME_AFTER_ACTION)
@@ -679,6 +696,7 @@ namespace TankArmageddon
             for (int i = 0; i < 1; i++)
             {
                 _lootBag.Add(Action.eActions.SaintGrenada);
+                _lootBag.Add(Action.eActions.DropHealth);
             }
         }
 

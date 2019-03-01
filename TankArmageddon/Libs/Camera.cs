@@ -90,7 +90,7 @@ namespace TankArmageddon
             {
                 x = 0;
             }
-            if (LimitOnRight && x > CameraSize.X - Screen.Width)
+            if (LimitOnRight && x > CameraSize.X - Screen.Width && CameraSize.X > 0)
             {
                 x = CameraSize.X - Screen.Width;
             }
@@ -98,7 +98,7 @@ namespace TankArmageddon
             {
                 y = 0;
             }
-            if (LimitOnBottom && y > CameraSize.Y - Screen.Height)
+            if (LimitOnBottom && y > CameraSize.Y - Screen.Height && CameraSize.Y > 0)
             {
                 y = CameraSize.Y - Screen.Height;
             }

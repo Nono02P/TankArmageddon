@@ -13,6 +13,8 @@ namespace TankArmageddon.GUI
         Color ColorBck_Selected { get; set; }
         Color Color_Default { get; set; }
         Color ColorBck_Default { get; set; }
+
+        void ApplyColor(Color pFrontColor, Color pBackColor);
     }
 
     /// <summary>
@@ -24,12 +26,12 @@ namespace TankArmageddon.GUI
         private int _currentSelection;
         private Color _selectedTextColor = Color.Yellow;
         private Color _selectedTextColorBck = Color.Red;
-        private Color _unselectedTextColor = Color.Gray;
-        private Color _unselectedTextColorBck = Color.Red;
+        private Color _unselectedTextColor = Color.Red;
+        private Color _unselectedTextColorBck = Color.Gray;
         #endregion
 
         #region Propriétés
-        public int CurrentSelection { get { return _currentSelection; } set { _currentSelection = (Elements.Count + value) % Elements.Count; ; } }
+        public int CurrentSelection { get { return _currentSelection; } set { _currentSelection = (Elements.Count + value) % Elements.Count; RefreshSelection(); } }
         public Color SelectedTextColor { get { return _selectedTextColor; } set { _selectedTextColor = value; RefreshColors(); } }
         public Color SelectedTextColorBck { get { return _selectedTextColorBck; } set { _selectedTextColorBck = value; RefreshColors(); } }
         public Color UnselectedTextColor { get { return _unselectedTextColor; } set { _unselectedTextColor = value; RefreshColors(); } }
@@ -69,28 +71,9 @@ namespace TankArmageddon.GUI
             // Voir dans le setter de CurrentSelection.
             CurrentSelection = CurrentSelection; 
         }
-        #endregion
 
-        #region Gestion des couleurs
-
-        private void RefreshColors()
+        private void RefreshSelection()
         {
-            for (int i = 0; i < Elements.Count; i++)
-            {
-                IIntegrableMenu integrable = (IIntegrableMenu)Elements[i];
-                integrable.Color_Selected = SelectedTextColor;
-                integrable.ColorBck_Selected = SelectedTextColorBck;
-                integrable.Color_Default = UnselectedTextColor;
-                integrable.ColorBck_Default = UnselectedTextColorBck;
-            }
-        }
-        #endregion
-
-        #region Update
-        public override void Update(GameTime gameTime)
-        {
-            base.Update(gameTime);
-
             if (Elements.Count > 0)
             {
                 for (int i = 0; i < Elements.Count; i++)
@@ -99,6 +82,26 @@ namespace TankArmageddon.GUI
                     e.Selected = (i == CurrentSelection);
                 }
             }
+        }
+        #endregion
+
+        #region Gestion des couleurs
+        public void RefreshColors()
+        {
+            for (int i = 0; i < Elements.Count; i++)
+            {
+                IIntegrableMenu integrable = (IIntegrableMenu)Elements[i];
+                integrable.ApplyColor(UnselectedTextColor, UnselectedTextColorBck);
+                integrable.Color_Selected = SelectedTextColor;
+                integrable.ColorBck_Selected = SelectedTextColorBck;
+            }
+        }
+        #endregion
+
+        #region Update
+        public override void Update(GameTime gameTime)
+        {
+            base.Update(gameTime);
         }
         #endregion
 

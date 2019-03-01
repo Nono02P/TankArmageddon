@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PipelineBuildEvent xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <SourceFile>C:/Users/PierArn/Documents/Perso/Jeux Video/_GameJam/4_TankArmageddon/TankArmageddon/TankArmageddon/Content/_Font/MenuFont.spritefont</SourceFile>
+  <SourceTime>2019-03-01T15:48:56.9740984+01:00</SourceTime>
+  <DestFile>C:/Users/PierArn/Documents/Perso/Jeux Video/_GameJam/4_TankArmageddon/TankArmageddon/TankArmageddon/Content/bin/Windows/_Font/MenuFont.xnb</DestFile>
+  <DestTime>2019-03-01T15:49:52.2692611+01:00</DestTime>
+  <Importer>FontDescriptionImporter</Importer>
+  <ImporterTime>2017-03-01T16:05:36+01:00</ImporterTime>
+  <Processor>FontDescriptionProcessor</Processor>
+  <ProcessorTime>2017-03-01T16:05:36+01:00</ProcessorTime>
+  <Parameters>
+    <Key>PremultiplyAlpha</Key>
+    <Value>True</Value>
+  </Parameters>
+  <Parameters>
+    <Key>TextureFormat</Key>
+    <Value>Compressed</Value>
+  </Parameters>
+  <Dependencies />
+  <BuildAsset />
+  <BuildOutput />
+</PipelineBuildEvent>
