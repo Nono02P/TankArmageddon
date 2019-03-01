@@ -14,7 +14,7 @@ namespace TankArmageddon
         X2,
     }
 
-    static class Input
+    static public class Input
     {
         private class Click : InputElement
         {

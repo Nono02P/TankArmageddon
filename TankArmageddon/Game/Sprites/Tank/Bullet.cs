@@ -111,12 +111,21 @@ namespace TankArmageddon
                 }
                 #endregion
 
+                Gameplay g = Parent.Parent.Parent;
+
                 #region Application de la gravité
                 float vx = Velocity.X;
                 float vy = Velocity.Y;
                 vy += GRAVITY / 20;
-
                 Velocity = new Vector2(vx, vy);
+
+                // Dans l'eau
+                if (Position.Y > g.WaterLevel)
+                {
+                    Velocity.Normalize();
+                    if (Position.Y > g.WaterLevel + g.WaterHeight)
+                        Die(false);
+                }
                 #endregion
 
                 #region Angle de la bullet en fonction de sa direction
@@ -130,8 +139,6 @@ namespace TankArmageddon
                 base.Update(gameTime);
 
                 #region Collisions avec le sol
-                Gameplay g = Parent.Parent.Parent;
-
                 bool collision = false;
                 Vector2 normalised = Vector2.Normalize(Velocity);
                 Vector2 collisionPosition = previousPosition;

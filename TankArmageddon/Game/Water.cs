@@ -9,6 +9,7 @@ namespace TankArmageddon
         #region Variables privées
         private Vector2 _position;
         private Vector2 _size;
+        private int _maxBottom;
         private float _tension;
         private float _dampening;
         private List<Particle> _particles;
@@ -72,6 +73,7 @@ namespace TankArmageddon
         {
             Parent = pParent;
             WaveWidth = pWaveWidth;
+            _maxBottom = MainGame.Screen.Height;
             int numberOfSprings = (int)pSize.X / WaveWidth;
             Springs = new Spring[numberOfSprings];
             Position = pPosition;
@@ -171,7 +173,7 @@ namespace TankArmageddon
             Camera cam = MainGame.Camera;
             Vector3 offsetPos = cam.Position - cam.CameraOffset;
             float bottom = Position.Y + offsetPos.Y + Size.Y;
-
+            bottom = MathHelper.Clamp(bottom, 0, _maxBottom);
             float scale = (Position.X + offsetPos.X + Size.X) / (Springs.Length - 1f); // be sure to use float division
 
             for (int i = 0; i < Springs.Length - 1; i++)

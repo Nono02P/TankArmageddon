@@ -21,6 +21,7 @@ namespace TankArmageddon
         private bool _parachute = true;
         private Image _imgParachute;
         private bool _onFloor = false;
+        private bool _disableCCD = false;
         private eDirection _direction = eDirection.Right;
         private float _minCannonAngle = MathHelper.ToRadians(-90);
         private float _maxCannonAngle = MathHelper.ToRadians(0);
@@ -163,7 +164,7 @@ namespace TankArmageddon
 
         #region Gestion des actions en fonction de l'item sélectionné
         /// <summary>
-        /// Sélectionne la classe à utiliser en fonction du type d'action.
+        /// Sélectionne la public classe à utiliser en fonction du type d'action.
         /// </summary>
         private void RefreshActionClass()
         {
@@ -257,6 +258,8 @@ namespace TankArmageddon
         {
             _action.BlockAction = false;
             _action.EndOfTour();
+            SelectedAction = Action.eActions.None;
+            Parent.Parent.RefreshActionButtonSelection(SelectedAction);
         }
         #endregion
 
@@ -291,6 +294,8 @@ namespace TankArmageddon
             }
             #endregion
 
+            Gameplay g = Parent.Parent;
+
             #region Gestion de la gravité en fonction du parachute
             // Applique la gravité uniquement si le tank ne touche pas le sol (permet au tank d'éviter de passer au travers le sol qui n'est pas totalement détruit)
             if (Parachute && !_onFloor)
@@ -300,6 +305,14 @@ namespace TankArmageddon
             else if (!_onFloor)
             {
                 vy += GRAVITY;
+            }
+
+            // Dans l'eau
+            if (Position.Y > g.WaterLevel)
+            {
+                Velocity.Normalize();
+                if (Position.Y > g.WaterLevel + g.WaterHeight)
+                    Die(false);
             }
             #endregion
 
@@ -359,9 +372,8 @@ namespace TankArmageddon
             Vector2 newPosMiddle = new Vector2(BoundingBox.Center.X, BoundingBox.Bottom);
             Vector2 newPosRight = new Vector2(BoundingBox.Right, BoundingBox.Bottom);
 
-            Gameplay g = Parent.Parent;
-
             bool collision = false;
+            
             Vector2 normalised = Vector2.Normalize(Velocity);
             Vector2 collisionPosLeft = previousPosLeft;
             Vector2 collisionPosMiddle = previousPosMiddle;
@@ -378,11 +390,18 @@ namespace TankArmageddon
                     collisionPosLeft -= normalised;
                     collisionPosRight -= normalised;
                 }
-            } while (!collision && 
+            } while (!collision &&
             Math.Abs((collisionPosMiddle - newPosMiddle).X) >= Math.Abs(normalised.X) && Math.Abs((collisionPosMiddle - newPosMiddle).Y) >= Math.Abs(normalised.Y) &&
             Math.Abs((collisionPosLeft - newPosLeft).X) >= Math.Abs(normalised.X) && Math.Abs((collisionPosLeft - newPosLeft).Y) >= Math.Abs(normalised.Y) &&
             Math.Abs((collisionPosRight - newPosRight).X) >= Math.Abs(normalised.X) && Math.Abs((collisionPosRight - newPosRight).Y) >= Math.Abs(normalised.Y));
             
+            // Désactivation de la Continuous Collision Detection (pour permettre le décollage de l'hélicotank)
+            if (_disableCCD)
+            {
+                Vector2 p = new Vector2(BoundingBox.Center.X, BoundingBox.Bottom);
+                collision = Parent.Parent.IsSolid(p);
+            }
+
             if (collision)
             {
                 Parachute = false;
@@ -440,8 +459,8 @@ namespace TankArmageddon
             _positionCannon = new Vector2(Position.X + x, Position.Y - y);
             #endregion
 
-            #region Mort du tank par chute ou vie à 0
-            if (Position.Y > g.MapSize.Y || Life <= 0)
+            #region Mort du tank si vie à 0
+            if (Life <= 0)
             {
                 Die(Life <= 0);
             }

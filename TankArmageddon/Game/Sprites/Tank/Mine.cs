@@ -106,6 +106,13 @@ namespace TankArmageddon
             }
             #endregion
 
+            #region 
+            private void Die(bool pWithExplosion)
+            {
+                
+            }
+            #endregion
+
             #region BoundingBox
             public override void RefreshBoundingBox()
             {
@@ -116,13 +123,23 @@ namespace TankArmageddon
             #region Update
             public override void Update(GameTime gameTime)
             {
+                Gameplay g = Parent.Parent.Parent;
+
+                #region Gestion de la gravité
                 float vx = Velocity.X;
                 float vy = Velocity.Y;
 
-                #region Gestion de la gravité
                 if (!_onFloor)
                 {
                     vy = GRAVITY;
+                }
+
+                // Dans l'eau
+                if (Position.Y > g.WaterLevel)
+                {
+                    Velocity.Normalize();
+                    if (Position.Y > g.WaterLevel + g.WaterHeight)
+                        Die(false);
                 }
                 #endregion
 
@@ -141,7 +158,6 @@ namespace TankArmageddon
                 base.Update(gameTime);
 
                 #region Collision avec le sol
-                Gameplay g = Parent.Parent.Parent;
                 Vector2 newPosLeft = new Vector2(Position.X - ImgBox.Value.Width / 2, Position.Y);
                 Vector2 newPosMiddle = Position;
                 Vector2 newPosRight = new Vector2(Position.X + ImgBox.Value.Width / 2, Position.Y);

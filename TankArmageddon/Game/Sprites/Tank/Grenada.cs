@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Timers;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using TankArmageddon.GUI;
 
 namespace TankArmageddon
@@ -87,7 +86,7 @@ namespace TankArmageddon
             }
             #endregion
 
-            #region Fin de vie de la bullet
+            #region Fin de vie de la grenade
             protected void Die(bool pWithExplosion)
             {
                 if (pWithExplosion)
@@ -119,12 +118,22 @@ namespace TankArmageddon
                 }
                 #endregion
 
+                Gameplay g = Parent.Parent.Parent;
+
                 #region Application de la gravité
                 float vx = Velocity.X;
                 float vy = Velocity.Y;
 
                 vy += GRAVITY / 10;
                 Velocity = new Vector2(vx, vy);
+
+                // Dans l'eau
+                if (Position.Y > g.WaterLevel)
+                {
+                    Velocity.Normalize();
+                    if (Position.Y > g.WaterLevel + g.WaterHeight)
+                        Die(false);
+                }
                 #endregion
 
                 #region Récupération de l'ancienne position pour vérifier les collisions
@@ -134,8 +143,6 @@ namespace TankArmageddon
                 base.Update(gameTime);
 
                 #region Collision avec le sol
-                Gameplay g = Parent.Parent.Parent;
-
                 bool collision = false;
                 Vector2 normalised = Vector2.Normalize(Velocity);
                 Vector2 collisionPosition = previousPosition;

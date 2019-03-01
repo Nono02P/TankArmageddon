@@ -15,7 +15,7 @@ namespace TankArmageddon
             #region Propriétés
             public Tank Parent { get; private set; }
             public bool Enable { get; set; }
-            public bool BlockAction { get => _blockAction; set { _blockAction = value; Parent.Parent.Inventory[Parent.SelectedAction]--; Parent.Parent.Parent.RefreshActionButton(); } }
+            public bool BlockAction { get => _blockAction; set { _blockAction = value; Parent.Parent.Inventory[Parent.SelectedAction]--; Parent.Parent.Parent.RefreshActionButtonInventory(); } }
             #endregion
 
             #region Constructeur
@@ -40,6 +40,12 @@ namespace TankArmageddon
                     vx += (float)(Math.Sin(Parent.Angle) * SPEED);
                     vy -= (float)(Math.Cos(Parent.Angle) * SPEED);
                     Parent.Fuel -= FUEL_CONSUMPTION;
+                    // Permet de désactiver la Continuous Collision Detection au moment du décollage.
+                    Parent._disableCCD = true;
+                }
+                else
+                {
+                    Parent._disableCCD = false;
                 }
                 Parent.Parent.RefreshCameraOnSelection();
             }

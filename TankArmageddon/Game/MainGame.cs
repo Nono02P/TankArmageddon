@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 
 namespace TankArmageddon
 {
@@ -44,6 +43,10 @@ namespace TankArmageddon
         public static Camera Camera { get; private set; }
         public static Scene CurrentScene { get; private set; }
         public static bool ExitGame { get;  set; }
+        public static string Winner { get;  set; }
+
+        public static int NumberOfTeam { get; set; } = 2;
+        public static int NumberOfTankPerTeam { get; set; } = 5;
 
         public static readonly bool UsingMouse = true;
         public static readonly bool UsingKeyboard = true;
@@ -56,9 +59,11 @@ namespace TankArmageddon
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+            int screenWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+            int screenHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
             graphics.PreferredBackBufferWidth = 1366;
             graphics.PreferredBackBufferHeight = 768;
-            //graphics.IsFullScreen = true;
+            graphics.IsFullScreen = screenWidth == graphics.PreferredBackBufferWidth && screenHeight == graphics.PreferredBackBufferHeight;
         }
         #endregion
 

@@ -16,8 +16,6 @@ namespace TankArmageddon
         private const int TIME_PER_TOUR = 60;
         private const int TIME_AFTER_ACTION = 10;
         private const int TIME_BETWEEN_TOUR = 10;
-        private const byte NUMBER_OF_TEAMS = 4;
-        private const byte NUMBER_OF_TANK_PER_TEAM = 5;
         #endregion
 
         #region Evènements
@@ -101,12 +99,14 @@ namespace TankArmageddon
         private List<Action.eActions> _lootBag;
         private SoundEffect _sndexplosion;
         private Water _water;
+        private bool _gameFinnished;
         #endregion
 
         #region Propriétés
         public Group GUIGroup { get; private set; }
         public GroupSelection GUIGroupButtons { get; private set; }
         public int WaterLevel { get { return (int)(MapSize.Y - MapSize.Y * 0.05f); } }
+        public int WaterHeight { get; private set; }
         public Vector2 MapSize { get; private set; } = new Vector2(4096, MainGame.Screen.Height - AssetManager.GameBottomBar.Height);
         public byte[] MapData { get; private set; }
         public Color[] MapColors { get; private set; }
@@ -119,7 +119,7 @@ namespace TankArmageddon
                 {
                     _indexTeam = value % _teams.Count;
                     _teams[_indexTeam].RefreshCameraOnSelection();
-                    RefreshActionButton();
+                    RefreshActionButtonInventory();
                 }
             }
         }
@@ -219,7 +219,8 @@ namespace TankArmageddon
 
             #region Création de l'eau
             Vector2 p = new Vector2(0, WaterLevel);
-            Vector2 s = new Vector2(MapSize.X, MapSize.Y - p.Y);
+            WaterHeight = (int)(MapSize - p).Y;
+            Vector2 s = new Vector2(MapSize.X, WaterHeight);
             _water = new Water(this, p, s);
             #endregion
 
@@ -255,7 +256,7 @@ namespace TankArmageddon
             Viewport screen = MainGame.Screen;
             SpriteFont font = AssetManager.MenuFont;
             _bigTimerTextBox = new Textbox(new Vector2((screen.Width - font.MeasureString("3").X) / 2, (screen.Height - font.MeasureString("3").Y) / 2), font, "3");
-            _bigTimerTextBox.ApplyColor(Color.Green, Color.Black);
+            _bigTimerTextBox.ApplyColor(Color.White, Color.Black);
             _bigTimerTextBox.Visible = false;
             _bigTimerTextBox.Layer += 0.2f;
             GUIGroup.AddElement(_bigTimerTextBox);
@@ -304,9 +305,11 @@ namespace TankArmageddon
             _teams = new List<Team>();
             Texture2D img = AssetManager.TanksSpriteSheet;
             Team t;
-            for (byte i = 0; i < NUMBER_OF_TEAMS; i++)
+            int numberOfTeam = MainGame.NumberOfTeam;
+            int numberOfTankPerTeam = MainGame.NumberOfTankPerTeam;
+            for (byte i = 0; i < numberOfTeam; i++)
             {
-                t = new Team(this, img, NUMBER_OF_TANK_PER_TEAM, i);
+                t = new Team(this, img, numberOfTankPerTeam, i);
                 _teams.Add(t);
                 t.OnTankSelectionChange += OnTankSelectionChange;
             }
@@ -314,10 +317,16 @@ namespace TankArmageddon
             t.RefreshCameraOnSelection();
             _currentTeamTextBox.ApplyColor(t.TeamColor, Color.Black);
             _currentTankTextBox.Text = t.Tanks[t.IndexTank].Name;
-            RefreshActionButton();
+            RefreshActionButtonInventory();
             #endregion
 
             base.Load();
+        }
+
+        public override void UnLoad()
+        {
+            _timerSecond.Elapsed -= OnTimerElapsed;
+            base.UnLoad();
         }
         #endregion
 
@@ -341,7 +350,15 @@ namespace TankArmageddon
             }
         }
 
-        public void RefreshActionButton()
+        public void RefreshActionButtonSelection(Action.eActions action)
+        {
+            GUIGroupButtons.CurrentSelection = GUIGroupButtons.Elements.FindIndex(delegate (Element elm)
+            {
+                return ((ButtonAction)elm).ActionType == action;
+            });
+        }
+
+        public void RefreshActionButtonInventory()
         {
             int nbBtn = GUIGroupButtons.Elements.Count;
             Dictionary<Action.eActions, int> inv = _teams[_indexTeam].Inventory;
@@ -396,7 +413,7 @@ namespace TankArmageddon
                     _currentTeamTextBox.Text = t.ToString();
                     _currentTeamTextBox.ApplyColor(t.TeamColor, Color.Black);
                     _timerTextBox.ApplyColor(Color.Red, Color.Black);
-                    _bigTimerTextBox.ApplyColor(Color.Green, Color.Black);
+                    _bigTimerTextBox.ApplyColor(Color.White, Color.Black);
                     _currentTankTextBox.Text = t.Tanks[t.IndexTank].Name;
                     Drop d = new Drop(this, (Drop.eDropType)utils.MathRnd(0, 3), AssetManager.TanksSpriteSheet, new Vector2(utils.MathRnd(20, (int)MapSize.X - 20), 1), Vector2.Zero, Vector2.One);
                     while (!CanAppear(d))
@@ -433,7 +450,7 @@ namespace TankArmageddon
             }
             else
             {
-                _counter = 1;
+                _counter = 3;
             }
         }
         #endregion
@@ -780,6 +797,22 @@ namespace TankArmageddon
         }
         #endregion
 
+        #region Timer de fin de partie
+        private void TimerEnd_OnElapsed(object sender, ElapsedEventArgs e)
+        {
+            if (_teams.Count == 1)
+            {
+                MainGame.Winner = _teams[0].ToString();
+                MainGame.ChangeScene(SceneType.Victory);
+            }
+            else
+            {
+                MainGame.ChangeScene(SceneType.Gameover);
+            }
+            ((Timer)sender).Elapsed -= TimerEnd_OnElapsed;
+        }
+        #endregion
+
         #region Update
         public override void Update(GameTime gameTime)
         {
@@ -819,7 +852,17 @@ namespace TankArmageddon
 
             _teams.RemoveAll(t => t.Remove);
             #endregion
-            
+
+            #region Victoire / Défaite
+            if (_teams.Count < 2 && !_gameFinnished)
+            {
+                _gameFinnished = true;
+                Timer timerEnd = new Timer(3000);
+                timerEnd.Enabled = true;
+                timerEnd.Elapsed += TimerEnd_OnElapsed;
+            }
+            #endregion
+
             base.Update(gameTime);
         }
         #endregion

@@ -4,7 +4,7 @@ namespace TankArmageddon
 {
 #if WINDOWS || LINUX
     /// <summary>
-    /// The main class.
+    /// The main public class.
     /// </summary>
     public static class Program
     {

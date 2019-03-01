@@ -9,7 +9,7 @@ using System.Xml.Serialization;
 
 namespace TankArmageddon
 {
-    class AssetManager
+    public class AssetManager
     {
         #region Musiques
         public static Song mscMenu { get; private set; }
@@ -32,7 +32,7 @@ namespace TankArmageddon
         #region Textures
         public static Texture2D Menu { get; private set; }
         public static Texture2D Victory { get; private set; }
-        public static Texture2D Defeat { get; private set; }
+        public static Texture2D Gameover { get; private set; }
         public static Texture2D GameBottomBar { get; private set; }
         public static Texture2D Cursor { get; private set; }
         public static Texture2D Crosshair { get; private set; }
@@ -51,8 +51,8 @@ namespace TankArmageddon
             #region Musiques
             mscMenu = pContent.Load<Song>("_Musics/Heros");
             mscGameplay = pContent.Load<Song>("_Musics/Grandioso");
-            //mscVictory = pContent.Load<Song>("cool");
-            //mscGameover = pContent.Load<Song>("cool");
+            mscVictory = pContent.Load<Song>("_Musics/Heros");
+            mscGameover = pContent.Load<Song>("_Musics/Heros");
             #endregion
 
             #region Sons
@@ -68,7 +68,7 @@ namespace TankArmageddon
 
             #region Textures
             Menu = pContent.Load<Texture2D>("_Background/Menu");
-            Defeat = pContent.Load<Texture2D>("_Background/Defeat");
+            Gameover = pContent.Load<Texture2D>("_Background/Defeat");
             Victory = pContent.Load<Texture2D>("_Background/Victory");
             GameBottomBar = pContent.Load<Texture2D>("_GUI/GameBottomBar");
             Cursor = pContent.Load<Texture2D>("_GUI/Cursor");

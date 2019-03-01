@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace TankArmageddon
 {
-    static class MusicManager
+    static public class MusicManager
     {
         #region Variables privées
         private static int _currentMusic;

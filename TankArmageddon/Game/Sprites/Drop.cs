@@ -35,7 +35,7 @@ namespace TankArmageddon
         public Gameplay Parent { get; private set; }
         public eDropType DropType { get; private set; }
         public int Value { get; set; } = utils.MathRnd(50, 100);
-        public bool Parachute { get => _parachute; private set { _parachute = value; _imgParachute.Visible = value; } }
+        public bool Parachute { get => _parachute; private set { if (_parachute != value) { _parachute = value; _imgParachute.Visible = value; Parent.FinnishTour(true); } } }
         #endregion
 
         #region Constructeur
@@ -95,8 +95,12 @@ namespace TankArmageddon
         {
             if (collisionnable is Tank)
             {
+                if (Parachute)
+                {
+                    Parachute = false;
+                }
                 Tank t = (Tank)collisionnable;
-                Parent.RefreshActionButton();
+                Parent.RefreshActionButtonInventory();
                 Remove = true;
                 switch (DropType)
                 {

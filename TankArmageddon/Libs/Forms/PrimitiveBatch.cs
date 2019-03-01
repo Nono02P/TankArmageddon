@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace TankArmageddon
 {
-    // PrimitiveBatch is a class that handles efficient rendering automatically for its
+    // PrimitiveBatch is a public class that handles efficient rendering automatically for its
     // users, in a similar way to SpriteBatch. PrimitiveBatch can render lines, points,
     // and triangles to the screen. In this sample, it is used to draw a spacewars
     // retro scene.

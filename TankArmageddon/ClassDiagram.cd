@@ -1,76 +1,76 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Class Name="TankArmageddon.AssetManager" Collapsed="true">
+<public classDiagram MajorVersion="1" MinorVersion="1">
+  <public class Name="TankArmageddon.AssetManager" Collapsed="true">
     <Position X="13.75" Y="4" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAiAAIAQAAAAAIAQBAEAgIAIAQAAAAAQACICIAAAA=</HashCode>
       <FileName>Assets\AssetManager.cs</FileName>
     </TypeIdentifier>
-  </Class>
-  <Class Name="TankArmageddon.XmlTextureAtlas" Collapsed="true">
+  </public class>
+  <public class Name="TankArmageddon.XmlTextureAtlas" Collapsed="true">
     <Position X="13.75" Y="7" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Assets\XmlTextureAtlas.cs</FileName>
     </TypeIdentifier>
-  </Class>
-  <Class Name="TankArmageddon.ButtonAction" Collapsed="true">
+  </public class>
+  <public class Name="TankArmageddon.ButtonAction" Collapsed="true">
     <Position X="2.75" Y="6.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAQAAAAAAAAAAAAAAEEAQAAAAAAAEAAAAAAAAABAAAA=</HashCode>
       <FileName>Game\ButtonAction.cs</FileName>
     </TypeIdentifier>
-  </Class>
-  <Class Name="TankArmageddon.ExplosionEventArgs" Collapsed="true">
+  </public class>
+  <public class Name="TankArmageddon.ExplosionEventArgs" Collapsed="true">
     <Position X="19" Y="4" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAA=</HashCode>
       <FileName>Game\ExplosionEventArgs.cs</FileName>
     </TypeIdentifier>
-  </Class>
-  <Class Name="TankArmageddon.MainGame" Collapsed="true">
+  </public class>
+  <public class Name="TankArmageddon.MainGame" Collapsed="true">
     <Position X="15.5" Y="5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAQCEEAAAAABAgABBAAIAAAAACAAAQgAAAAAAAAAAgQ=</HashCode>
       <FileName>Game\MainGame.cs</FileName>
     </TypeIdentifier>
-  </Class>
-  <Class Name="TankArmageddon.Scene" Collapsed="true">
+  </public class>
+  <public class Name="TankArmageddon.Scene" Collapsed="true">
     <Position X="3.75" Y="8" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AARAhACAAAAAAgAgAAAAAAAAIAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Game\SceneManager\Scene.cs</FileName>
     </TypeIdentifier>
-  </Class>
-  <Class Name="TankArmageddon.Gameover" Collapsed="true">
+  </public class>
+  <public class Name="TankArmageddon.Gameover" Collapsed="true">
     <Position X="0.5" Y="9.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAQAgACAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Game\SceneManager\Scenes\Gameover.cs</FileName>
     </TypeIdentifier>
-  </Class>
-  <Class Name="TankArmageddon.Gameplay" Collapsed="true">
+  </public class>
+  <public class Name="TankArmageddon.Gameplay" Collapsed="true">
     <Position X="2.75" Y="9.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AQQAo0JBAAAIAjQAIkCAAAwEEUACRgAFjiAhBEAEkAQ=</HashCode>
       <FileName>Game\SceneManager\Scenes\Gameplay.cs</FileName>
     </TypeIdentifier>
-  </Class>
-  <Class Name="TankArmageddon.Menu" Collapsed="true">
+  </public class>
+  <public class Name="TankArmageddon.Menu" Collapsed="true">
     <Position X="5" Y="9.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAQAgACAAAAAAgAgAAAAAAAAAAAAAAAAQAAAAAAAAAA=</HashCode>
       <FileName>Game\SceneManager\Scenes\Menu.cs</FileName>
     </TypeIdentifier>
-  </Class>
-  <Class Name="TankArmageddon.Victory" Collapsed="true">
+  </public class>
+  <public class Name="TankArmageddon.Victory" Collapsed="true">
     <Position X="7.25" Y="9.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAQAgACAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Game\SceneManager\Scenes\Victory.cs</FileName>
     </TypeIdentifier>
-  </Class>
-  <Class Name="TankArmageddon.Drop">
+  </public class>
+  <public class Name="TankArmageddon.Drop">
     <Position X="2.75" Y="12.25" Width="1.5" />
     <Compartments>
       <Compartment Name="Fields" Collapsed="true" />
@@ -90,15 +90,15 @@
       <HashCode>CAQAAAIAQAAAAgAAEQAAQAAAAAAAAIABAAAgAAAAQAA=</HashCode>
       <FileName>Game\Sprites\Drop.cs</FileName>
     </TypeIdentifier>
-  </Class>
-  <Class Name="TankArmageddon.Particle" Collapsed="true">
+  </public class>
+  <public class Name="TankArmageddon.Particle" Collapsed="true">
     <Position X="5" Y="12.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>CAQAAAAAAAAAAgAAAAAAQABAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Game\Sprites\Particle.cs</FileName>
     </TypeIdentifier>
-  </Class>
-  <Class Name="TankArmageddon.Sprite" Collapsed="true">
+  </public class>
+  <public class Name="TankArmageddon.Sprite" Collapsed="true">
     <Position X="2.75" Y="11" Width="1.5" />
     <Compartments>
       <Compartment Name="Fields" Collapsed="true" />
@@ -109,8 +109,8 @@
       <FileName>Game\Sprites\Sprite.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
-  </Class>
-  <Class Name="TankArmageddon.Tank">
+  </public class>
+  <public class Name="TankArmageddon.Tank">
     <Position X="0.5" Y="12.25" Width="1.5" />
     <Compartments>
       <Compartment Name="Fields" Collapsed="true" />
@@ -119,182 +119,182 @@
       <Compartment Name="Nested Types" Collapsed="false" />
     </Compartments>
     <NestedTypes>
-      <Class Name="TankArmageddon.Tank.Grenada" Collapsed="true">
+      <public class Name="TankArmageddon.Tank.Grenada" Collapsed="true">
         <TypeIdentifier>
           <NewMemberFileName>Game\Sprites\Tank\Grenada.cs</NewMemberFileName>
         </TypeIdentifier>
-      </Class>
-      <Class Name="TankArmageddon.Tank.HelicoTank" Collapsed="true">
+      </public class>
+      <public class Name="TankArmageddon.Tank.HelicoTank" Collapsed="true">
         <TypeIdentifier>
           <NewMemberFileName>Game\Sprites\Tank\Actions\HelicoTank.cs</NewMemberFileName>
         </TypeIdentifier>
         <Lollipop Position="0.2" />
-      </Class>
-      <Class Name="TankArmageddon.Tank.OneShootFromTank" Collapsed="true">
+      </public class>
+      <public class Name="TankArmageddon.Tank.OneShootFromTank" Collapsed="true">
         <TypeIdentifier>
           <NewMemberFileName>Game\Sprites\Tank\Actions\OneShootFromTank.cs</NewMemberFileName>
         </TypeIdentifier>
-      </Class>
-      <Class Name="TankArmageddon.Tank.OneShootFromAirplane" Collapsed="true">
+      </public class>
+      <public class Name="TankArmageddon.Tank.OneShootFromAirplane" Collapsed="true">
         <TypeIdentifier>
           <NewMemberFileName>Game\Sprites\Tank\Actions\OneShootFromAirplane.cs</NewMemberFileName>
         </TypeIdentifier>
-      </Class>
-      <Class Name="TankArmageddon.Tank.NormalMove" Collapsed="true">
+      </public class>
+      <public class Name="TankArmageddon.Tank.NormalMove" Collapsed="true">
         <TypeIdentifier>
           <NewMemberFileName>Game\Sprites\Tank\Actions\NormalMove.cs</NewMemberFileName>
         </TypeIdentifier>
         <Lollipop Position="0.2" />
-      </Class>
-      <Class Name="TankArmageddon.Tank.Mine" Collapsed="true">
+      </public class>
+      <public class Name="TankArmageddon.Tank.Mine" Collapsed="true">
         <TypeIdentifier>
           <NewMemberFileName>Game\Sprites\Tank\Mine.cs</NewMemberFileName>
         </TypeIdentifier>
-      </Class>
-      <Class Name="TankArmageddon.Tank.MultipleShootFromTank" Collapsed="true">
+      </public class>
+      <public class Name="TankArmageddon.Tank.MultipleShootFromTank" Collapsed="true">
         <TypeIdentifier>
           <NewMemberFileName>Game\Sprites\Tank\Actions\MultipleShootFromTank.cs</NewMemberFileName>
         </TypeIdentifier>
-      </Class>
-      <Class Name="TankArmageddon.Tank.Bullet" Collapsed="true">
+      </public class>
+      <public class Name="TankArmageddon.Tank.Bullet" Collapsed="true">
         <TypeIdentifier>
           <NewMemberFileName>Game\Sprites\Tank\Bullet.cs</NewMemberFileName>
         </TypeIdentifier>
-      </Class>
-      <Class Name="TankArmageddon.Tank.LetOnFloor" Collapsed="true">
+      </public class>
+      <public class Name="TankArmageddon.Tank.LetOnFloor" Collapsed="true">
         <TypeIdentifier>
           <NewMemberFileName>Game\Sprites\Tank\Actions\LetOnFloor.cs</NewMemberFileName>
         </TypeIdentifier>
-      </Class>
+      </public class>
     </NestedTypes>
     <TypeIdentifier>
       <HashCode>CIQBQSICGAIAKhAgKcEDQQRmkEEAAIBBDgCIgHABQCI=</HashCode>
       <FileName>Game\Sprites\Tank\Actions\HelicoTank.cs</FileName>
     </TypeIdentifier>
-  </Class>
-  <Class Name="TankArmageddon.Action" Collapsed="true">
+  </public class>
+  <public class Name="TankArmageddon.Action" Collapsed="true">
     <Position X="12" Y="4" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAA=</HashCode>
       <FileName>Game\Sprites\Tank\Actions\IAction.cs</FileName>
     </TypeIdentifier>
-  </Class>
-  <Class Name="TankArmageddon.Team" Collapsed="true">
+  </public class>
+  <public class Name="TankArmageddon.Team" Collapsed="true">
     <Position X="17.25" Y="6" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAQAAQAAEAAAAIAEABIARgAAAAAAAAAAQAAIAgAAAAA=</HashCode>
       <FileName>Game\Team.cs</FileName>
     </TypeIdentifier>
-  </Class>
-  <Class Name="TankArmageddon.BackGround" Collapsed="true">
+  </public class>
+  <public class Name="TankArmageddon.BackGround" Collapsed="true">
     <Position X="15.5" Y="4" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAQAAAAAAAAAAgAgAAAAAAABAAAAABAAAAAAAAAAAAA=</HashCode>
       <FileName>Libs\BackGround.cs</FileName>
     </TypeIdentifier>
-  </Class>
-  <Class Name="TankArmageddon.Camera" Collapsed="true">
+  </public class>
+  <public class Name="TankArmageddon.Camera" Collapsed="true">
     <Position X="17.25" Y="4" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAQAQAAAAAAAAAAgFAAACAABAACAAAAAAkAAgAgAAAQ=</HashCode>
       <FileName>Libs\Camera.cs</FileName>
     </TypeIdentifier>
-  </Class>
-  <Class Name="TankArmageddon.Primitives2D" Collapsed="true">
+  </public class>
+  <public class Name="TankArmageddon.Primitives2D" Collapsed="true">
     <Position X="12" Y="6" Width="1.5" />
     <TypeIdentifier>
       <HashCode>gAAAACAQAAAAAAEAABIAAAQAACAAABABIEAAAAAAAAA=</HashCode>
       <FileName>Libs\Forms\Primitive2D.cs</FileName>
     </TypeIdentifier>
-  </Class>
-  <Class Name="TankArmageddon.RectangleBBox" Collapsed="true" BaseTypeListCollapsed="true">
+  </public class>
+  <public class Name="TankArmageddon.RectangleBBox" Collapsed="true" BaseTypeListCollapsed="true">
     <Position X="13.75" Y="6" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAABAAAggAAgAIQAEAAAAAoAAAACACAAAAYAIA=</HashCode>
       <FileName>Libs\Forms\RectangleBBox.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
-  </Class>
-  <Class Name="TankArmageddon.Input" Collapsed="true">
+  </public class>
+  <public class Name="TankArmageddon.Input" Collapsed="true">
     <Position X="12" Y="5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAYQQgAAIIAAIAFFAABAoAFAAGABAAAAAAEEEgBAEAA=</HashCode>
       <FileName>Libs\Input.cs</FileName>
     </TypeIdentifier>
-  </Class>
-  <Class Name="TankArmageddon.InputElement" Collapsed="true">
+  </public class>
+  <public class Name="TankArmageddon.InputElement" Collapsed="true">
     <Position X="13.75" Y="5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAABAAABAAEAAAAAAAAEAAAAAAAA=</HashCode>
       <FileName>Libs\Input.cs</FileName>
     </TypeIdentifier>
-  </Class>
-  <Class Name="TankArmageddon.MusicManager" Collapsed="true">
+  </public class>
+  <public class Name="TankArmageddon.MusicManager" Collapsed="true">
     <Position X="17.25" Y="5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAQKAAAAAAAAAAEAAAAAAAEAAIAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Libs\MusicManager.cs</FileName>
     </TypeIdentifier>
-  </Class>
-  <Class Name="TankArmageddon.PerlinNoise" Collapsed="true">
+  </public class>
+  <public class Name="TankArmageddon.PerlinNoise" Collapsed="true">
     <Position X="19" Y="5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Libs\PerlingNoise.cs</FileName>
     </TypeIdentifier>
-  </Class>
-  <Class Name="TankArmageddon.Simplex" Collapsed="true">
+  </public class>
+  <public class Name="TankArmageddon.Simplex" Collapsed="true">
     <Position X="15.5" Y="6" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAABAAIAAAAAAAAAAAAAAAQAAAAAAAAAAEAAAAA=</HashCode>
       <FileName>Libs\PerlingNoise.cs</FileName>
     </TypeIdentifier>
-  </Class>
-  <Class Name="TankArmageddon.Tweening" Collapsed="true">
+  </public class>
+  <public class Name="TankArmageddon.Tweening" Collapsed="true">
     <Position X="19" Y="6" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAQBAAAAgEACAAAQAAQAAAQAAAAAEAAABABAAAAAAAI=</HashCode>
       <FileName>Libs\Tweening.cs</FileName>
     </TypeIdentifier>
-  </Class>
-  <Class Name="TankArmageddon.utils" Collapsed="true">
+  </public class>
+  <public class Name="TankArmageddon.utils" Collapsed="true">
     <Position X="12" Y="7" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAEgAABAAAAEAAAAQAIAAAAIAAAAAAAAAAAAA=</HashCode>
       <FileName>Libs\utils.cs</FileName>
     </TypeIdentifier>
-  </Class>
-  <Class Name="TankArmageddon.GUI.BarGraph" Collapsed="true">
+  </public class>
+  <public class Name="TankArmageddon.GUI.BarGraph" Collapsed="true">
     <Position X="0.5" Y="5.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>ABQAIQkgAAABApAAIAAgAAAAAAAAAQBABAAhAAAAAAA=</HashCode>
       <FileName>Libs\GUI\BarGraph.cs</FileName>
     </TypeIdentifier>
-  </Class>
-  <Class Name="TankArmageddon.GUI.Button" Collapsed="true">
+  </public class>
+  <public class Name="TankArmageddon.GUI.Button" Collapsed="true">
     <Position X="2.75" Y="5.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>gAQAAAQARCIBAgAAAAACAQBAAAAACACQAAAAAABAQAI=</HashCode>
       <FileName>Libs\GUI\Button.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
-  </Class>
-  <Class Name="TankArmageddon.GUI.Element" Collapsed="true">
+  </public class>
+  <public class Name="TankArmageddon.GUI.Element" Collapsed="true">
     <Position X="5" Y="4" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAQAAEQAAAAAwgAwMAIAhABCICCAACAJAUAAgAoAACA=</HashCode>
       <FileName>Libs\GUI\Element.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
-  </Class>
-  <Class Name="TankArmageddon.GUI.Group" Collapsed="true">
+  </public class>
+  <public class Name="TankArmageddon.GUI.Group" Collapsed="true">
     <Position X="8.25" Y="11" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAQAAAAAAAABAgAgAAAQBAAAAAACAAEIAAAAgAAAAAA=</HashCode>
       <FileName>Libs\GUI\Group.cs</FileName>
     </TypeIdentifier>
-  </Class>
-  <Class Name="TankArmageddon.GUI.GroupSelection" Collapsed="true">
+  </public class>
+  <public class Name="TankArmageddon.GUI.GroupSelection" Collapsed="true">
     <Position X="8.25" Y="12.25" Width="1.5" />
     <Compartments>
       <Compartment Name="Fields" Collapsed="true" />
@@ -303,29 +303,29 @@
       <HashCode>CAQAAAAAggABAAAAAAAAAAAAhAACIQAAACEAAAACAAA=</HashCode>
       <FileName>Libs\GUI\GroupSelection.cs</FileName>
     </TypeIdentifier>
-  </Class>
-  <Class Name="TankArmageddon.GUI.Image" Collapsed="true">
+  </public class>
+  <public class Name="TankArmageddon.GUI.Image" Collapsed="true">
     <Position X="5" Y="5.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAACAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAIAAAAAAAA=</HashCode>
       <FileName>Libs\GUI\Image.cs</FileName>
     </TypeIdentifier>
-  </Class>
-  <Class Name="TankArmageddon.GUI.Slider" Collapsed="true">
+  </public class>
+  <public class Name="TankArmageddon.GUI.Slider" Collapsed="true">
     <Position X="7.25" Y="5.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>ABQgAgAAAAIAAgAkAIACAAAAAAAABAAAAEAgAAAAAAA=</HashCode>
       <FileName>Libs\GUI\Slider.cs</FileName>
     </TypeIdentifier>
-  </Class>
-  <Class Name="TankArmageddon.GUI.Textbox" Collapsed="true">
+  </public class>
+  <public class Name="TankArmageddon.GUI.Textbox" Collapsed="true">
     <Position X="9.5" Y="5.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAQAEBAQAABggAgIAAIAABAIAGABgBQAAAAiAgCAEI=</HashCode>
       <FileName>Libs\GUI\Textbox.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
-  </Class>
+  </public class>
   <Struct Name="TankArmageddon.Circle" Collapsed="true" BaseTypeListCollapsed="true">
     <Position X="12" Y="8.25" Width="1.5" />
     <TypeIdentifier>
@@ -580,4 +580,4 @@
     </TypeIdentifier>
   </Delegate>
   <Font Name="Tahoma" Size="8.25" />
-</ClassDiagram>
+</public classDiagram>

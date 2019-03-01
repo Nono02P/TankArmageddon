@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace TankArmageddon
 {
-    class BackGround
+    public class BackGround
     {
         #region Propriétés
         public Vector2 Position1 { get; private set; }

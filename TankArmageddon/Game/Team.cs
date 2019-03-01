@@ -42,10 +42,11 @@ namespace TankArmageddon
         #region Constructeur
         public Team(Gameplay pParent, Texture2D pImage, int pNumberOfTanks, int pTeamNumber)
         {
+            #region Création de l'inventaire
             Inventory = new Dictionary<Action.eActions, int>();
             for (int i = 1; i < Enum.GetValues(typeof(Action.eActions)).GetLength(0); i++)
             {
-                Inventory.Add((Action.eActions)i, 10);
+                Inventory.Add((Action.eActions)i, 0);
             }
             Inventory[Action.eActions.Grenada] = 6;
             Inventory[Action.eActions.GoldBullet] = 2;
@@ -54,7 +55,9 @@ namespace TankArmageddon
             Inventory[Action.eActions.iMine] = -1;
             //Inventory[Action.eActions.iTankBaseBall] = -1;
             Inventory[Action.eActions.iDropFuel] = -1;
+            #endregion
 
+            #region Initialisation des valeurs
             Parent = pParent;
             Tanks = new List<Tank>();
             string tankName = "";
@@ -84,7 +87,9 @@ namespace TankArmageddon
             Rectangle imgTank = AssetManager.TanksAtlas.Textures.Find(t => t.Name == tankName).ImgBox;
             Rectangle imgCannon = AssetManager.TanksAtlas.Textures.Find(t => t.Name == tankCannon).ImgBox;
             Rectangle imgWheel = AssetManager.TanksAtlas.Textures.Find(t => t.Name == tankWheel).ImgBox;
+            #endregion
 
+            #region Création des tanks
             for (int i = 0; i < pNumberOfTanks; i++)
             {
                 Tank t = new Tank(this, TeamColor, Parent.GetTankName(), pImage, imgTank, imgCannon, imgWheel, new Vector2(utils.MathRnd(40, (int)Parent.MapSize.X - 40), 1), new Vector2(imgTank.Width / 2, imgTank.Height / 2), Vector2.One * 0.5f);
@@ -94,9 +99,10 @@ namespace TankArmageddon
                 }
                 Tanks.Add(t);
             }
+            #endregion
         }
         #endregion
-        
+
         #region Acquisition de Loot
         public void OpenLoot()
         {
@@ -168,6 +174,7 @@ namespace TankArmageddon
         {
             if (Tanks.Count > 0)
             {
+                IndexTank = (byte)(IndexTank % Tanks.Count);
                 Tank CurrentTank = Tanks[IndexTank];
                 // Sélectionne le tank suivant
                 if (Input.OnPressed(Keys.N) && pCanPlay)
@@ -175,7 +182,6 @@ namespace TankArmageddon
                     CurrentTank.IsControlled = false;
                     IndexTank++;
                 }
-                IndexTank = (byte)(IndexTank % Tanks.Count);
 
                 // Si le joueur peut jouer (si c'est son tour) gère les entrées claviers.
                 CurrentTank = Tanks[IndexTank];

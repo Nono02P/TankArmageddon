@@ -10,7 +10,7 @@ namespace TankArmageddon
     public class Menu : Scene
     {
         #region Constantes
-        private const int TIMER_INTRO = 2;
+        private const int TIMER_INTRO = 1;
         #endregion
 
         #region Variables privées
@@ -26,24 +26,7 @@ namespace TankArmageddon
         private Tweening _tweeningExit;
         #endregion
 
-        #region Constructeur
-        public Menu() {}
-        #endregion
-
         #region Méthodes
-
-        #region Gestion des clicks boutons
-        public void OnClickPlay(Element element, ClickType clickType)
-        {
-            if (element is Button)
-            {
-                if (clickType == ClickType.Left)
-                {
-                    MainGame.ChangeScene(SceneType.Gameplay);
-                }
-            }
-        }
-        #endregion
 
         #region Load/Unload
         public override void Load()
@@ -71,11 +54,11 @@ namespace TankArmageddon
             _groupMenu.AddElement((IIntegrableMenu)_play);
 
             text = "COMMENT JOUER";
-            _howToPlay = new Textbox(new Vector2(-500, (screenHeight - font.MeasureString(text).Y) / 2), font, text);
+            _howToPlay = new Textbox(new Vector2(-1200, (screenHeight - font.MeasureString(text).Y) / 2), font, text);
             _groupMenu.AddElement((IIntegrableMenu)_howToPlay);
 
             text = "QUITTER";
-            _exit = new Textbox(new Vector2(-800, (screenHeight - font.MeasureString(text).Y) / 2 + 80), font, text);
+            _exit = new Textbox(new Vector2(-2200, (screenHeight - font.MeasureString(text).Y) / 2 + 80), font, text);
             _groupMenu.AddElement((IIntegrableMenu)_exit);
 
             _groupMenu.RefreshColors();
@@ -104,6 +87,7 @@ namespace TankArmageddon
         }
         #endregion
 
+        #region Gestion des boutons
         private void Textbox_OnHover(object sender, EventArgs e)
         {
             if (_currentTimerIntro >= TIMER_INTRO)
@@ -111,6 +95,7 @@ namespace TankArmageddon
                 _groupMenu.CurrentSelection = _groupMenu.Elements.FindIndex(elm => elm == (Element)sender);
             }
         }
+        
 
         private void Textbox_OnClick(object sender, ClickType Clicks)
         {
@@ -120,7 +105,9 @@ namespace TankArmageddon
                 Select();
             }
         }
+        #endregion
 
+        #region Sélection de scène
         private void Select()
         {
             switch (_groupMenu.CurrentSelection)
@@ -138,6 +125,7 @@ namespace TankArmageddon
                     break;
             }
         }
+        #endregion
 
         #region Update
         public override void Update(GameTime gameTime)
