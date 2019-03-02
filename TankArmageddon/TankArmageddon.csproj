@@ -41,23 +41,24 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Game\ExplosionEventArgs.cs" />
-    <Compile Include="Game\ButtonAction.cs" />
-    <Compile Include="Game\SceneManager\Scenes\HowToPlay.cs" />
-    <Compile Include="Game\Spring.cs" />
-    <Compile Include="Game\Sprites\Tank\Actions\Action.cs" />
-    <Compile Include="Game\Water.cs" />
-    <Compile Include="Game\Sprites\Drop.cs" />
-    <Compile Include="Game\Sprites\Tank\Grenada.cs" />
-    <Compile Include="Game\Sprites\Tank\Actions\HelicoTank.cs" />
-    <Compile Include="Game\Sprites\Tank\Actions\IAction.cs" />
-    <Compile Include="Game\Sprites\Tank\Actions\LetOnFloor.cs" />
-    <Compile Include="Game\Sprites\Tank\Actions\MultipleShootFromTank.cs" />
-    <Compile Include="Game\Sprites\Tank\Actions\NormalMove.cs" />
-    <Compile Include="Game\Sprites\Tank\Actions\OneShootFromTank.cs" />
-    <Compile Include="Game\Sprites\Tank\Actions\OneShootFromAirplane.cs" />
-    <Compile Include="Game\Sprites\Tank\Bullet.cs" />
-    <Compile Include="Game\Sprites\Tank\Mine.cs" />
+    <Compile Include="MainGame\ExplosionEventArgs.cs" />
+    <Compile Include="MainGame\ButtonAction.cs" />
+    <Compile Include="MainGame\SceneManager\Scenes\HowToPlay.cs" />
+    <Compile Include="MainGame\Spring.cs" />
+    <Compile Include="MainGame\Sprites\Tank\Actions\Action.cs" />
+    <Compile Include="MainGame\Sprites\Tank\Drill.cs" />
+    <Compile Include="MainGame\Water.cs" />
+    <Compile Include="MainGame\Sprites\Drop.cs" />
+    <Compile Include="MainGame\Sprites\Tank\Grenada.cs" />
+    <Compile Include="MainGame\Sprites\Tank\Actions\HelicoTank.cs" />
+    <Compile Include="MainGame\Sprites\Tank\Actions\IAction.cs" />
+    <Compile Include="MainGame\Sprites\Tank\Actions\LetOnFloor.cs" />
+    <Compile Include="MainGame\Sprites\Tank\Actions\MultipleShootFromTank.cs" />
+    <Compile Include="MainGame\Sprites\Tank\Actions\NormalMove.cs" />
+    <Compile Include="MainGame\Sprites\Tank\Actions\OneShootFromTank.cs" />
+    <Compile Include="MainGame\Sprites\Tank\Actions\OneShootFromAirplane.cs" />
+    <Compile Include="MainGame\Sprites\Tank\Bullet.cs" />
+    <Compile Include="MainGame\Sprites\Tank\Mine.cs" />
     <Compile Include="Libs\Camera.cs" />
     <Compile Include="Libs\Forms\Circle.cs" />
     <Compile Include="Libs\Forms\PrimitiveBatch.cs" />
@@ -67,15 +68,15 @@
     <Compile Include="Libs\Forms\Primitive2D.cs" />
     <Compile Include="Assets\AssetManager.cs" />
     <Compile Include="Libs\BackGround.cs" />
-    <Compile Include="Game\Sprites\Particle.cs" />
+    <Compile Include="MainGame\Sprites\Particle.cs" />
     <Compile Include="Libs\IActor.cs" />
     <Compile Include="Libs\ICollisionnable.cs" />
     <Compile Include="Libs\Input.cs" />
     <Compile Include="Libs\MusicManager.cs" />
     <Compile Include="Libs\PerlingNoise.cs" />
-    <Compile Include="Game\SceneManager\Scene.cs" />
+    <Compile Include="MainGame\SceneManager\Scene.cs" />
     <Compile Include="Assets\XmlTextureAtlas.cs" />
-    <Compile Include="Game\Sprites\Tank\Tank.cs" />
+    <Compile Include="MainGame\Sprites\Tank\Tank.cs" />
     <Compile Include="Libs\Tweening.cs" />
     <Compile Include="Libs\utils.cs" />
     <Compile Include="Libs\GUI\BarGraph.cs" />
@@ -85,15 +86,15 @@
     <Compile Include="Libs\GUI\GroupSelection.cs" />
     <Compile Include="Libs\GUI\Slider.cs" />
     <Compile Include="Libs\GUI\Textbox.cs" />
-    <Compile Include="Game\MainGame.cs" />
+    <Compile Include="MainGame\MainGame.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Game\SceneManager\Scenes\Gameover.cs" />
-    <Compile Include="Game\SceneManager\Scenes\Gameplay.cs" />
-    <Compile Include="Game\SceneManager\Scenes\Menu.cs" />
-    <Compile Include="Game\Team.cs" />
-    <Compile Include="Game\SceneManager\Scenes\Victory.cs" />
-    <Compile Include="Game\Sprites\Sprite.cs" />
+    <Compile Include="MainGame\SceneManager\Scenes\Gameover.cs" />
+    <Compile Include="MainGame\SceneManager\Scenes\Gameplay.cs" />
+    <Compile Include="MainGame\SceneManager\Scenes\Menu.cs" />
+    <Compile Include="MainGame\Team.cs" />
+    <Compile Include="MainGame\SceneManager\Scenes\Victory.cs" />
+    <Compile Include="MainGame\Sprites\Sprite.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">

@@ -31,6 +31,7 @@ namespace TankArmageddon
 
         #region Textures
         public static Texture2D Menu { get; private set; }
+        public static Texture2D HowToPlay { get; private set; }
         public static Texture2D Victory { get; private set; }
         public static Texture2D Gameover { get; private set; }
         public static Texture2D GameBottomBar { get; private set; }
@@ -68,6 +69,7 @@ namespace TankArmageddon
 
             #region Textures
             Menu = pContent.Load<Texture2D>("_Background/Menu");
+            HowToPlay = pContent.Load<Texture2D>("_Background/HowToPlay");
             Gameover = pContent.Load<Texture2D>("_Background/Defeat");
             Victory = pContent.Load<Texture2D>("_Background/Victory");
             GameBottomBar = pContent.Load<Texture2D>("_GUI/GameBottomBar");

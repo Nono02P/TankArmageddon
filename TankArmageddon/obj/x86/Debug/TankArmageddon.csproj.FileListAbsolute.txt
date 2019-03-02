@@ -76,3 +76,4 @@ C:\Users\PierArn\Documents\Perso\Jeux Video\_GameJam\4_TankArmageddon\TankArmage
 C:\Users\PierArn\Documents\Perso\Jeux Video\_GameJam\4_TankArmageddon\TankArmageddon\TankArmageddon\bin\Windows\x86\Debug\Content\_Background\Menu.xnb
 C:\Users\PierArn\Documents\Perso\Jeux Video\_GameJam\4_TankArmageddon\TankArmageddon\TankArmageddon\bin\Windows\x86\Debug\Content\_Background\Victory.xnb
 C:\Users\PierArn\Documents\Perso\Jeux Video\_GameJam\4_TankArmageddon\TankArmageddon\TankArmageddon\bin\Windows\x86\Debug\Content\_Font\MenuFont.xnb
+C:\Users\PierArn\Documents\Perso\Jeux Video\_GameJam\4_TankArmageddon\TankArmageddon\TankArmageddon\bin\Windows\x86\Debug\Content\_Background\HowToPlay.xnb
