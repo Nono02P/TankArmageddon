@@ -63,7 +63,7 @@ namespace TankArmageddon
             int screenHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
             graphics.PreferredBackBufferWidth = 1366;
             graphics.PreferredBackBufferHeight = 768;
-            graphics.IsFullScreen = screenWidth == graphics.PreferredBackBufferWidth && screenHeight == graphics.PreferredBackBufferHeight;
+            //graphics.IsFullScreen = screenWidth == graphics.PreferredBackBufferWidth && screenHeight == graphics.PreferredBackBufferHeight;
         }
         #endregion
 

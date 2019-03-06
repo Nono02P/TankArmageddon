@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using IA;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
@@ -37,10 +38,11 @@ namespace TankArmageddon
         public List<Tank> Tanks { get; private set; }
         public Color TeamColor { get; private set; }
         public bool Remove { get; private set; }
+        public IControl Control { get; private set; }
         #endregion
 
         #region Constructeur
-        public Team(Gameplay pParent, Texture2D pImage, int pNumberOfTanks, int pTeamNumber)
+        public Team(Gameplay pParent, Texture2D pImage, int pNumberOfTanks, int pTeamNumber, eControlType pControlType = eControlType.Player)
         {
             #region Création de l'inventaire
             Inventory = new Dictionary<Action.eActions, int>();
@@ -87,6 +89,20 @@ namespace TankArmageddon
             Rectangle imgTank = AssetManager.TanksAtlas.Textures.Find(t => t.Name == tankName).ImgBox;
             Rectangle imgCannon = AssetManager.TanksAtlas.Textures.Find(t => t.Name == tankCannon).ImgBox;
             Rectangle imgWheel = AssetManager.TanksAtlas.Textures.Find(t => t.Name == tankWheel).ImgBox;
+            #endregion
+
+            #region Instanciation du type de contrôle
+            switch (pControlType)
+            {
+                case eControlType.NeuralNetwork:
+                    Control = new NeuralNetworkControl(this);
+                    break;
+                case eControlType.Player:
+                    Control = new PlayerControl(this);
+                    break;
+                default:
+                    break;
+            }
             #endregion
 
             #region Création des tanks
@@ -162,10 +178,15 @@ namespace TankArmageddon
         #endregion
 
         #region Sélection de l'action
-        public void SelectAction(Action.eActions actions)
+        public bool SelectAction(Action.eActions actions)
         {
-            Tank CurrentTank = Tanks[IndexTank];
-            CurrentTank.SelectedAction = actions;
+            if (Control is PlayerControl)
+            {
+                Tank CurrentTank = Tanks[IndexTank];
+                CurrentTank.SelectedAction = actions;
+                return true;
+            }
+            return false;
         }
         #endregion
 
@@ -176,8 +197,11 @@ namespace TankArmageddon
             {
                 IndexTank = (byte)(IndexTank % Tanks.Count);
                 Tank CurrentTank = Tanks[IndexTank];
+                
+                Control.Update(pCanPlay);
+
                 // Sélectionne le tank suivant
-                if (Input.OnPressed(Keys.N) && pCanPlay)
+                if (Control.OnPressedN && pCanPlay)
                 {
                     CurrentTank.IsControlled = false;
                     IndexTank++;
@@ -186,11 +210,11 @@ namespace TankArmageddon
                 // Si le joueur peut jouer (si c'est son tour) gère les entrées claviers.
                 CurrentTank = Tanks[IndexTank];
                 CurrentTank.IsControlled = pCanPlay;
-                CurrentTank.Space = Input.IsDown(Keys.Space);
-                CurrentTank.Left = Input.IsDown(Keys.Left);
-                CurrentTank.Right = Input.IsDown(Keys.Right);
-                CurrentTank.Up = Input.IsDown(Keys.Up);
-                CurrentTank.Down = Input.IsDown(Keys.Down);
+                CurrentTank.Space = Control.IsDownSpace;
+                CurrentTank.Left = Control.IsDownLeft;
+                CurrentTank.Right = Control.IsDownRight;
+                CurrentTank.Up = Control.IsDownUp;
+                CurrentTank.Down = Control.IsDownDown;
 
                 Tanks.RemoveAll(t => t.Remove);
                 if (Tanks.Count == 0)

@@ -29,10 +29,11 @@ namespace TankArmageddon
                 if (Enable)
                 {
                     ShootCursor.Visible = true;
-                    ShootCursor.Position = Mouse.GetState().Position.ToVector2() + new Vector2(MainGame.Camera.Position.X, MainGame.Camera.Position.Y);
-                    if (Input.OnPressed(Keys.Space))
+                    Action.eCategory category = Action.GetCategory(Parent.SelectedAction);
+                    ShootCursor.Position = Control.CursorPosition(category != Action.eCategory.Drop); //Mouse.GetState().Position.ToVector2() + new Vector2(MainGame.Camera.Position.X, MainGame.Camera.Position.Y);
+                    if (Control.OnPressedSpace) //(Input.OnPressed(Keys.Space))
                     {
-                        switch (Action.GetCategory(Parent.SelectedAction))
+                        switch (category)
                         {
                             case Action.eCategory.None:
                             case Action.eCategory.Grenada:

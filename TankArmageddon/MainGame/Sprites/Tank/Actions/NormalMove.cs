@@ -14,12 +14,17 @@ namespace TankArmageddon
 
             #region Propriétés
             public Tank Parent { get; private set; }
+            public IControl Control { get; private set; }
             public bool Enable { get; set; }
             public bool BlockAction { get => _blockAction; set { if (_blockAction != value) { _blockAction = value; if (Parent.Parent.Inventory[Parent.SelectedAction] > 0) { Parent.Parent.Inventory[Parent.SelectedAction]--; Parent.Parent.Parent.RefreshActionButtonInventory(); } } } }
             #endregion
 
             #region Constructeur
-            public NormalMove(Tank pParent) { Parent = pParent; }
+            public NormalMove(Tank pParent)
+            {
+                Parent = pParent;
+                Control = Parent.Parent.Control;
+            }
             #endregion
 
             #region Update

@@ -6,6 +6,7 @@ namespace TankArmageddon
     {
         #region Propriétés
         Tank Parent { get; }
+        IControl Control { get; }
         bool Enable { get; set; }
         bool BlockAction { get; set; }
         #endregion

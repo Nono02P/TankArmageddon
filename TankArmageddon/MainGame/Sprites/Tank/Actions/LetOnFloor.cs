@@ -18,7 +18,7 @@ namespace TankArmageddon
 
                 if (Enable)
                 {
-                    if (Input.OnPressed(Keys.Space))
+                    if (Control.OnPressedSpace) //(Input.OnPressed(Keys.Space))
                     {
                         switch (Action.GetCategory(Parent.SelectedAction))
                         {

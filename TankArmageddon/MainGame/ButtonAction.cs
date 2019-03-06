@@ -79,7 +79,7 @@ namespace TankArmageddon
                         infoBulle = "Hélicotank : Transforme le tank en hélicoptère.";
                         break;
                     case Action.eActions.Drilling:
-                        infoBulle = "Foreuse : Permet de creuser sous terre.";
+                        infoBulle = "Foreuse : Fait tomber une foreuse du ciel.";
                         break;
                     case Action.eActions.DropHealth:
                         infoBulle = "Envoi des réparations à l'emplacement spécifié.";

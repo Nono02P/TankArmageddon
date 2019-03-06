@@ -411,17 +411,18 @@ namespace TankArmageddon
                 Vector2 center;
                 Vector2 before;
                 Vector2 after;
+                int delta = 20;
                 if (collisionPosMiddle.Y > previousPosMiddle.Y)
                 {
                     center = g.FindHighestPoint(collisionPosMiddle, 0);
-                    before = g.FindHighestPoint(collisionPosMiddle, -20);
-                    after = g.FindHighestPoint(collisionPosMiddle, 20);
+                    before = g.FindHighestPoint(collisionPosMiddle, -delta);
+                    after = g.FindHighestPoint(collisionPosMiddle, delta);
                 }
                 else
                 {
                     center = g.FindHighestPoint(previousPosMiddle, 0);
-                    before = g.FindHighestPoint(previousPosMiddle, -20);
-                    after = g.FindHighestPoint(previousPosMiddle, 20);
+                    before = g.FindHighestPoint(previousPosMiddle, -delta);
+                    after = g.FindHighestPoint(previousPosMiddle, delta);
                 }
                 Angle = (float)utils.MathAngle(after - before);
 

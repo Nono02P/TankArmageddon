@@ -41,8 +41,14 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Libs\IA\ActivationFunctions.cs" />
+    <Compile Include="Libs\IA\Matrix.cs" />
+    <Compile Include="Libs\IA\NeuralNetwork.cs" />
     <Compile Include="MainGame\ExplosionEventArgs.cs" />
     <Compile Include="MainGame\ButtonAction.cs" />
+    <Compile Include="MainGame\Controls\NeuralNetworkControl.cs" />
+    <Compile Include="MainGame\Controls\IControl.cs" />
+    <Compile Include="MainGame\Controls\PlayerControl.cs" />
     <Compile Include="MainGame\SceneManager\Scenes\HowToPlay.cs" />
     <Compile Include="MainGame\Spring.cs" />
     <Compile Include="MainGame\Sprites\Tank\Actions\Action.cs" />

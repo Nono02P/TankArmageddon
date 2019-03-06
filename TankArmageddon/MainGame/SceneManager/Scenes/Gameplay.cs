@@ -110,6 +110,7 @@ namespace TankArmageddon
         public Vector2 MapSize { get; private set; } = new Vector2(4096, MainGame.Screen.Height - AssetManager.GameBottomBar.Height);
         public byte[] MapData { get; private set; }
         public Color[] MapColors { get; private set; }
+        public List<Rectangle> WaterPosition;
         public int IndexTeam
         {
             get { return _indexTeam; }
@@ -155,7 +156,10 @@ namespace TankArmageddon
             _skyTexture.SetData(skyData);
             #endregion
 
-            #region Création de la map
+            #region Création de la map et relevé des points d'eau pour le réseau de neurone
+            WaterPosition = new List<Rectangle>();
+            bool beginWater = false;
+            int beginWaterPosition = 0;
             _perlinNoise = PerlinNoise.Generate1DMap((int)MapSize.X, 550f);
             _mapTexture = new Texture2D(MainGame.spriteBatch.GraphicsDevice, (int)MapSize.X, (int)MapSize.Y);
             MapData = new byte[(int)(MapSize.X * MapSize.Y)];
@@ -176,45 +180,53 @@ namespace TankArmageddon
                 h = (ushort)MathHelper.Clamp(h, 0, WaterLevel + 1);
                 int min = (int)Math.Floor((_perlinNoise.Min() + 1) * MapSize.Y * 0.5f);
                 int dif = (int)MapSize.Y - min;
-                for (ushort y = 0; y < MapSize.Y; y++)
+                for (ushort y = h; y < MapSize.Y; y++)
                 {
                     uint index = (uint)(x + y * MapSize.X);
-                    if (y < h)
+                    if (y <= WaterLevel)
                     {
-                        MapColors[index] = Color.Transparent;
+                        float pourcent = (float)(y - min) / dif;
+                        float p1 = 0.25f;
+                        float p2 = 0.5f;
+                        float p3 = 0.75f;
+                        float p4 = 1f;
+                        if (pourcent < p1)
+                        {
+                            MapColors[index] = Color.Lerp(colors[0], colors[1], pourcent / p1);
+                        }
+                        else if (pourcent < p2)
+                        {
+                            MapColors[index] = Color.Lerp(colors[1], colors[2], (pourcent - p1) / (p2 - p1));
+                        }
+                        else if (pourcent < p3)
+                        {
+                            MapColors[index] = Color.Lerp(colors[2], colors[3], (pourcent - p2) / (p3 - p2));
+                        }
+                        else if (pourcent < p4)
+                        {
+                            MapColors[index] = Color.Lerp(colors[3], colors[4], (pourcent - p3) / (p4 - p3));
+                        }
+                        MapData[index] = 1;
                     }
                     else
                     {
-                        if (y <= WaterLevel)
-                        {
-                            float pourcent = (float)(y - min) / dif;
-                            float p1 = 0.25f;
-                            float p2 = 0.5f;
-                            float p3 = 0.75f;
-                            float p4 = 1f;
-                            if (pourcent < p1)
-                            {
-                                MapColors[index] = Color.Lerp(colors[0], colors[1], pourcent / p1);
-                            }
-                            else if (pourcent < p2)
-                            {
-                                MapColors[index] = Color.Lerp(colors[1], colors[2], (pourcent - p1) / (p2 - p1));
-                            }
-                            else if (pourcent < p3)
-                            {
-                                MapColors[index] = Color.Lerp(colors[2], colors[3], (pourcent - p2) / (p3 - p2));
-                            }
-                            else if (pourcent < p4)
-                            {
-                                MapColors[index] = Color.Lerp(colors[3], colors[4], (pourcent - p3) / (p4 - p3));
-                            }
-                            //MapColors[index] = Color.Green;
-                            MapData[index] = 1;
-                        }
-                        else
-                        {
-                            MapColors[index] = Color.Brown;
-                        }
+                        MapColors[index] = Color.Brown;
+                    }
+                }
+                if (!IsSolid(new Vector2(x, WaterLevel - 1)))
+                {
+                    if (!beginWater)
+                    {
+                        beginWater = true;
+                        beginWaterPosition = x;
+                    }
+                }
+                else
+                {
+                    if (beginWater)
+                    {
+                        beginWater = false;
+                        WaterPosition.Add(new Rectangle(beginWaterPosition, WaterLevel, x - beginWaterPosition, (int)MapSize.Y - WaterLevel));
                     }
                 }
             }
@@ -313,7 +325,7 @@ namespace TankArmageddon
             int numberOfTankPerTeam = MainGame.NumberOfTank;
             for (byte i = 0; i < numberOfTeam; i++)
             {
-                t = new Team(this, img, numberOfTankPerTeam, i);
+                t = new Team(this, img, numberOfTankPerTeam, i, eControlType.NeuralNetwork);
                 _teams.Add(t);
                 t.OnTankSelectionChange += OnTankSelectionChange;
             }
@@ -348,8 +360,8 @@ namespace TankArmageddon
                 ButtonAction btn = (ButtonAction)pSender;
                 if (btn.Number != 0)
                 {
-                    GUIGroupButtons.CurrentSelection = GUIGroupButtons.Elements.FindIndex(b => b == btn);
-                    _teams[_indexTeam].SelectAction(btn.ActionType);
+                    if(_teams[_indexTeam].SelectAction(btn.ActionType))
+                        GUIGroupButtons.CurrentSelection = GUIGroupButtons.Elements.FindIndex(b => b == btn);
                 }
             }
         }
@@ -482,6 +494,8 @@ namespace TankArmageddon
             int force = pExplosionEventArgs.Force;
             Texture2D particles = new Texture2D(MainGame.graphics.GraphicsDevice, rad * 2, rad * 2);
             Color[] particlesData = new Color[particles.Width * particles.Height];
+            bool beginWater = false;
+            int beginWaterPosition = 0;
             for (int x = (int)(pos.X - rad); x <= (int)(pos.X + rad); x++)
             {
                 if (x >= 0 && x < MapSize.X)
@@ -504,7 +518,26 @@ namespace TankArmageddon
                             }
                         }
                     }
-                } 
+                    if (pos.Y + rad >= WaterLevel)
+                    {
+                        if (!IsSolid(new Vector2(x, WaterLevel - 1)))
+                        {
+                            if (!beginWater)
+                            {
+                                beginWater = true;
+                                beginWaterPosition = x;
+                            }
+                        }
+                        else
+                        {
+                            if (beginWater)
+                            {
+                                beginWater = false;
+                                WaterPosition.Add(new Rectangle(beginWaterPosition, WaterLevel, x - beginWaterPosition, (int)MapSize.Y - WaterLevel));
+                            }
+                        }
+                    }
+                }
             }
             particles.SetData(particlesData);
             CreateMapParticles(particles, pos, force);
@@ -576,7 +609,7 @@ namespace TankArmageddon
         public bool IsSolid(Vector2 pPosition, Vector2 pPreviousPosition)
         {
             bool result = false;
-            float x = (pPosition.X + pPreviousPosition.X) / 2; 
+            float x = (pPosition.X + pPreviousPosition.X) / 2;
             List<int> yData = new List<int> { (int)pPosition.Y, (int)pPreviousPosition.Y};
             for (int y = yData.Min() - 1; y < yData.Max(); y++)
             {
@@ -717,7 +750,7 @@ namespace TankArmageddon
             {
                 _lootBag.Add(Action.eActions.SaintGrenada);
                 _lootBag.Add(Action.eActions.DropHealth);
-                _lootBag.Add(Action.eActions.Drilling);
+                //_lootBag.Add(Action.eActions.Drilling);
             }
         }
 

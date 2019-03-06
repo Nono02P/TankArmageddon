@@ -45,18 +45,17 @@ namespace TankArmageddon
             public override void Update(GameTime gameTime, ref float vx, ref float vy)
             {
                 base.Update(gameTime, ref vx, ref vy);
-
                 if (Enable)
                 {
-                    if (Input.OnPressed(Keys.Space))
+                    if (Control.OnPressedSpace) //(Input.OnPressed(Keys.Space))
                     {
                         Force = FORCE_MIN;
                     }
-                    if (Input.IsDown(Keys.Space))
+                    if (Control.IsDownSpace) //(Input.IsDown(Keys.Space))
                     {
                         Force += FORCE_SPEED;
                     }
-                    if (Input.OnReleased(Keys.Space) || Force >= FORCE_MAX)
+                    if (Control.OnReleasedSpace || Force >= FORCE_MAX) //(Input.OnReleased(Keys.Space) || Force >= FORCE_MAX)
                     {
                         Texture2D img = AssetManager.TanksSpriteSheet;
                         float cosAngle = (float)Math.Cos(Parent.AngleCannon + Parent.Angle);
@@ -95,7 +94,7 @@ namespace TankArmageddon
                         //if (Parent.Parent.Inventory[Parent.SelectedAction] > 0)
                         //    Parent.Parent.Inventory[Parent.SelectedAction]--;
                     }
-                    LaunchBar.Visible = Input.IsDown(Keys.Space) && Force < 100 && Enable;
+                    LaunchBar.Visible = Control.IsDownSpace && Force < 100 && Enable; //Input.IsDown(Keys.Space) && Force < 100 && Enable;
                     LaunchBar.Value = Force;
                     LaunchBar.Angle = Parent.AngleCannon + Parent.Angle;
                 }

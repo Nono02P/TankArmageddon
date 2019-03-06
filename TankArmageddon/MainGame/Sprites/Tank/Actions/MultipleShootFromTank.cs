@@ -37,11 +37,11 @@ namespace TankArmageddon
 
                 if (Enable)
                 {
-                    if (Input.OnPressed(Keys.Space) && _counter >= 15)
+                    if (Control.OnPressedSpace && _counter >= 15) //(Input.OnPressed(Keys.Space) && _counter >= 15)
                     {
                         _counter = 0;
                     }
-                    if (Input.IsDown(Keys.Space) && _counter <= 15)
+                    if (Control.IsDownSpace && _counter <= 15) //(Input.IsDown(Keys.Space) && _counter <= 15)
                     {
                         if (_timer > 0)
                         {
@@ -82,6 +82,14 @@ namespace TankArmageddon
                         //    Parent.Parent.Inventory[Parent.SelectedAction]--;
                     }
                 }
+            }
+            #endregion
+
+            #region Fin de tour
+            public override void EndOfTour()
+            {
+                base.EndOfTour();
+                _counter = 0;
             }
             #endregion
         }
