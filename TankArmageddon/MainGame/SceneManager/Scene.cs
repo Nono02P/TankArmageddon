@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace TankArmageddon
 {
@@ -11,6 +12,10 @@ namespace TankArmageddon
         protected Song sndMusic;
         protected List<IActor> lstActors;
         protected List<IActor> lstBuffer;
+        #endregion
+
+        #region Propriétés
+        public List<IActor> LstActors { get { return lstActors.ToList(); } }
         #endregion
 
         #region Constructeur

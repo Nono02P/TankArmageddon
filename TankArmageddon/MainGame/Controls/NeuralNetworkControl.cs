@@ -15,6 +15,7 @@ namespace TankArmageddon
 
         #region Propriétés
         public Team Parent { get; private set; }
+        public int FittingScore { get; set; }
         public bool OnPressedLeft { get; private set; }
         public bool OnPressedRight { get; private set; }
         public bool OnPressedUp { get; private set; }
@@ -34,8 +35,8 @@ namespace TankArmageddon
         public NeuralNetworkControl(Team pParent)
         {
             Parent = pParent;
-            _inputs = new float[24];
-            _neuralNetwork = new NeuralNetwork(_inputs.Length, new int[] { 32, 16 }, 20);
+            _inputs = new float[30];
+            _neuralNetwork = new NeuralNetwork(_inputs.Length, new int[] { 24, 20 }, 20, ActivationFunctions.eActivationFunction.TanH, true);
         }
         #endregion
 
@@ -43,31 +44,29 @@ namespace TankArmageddon
         private Vector2 MapNormalisation(Vector2 pPosition)
         {
             Vector2 mapSize = Parent.Parent.MapSize;
-            Vector2 p = new Vector2(MathHelper.Clamp(pPosition.X, 0, mapSize.X), MathHelper.Clamp(pPosition.Y, 0, mapSize.Y));
-            p /= mapSize;
-            return p * 2 - Vector2.One;
+            return new Vector2((float)utils.MapValue(-mapSize.X, mapSize.X, -1, 1, pPosition.X), (float)utils.MapValue(-mapSize.Y, mapSize.Y, -1, 1, pPosition.Y));
         }
         #endregion
 
-        #region Recherche du tank le plus proche
-        private Vector2 ShortestDistance(Tank pTank, List<Tank> tanks)
+        #region Recherche d'acteurs le plus proche
+        private IActor ShortestDistance(Tank pTank, List<IActor> actors)
         {
-            Vector2 min = new Vector2(100000);
+            IActor result = null;
             float distMin = -1;
-            for (int i = 0; i < tanks.Count; i++)
+            for (int i = 0; i < actors.Count; i++)
             {
-                Tank t = tanks[i];
-                if (t != pTank)
+                IActor actor = actors[i];
+                if (actor != pTank)
                 {
-                    float dist = (float)Math.Abs(utils.MathDist(pTank.Position, t.Position));
+                    float dist = (float)Math.Abs(utils.MathDist(pTank.Position, actor.Position));
                     if (distMin > dist || distMin == -1)
                     {
                         distMin = dist;
-                        min = t.Position;
+                        result = actor;
                     }
                 }
             }
-            return MapNormalisation(min - pTank.Position);
+            return result;
         }
         #endregion
 
@@ -95,13 +94,16 @@ namespace TankArmageddon
                 #region Affectation des entrées
                 Tank CurrentTank = Parent.Tanks[Parent.IndexTank];
                 Vector2 normalisedTankPos = MapNormalisation(CurrentTank.Position);
+
                 _inputs[0] = normalisedTankPos.X;
                 _inputs[1] = normalisedTankPos.Y;
-                _inputs[2] = CurrentTank.Angle;
-                _inputs[3] = CurrentTank.AngleCannon;
-
+                _inputs[2] = (float)utils.MapValue(MathHelper.ToRadians(0), MathHelper.ToRadians(360), -1, 1, CurrentTank.Angle);
+                _inputs[3] = (float)utils.MapValue(MathHelper.ToRadians(0), MathHelper.ToRadians(360), -1, 1, CurrentTank.AngleCannon);
+                _inputs[4] = CurrentTank.Life / 100;
+                _inputs[5] = CurrentTank.Fuel / 100;
+                
                 #region Eau la plus proche
-                Vector2 min = new Vector2(100000);
+                Vector2 min = - Vector2.One;
                 float distMin = -1;
                 for (int i = 0; i < Parent.Parent.WaterPosition.Count; i++)
                 {
@@ -128,30 +130,77 @@ namespace TankArmageddon
                 #endregion
 
                 Vector2 waterDist = MapNormalisation(min) - normalisedTankPos;
-                _inputs[4] = waterDist.X;
-                _inputs[5] = waterDist.Y;
+                _inputs[6] = waterDist.X;
+                _inputs[7] = waterDist.Y;
+
+                #region Drop le plus proche
+                Drop drop = (Drop)ShortestDistance(CurrentTank, Parent.Parent.LstActors.FindAll(d => d is Drop));
+                Vector2 dropDist;
+                if (drop == null)
+                {
+                    dropDist = Vector2.One;
+                }
+                else
+                {
+                    dropDist = MapNormalisation(drop.Position - CurrentTank.Position);
+                }
+                #endregion
+
+                _inputs[8] = dropDist.X;
+                _inputs[9] = dropDist.Y;
 
                 #region Allié le plus proche
-                Vector2 friendDist = ShortestDistance(CurrentTank, Parent.Tanks.FindAll(t => t.Parent == Parent && t != CurrentTank));
+                Tank friend = (Tank)ShortestDistance(CurrentTank, Parent.Tanks.FindAll(t => t.Parent == Parent && t != CurrentTank).Cast<IActor>().ToList());
+                Vector2 friendDist;
+                float life = 0;
+                if (friend == null)
+                {
+                    friendDist = Vector2.One;
+                    life = 1;
+                }
+                else
+                {
+                    friendDist = MapNormalisation(friend.Position - CurrentTank.Position);
+                    life = friend.Life / 100;
+                }
                 #endregion
 
-                _inputs[6] = friendDist.X;
-                _inputs[7] = friendDist.Y;
+                _inputs[10] = friendDist.X;
+                _inputs[11] = friendDist.Y;
+                _inputs[12] = life;
 
                 #region Ennemi le plus proche
-                Vector2 ennemyDist = ShortestDistance(CurrentTank, Parent.Tanks.FindAll(t => t.Parent != Parent));
+                List<Tank> tanks = new List<Tank>();
+                for (int i = 0; i < Parent.Parent.Teams.Count; i++)
+                {
+                    Team team = Parent.Parent.Teams[i];
+                    tanks.AddRange(team.Tanks);
+                }
+                Tank ennemy = (Tank)ShortestDistance(CurrentTank, tanks.FindAll(t => t.Parent != Parent).Cast<IActor>().ToList());
+                Vector2 ennemyDist;
+                if (ennemy == null)
+                {
+                    ennemyDist = Vector2.One;
+                    life = 1;
+                }
+                else
+                {
+                    ennemyDist = MapNormalisation(ennemy.Position - CurrentTank.Position);
+                    life = ennemy.Life / 100;
+                }
                 #endregion
 
-                _inputs[8] = ennemyDist.X;
-                _inputs[9] = ennemyDist.Y;
+                _inputs[13] = ennemyDist.X;
+                _inputs[14] = ennemyDist.Y;
+                _inputs[15] = life;
 
-                #region Action sélectionné
+                #region Action sélectionnée
                 for (int i = 0; i < Enum.GetValues(typeof(Action.eActions)).Length; i++)
                 {
                     if (CurrentTank.SelectedAction == (Action.eActions)i)
-                        _inputs[10 + i] = 1;
+                        _inputs[16 + i] = 1;
                     else
-                        _inputs[10 + i] = 0;
+                        _inputs[16 + i] = 0;
                 }
                 #endregion
 
@@ -163,7 +212,7 @@ namespace TankArmageddon
                 bool[] commands = new bool[outputs.Length];
                 for (int i = 0; i < outputs.Length; i++)
                 {
-                    if (outputs[i] >= 0.5f)
+                    if (outputs[i] >= 0f)
                     {
                         commands[i] = true;
                     }
@@ -190,9 +239,11 @@ namespace TankArmageddon
                 for (int i = 1; i < Enum.GetValues(typeof(Action.eActions)).Length; i++)
                 {
                     if (commands[i + 5])
-                        if (Parent.SelectAction((Action.eActions)i))
-                            break;
+                        Parent.SelectAction((Action.eActions)i);
+                        //if (Parent.SelectAction((Action.eActions)i))
+                            //break;
                 }
+                #endregion
             }
             else
             {
@@ -210,7 +261,6 @@ namespace TankArmageddon
                 IsDownN = false;
                 OnReleasedSpace = false;
             }
-            #endregion
         }
         #endregion
     }

@@ -293,22 +293,25 @@ namespace IA
         /// <summary>
         /// Rempli le Matrix avec des valeurs au hasard.
         /// </summary>
-        public void Randomize()
+        public void Randomize(bool pAllowNegative = false)
         {
             Random rnd = new Random();
-            Randomize(rnd);
+            Randomize(rnd, pAllowNegative);
         }
 
         /// <summary>
         /// Rempli le Matrix avec des valeurs au hasard à partir du Random passé en paramètre.
         /// </summary>
-        public void Randomize(Random rnd)
+        public void Randomize(Random rnd, bool pAllowNegative = false)
         {
             for (int i = 0; i < Rows; i++)
             {
                 for (int j = 0; j < Columns; j++)
                 {
-                    Data[i * Columns + j] += (float)rnd.NextDouble();// * 2 - 1;
+                    if (pAllowNegative)
+                        Data[i * Columns + j] += (float)rnd.NextDouble() * 2 - 1;
+                    else
+                        Data[i * Columns + j] += (float)rnd.NextDouble();
                 }
             }
         }

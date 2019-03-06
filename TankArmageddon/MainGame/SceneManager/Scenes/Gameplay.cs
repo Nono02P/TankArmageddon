@@ -27,6 +27,7 @@ namespace TankArmageddon
         private List<string> _names = new List<string>()
             {
                 "Almex",
+                "Anais_Ld",
                 "Anata",
                 "Arnkil",
                 "Asthegor",
@@ -35,6 +36,7 @@ namespace TankArmageddon
                 "BreakingBardo",
                 "Cehem",
                 "David",
+                "Demacedius",
                 "Duruti",
                 "Exe siga",
                 "Flashjaysan",
@@ -45,6 +47,7 @@ namespace TankArmageddon
                 "JadisGames",
                 "Jérôme",
                 "Jpcr",
+                "Jray",
                 "Kiba",
                 "Krayne Radion_Wave",
                 "Liolabs",
@@ -82,7 +85,6 @@ namespace TankArmageddon
             };
         private Textbox _timerTextBox;
         private Textbox _bigTimerTextBox;
-        private List<Team> _teams;
         private Textbox _currentTeamTextBox;
         private Textbox _currentTankTextBox;
         private Textbox _infoBulle;
@@ -111,15 +113,16 @@ namespace TankArmageddon
         public byte[] MapData { get; private set; }
         public Color[] MapColors { get; private set; }
         public List<Rectangle> WaterPosition;
+        public List<Team> Teams { get; private set; }
         public int IndexTeam
         {
             get { return _indexTeam; }
             private set
             {
-                if (_teams.Count > 0 && _indexTeam != value)
+                if (Teams.Count > 0 && _indexTeam != value)
                 {
-                    _indexTeam = value % _teams.Count;
-                    _teams[_indexTeam].RefreshCameraOnSelection();
+                    _indexTeam = value % Teams.Count;
+                    Teams[_indexTeam].RefreshCameraOnSelection();
                     RefreshActionButtonInventory();
                 }
             }
@@ -318,7 +321,7 @@ namespace TankArmageddon
             #endregion
 
             #region Création des équipes
-            _teams = new List<Team>();
+            Teams = new List<Team>();
             Texture2D img = AssetManager.TanksSpriteSheet;
             Team t;
             int numberOfTeam = MainGame.NumberOfTeam;
@@ -326,10 +329,10 @@ namespace TankArmageddon
             for (byte i = 0; i < numberOfTeam; i++)
             {
                 t = new Team(this, img, numberOfTankPerTeam, i, eControlType.NeuralNetwork);
-                _teams.Add(t);
+                Teams.Add(t);
                 t.OnTankSelectionChange += OnTankSelectionChange;
             }
-            t = _teams[IndexTeam];
+            t = Teams[IndexTeam];
             t.RefreshCameraOnSelection();
             _currentTeamTextBox.ApplyColor(t.TeamColor, Color.Black);
             _currentTankTextBox.Text = t.Tanks[t.IndexTank].Name;
@@ -360,7 +363,7 @@ namespace TankArmageddon
                 ButtonAction btn = (ButtonAction)pSender;
                 if (btn.Number != 0)
                 {
-                    if(_teams[_indexTeam].SelectAction(btn.ActionType))
+                    if(Teams[_indexTeam].SelectAction(btn.ActionType))
                         GUIGroupButtons.CurrentSelection = GUIGroupButtons.Elements.FindIndex(b => b == btn);
                 }
             }
@@ -377,7 +380,7 @@ namespace TankArmageddon
         public void RefreshActionButtonInventory()
         {
             int nbBtn = GUIGroupButtons.Elements.Count;
-            Dictionary<Action.eActions, int> inv = _teams[_indexTeam].Inventory;
+            Dictionary<Action.eActions, int> inv = Teams[_indexTeam].Inventory;
             for (int i = 0; i < nbBtn; i++)
             {
                 ButtonAction btn = (ButtonAction)GUIGroupButtons.Elements[i];
@@ -425,7 +428,7 @@ namespace TankArmageddon
                 {
                     _counter = TIME_BETWEEN_TOUR;
                     IndexTeam++;
-                    Team t = _teams[IndexTeam];
+                    Team t = Teams[IndexTeam];
                     _currentTeamTextBox.Text = t.ToString();
                     _currentTeamTextBox.ApplyColor(t.TeamColor, Color.Black);
                     _timerTextBox.ApplyColor(Color.Red, Color.Black);
@@ -444,7 +447,7 @@ namespace TankArmageddon
                     _counter = TIME_PER_TOUR;
                     _timerTextBox.ApplyColor(Color.Green, Color.Black);
                     _bigTimerTextBox.ApplyColor(Color.Orange, Color.Black);
-                    Team t = _teams[IndexTeam];
+                    Team t = Teams[IndexTeam];
                     t.NextTank();
                     t.RefreshCameraOnSelection();
                 }
@@ -837,9 +840,9 @@ namespace TankArmageddon
         #region Timer de fin de partie
         private void TimerEnd_OnElapsed(object sender, ElapsedEventArgs e)
         {
-            if (_teams.Count == 1)
+            if (Teams.Count == 1)
             {
-                MainGame.Winner = _teams[0].ToString();
+                MainGame.Winner = Teams[0].ToString();
                 MainGame.ChangeScene(SceneType.Victory);
             }
             else
@@ -875,23 +878,23 @@ namespace TankArmageddon
             #endregion
 
             #region Teams
-            for (int i = 0; i < _teams.Count; i++)
+            for (int i = 0; i < Teams.Count; i++)
             {
                 if (i == IndexTeam)
                 {
-                    _teams[i].Update(gameTime, _inTour);
+                    Teams[i].Update(gameTime, _inTour);
                 }
                 else
                 {
-                    _teams[i].Update(gameTime, false);
+                    Teams[i].Update(gameTime, false);
                 }
             }
 
-            _teams.RemoveAll(t => t.Remove);
+            Teams.RemoveAll(t => t.Remove);
             #endregion
 
             #region Victoire / Défaite
-            if (_teams.Count < 2 && !_gameFinnished)
+            if (Teams.Count < 2 && !_gameFinnished)
             {
                 _gameFinnished = true;
                 Timer timerEnd = new Timer(3000);

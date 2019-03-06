@@ -21,7 +21,7 @@ namespace IA
         [DataMember]
         public float LearningRate { get; set; } = 0.2f;
 
-        public NeuralNetwork(int NbInputs, int[] NbHiddens, int NbOutputs, ActivationFunctions.eActivationFunction pActivationFunction = ActivationFunctions.eActivationFunction.Sigmoid)
+        public NeuralNetwork(int NbInputs, int[] NbHiddens, int NbOutputs, ActivationFunctions.eActivationFunction pActivationFunction = ActivationFunctions.eActivationFunction.Sigmoid, bool pAllowNegative = false)
         {
             _rnd = new Random();
             ActivationFunction = pActivationFunction;
@@ -31,8 +31,8 @@ namespace IA
 
             Matrix Weights_IH = new Matrix(NbHiddens[0], NbInputs);
             Matrix Bias = new Matrix(NbHiddens[0], 1);
-            Weights_IH.Randomize(_rnd);
-            Bias.Randomize(_rnd);
+            Weights_IH.Randomize(_rnd, pAllowNegative);
+            Bias.Randomize(_rnd, pAllowNegative);
             _weights.Add(Weights_IH);
             _bias.Add(Bias);
 
@@ -51,10 +51,10 @@ namespace IA
                     b = new Matrix(NbOutputs, 1);
                 }
                 // Poids
-                w.Randomize(_rnd);
+                w.Randomize(_rnd, pAllowNegative);
                 _weights.Add(w);
                 // Biais
-                b.Randomize(_rnd);
+                b.Randomize(_rnd, pAllowNegative);
                 _bias.Add(b);
             }
         }
