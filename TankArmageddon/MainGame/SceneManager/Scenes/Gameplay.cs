@@ -392,6 +392,11 @@ namespace TankArmageddon
         public override void UnLoad()
         {
             _timerSecond.Elapsed -= OnTimerElapsed;
+            for (int i = 0; i < Teams.Count; i++)
+            {
+                Team t = Teams[i];
+                t.OnTankSelectionChange -= OnTankSelectionChange;
+            }
             if (IATrainingMode)
             {
                 Population.OnGenomesChanged -= Population_OnGenomesChanged;
@@ -418,6 +423,7 @@ namespace TankArmageddon
                 {
                     NeuralNetworkControl nn = (NeuralNetworkControl)t.Control;
                     nn.Genome = e.Genomes[i];
+                    nn.Genome.OnFitnessScoreChange += Genome_OnFittingScoreChange;
                     index++;
                 }
             }

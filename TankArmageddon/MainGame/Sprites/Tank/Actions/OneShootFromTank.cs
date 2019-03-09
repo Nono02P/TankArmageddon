@@ -59,7 +59,7 @@ namespace TankArmageddon
                         Texture2D img = AssetManager.TanksSpriteSheet;
                         float cosAngle = (float)Math.Cos(Parent.AngleCannon + Parent.Angle);
                         float sinAngle = (float)Math.Sin(Parent.AngleCannon + Parent.Angle);
-                        Vector2 p = new Vector2(Parent._imgCannon.Width * 1.25f * Parent.Scale.X * cosAngle, Parent._imgCannon.Width * 1.25f * Parent.Scale.X * sinAngle);
+                        Vector2 p = new Vector2(Parent._imgCannon.Width * Parent.Scale.X * cosAngle, Parent._imgCannon.Width * Parent.Scale.X * sinAngle);
                         p += Parent._positionCannon;
                         switch (TankArmageddon.Action.GetCategory(Parent.SelectedAction))
                         {
