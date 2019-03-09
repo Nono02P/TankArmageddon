@@ -17,10 +17,10 @@ namespace TankArmageddon
         #region Valeurs des bonus sur le FittingScore
         public static int BonusTankMove = 1;
         public static int BonusCannonMove = 2;
-        public static int BonusHelicoTankMove = 5;
+        public static int BonusHelicoTankMove = 40;
         public static int BonusShoot = 50;
         public static int BonusDropTouched = 40;
-        public static int BonusDropPickUp = 8;
+        public static int BonusDropPickUp = 2;
         public static int BonusTankTouched = 50;
         public static int BonusTankKilled = 100;
         #endregion
@@ -61,7 +61,7 @@ namespace TankArmageddon
         public NeuralNetworkControl(Team pParent)
         {
             Parent = pParent;
-            _inputs = new float[30];
+            _inputs = new float[46];
             Genome = new GeneticNeuralNetwork(_inputs.Length, new int[] { 24, 20 }, 20, ActivationFunctions.eActivationFunction.TanH, true);
         }
         #endregion
@@ -120,14 +120,15 @@ namespace TankArmageddon
                 #region Affectation des entrées
                 Tank CurrentTank = Parent.Tanks[Parent.IndexTank];
                 Vector2 normalisedTankPos = MapNormalisation(CurrentTank.Position);
+                int index = 0;
 
-                _inputs[0] = normalisedTankPos.X;
-                _inputs[1] = normalisedTankPos.Y;
-                _inputs[2] = (float)utils.MapValue(MathHelper.ToRadians(0), MathHelper.ToRadians(360), -1, 1, CurrentTank.Angle);
-                _inputs[3] = (float)utils.MapValue(MathHelper.ToRadians(0), MathHelper.ToRadians(360), -1, 1, CurrentTank.AngleCannon);
-                _inputs[4] = CurrentTank.Life / 100;
-                _inputs[5] = CurrentTank.Fuel / 100;
-                
+                _inputs[index] = normalisedTankPos.X; index++;
+                _inputs[index] = normalisedTankPos.Y; index++;
+                _inputs[index] = (float)utils.MapValue(MathHelper.ToRadians(0), MathHelper.ToRadians(360), -1, 1, CurrentTank.Angle); index++;
+                _inputs[index] = (float)utils.MapValue(MathHelper.ToRadians(0), MathHelper.ToRadians(360), -1, 1, CurrentTank.AngleCannon); index++;
+                _inputs[index] = CurrentTank.Life / 100; index++;
+                _inputs[index] = CurrentTank.Fuel / 100; index++;
+
                 #region Eau la plus proche
                 Vector2 min = - Vector2.One;
                 float distMin = -1;
@@ -156,8 +157,8 @@ namespace TankArmageddon
                 #endregion
 
                 Vector2 waterDist = MapNormalisation(min) - normalisedTankPos;
-                _inputs[6] = waterDist.X;
-                _inputs[7] = waterDist.Y;
+                _inputs[index] = waterDist.X; index++;
+                _inputs[index] = waterDist.Y; index++;
 
                 #region Drop le plus proche
                 Drop drop = (Drop)ShortestDistance(CurrentTank, Parent.Parent.LstActors.FindAll(d => d is Drop));
@@ -172,8 +173,8 @@ namespace TankArmageddon
                 }
                 #endregion
 
-                _inputs[8] = dropDist.X;
-                _inputs[9] = dropDist.Y;
+                _inputs[index] = dropDist.X; index++;
+                _inputs[index] = dropDist.Y; index++;
 
                 #region Allié le plus proche
                 Tank friend = (Tank)ShortestDistance(CurrentTank, Parent.Tanks.FindAll(t => t.Parent == Parent && t != CurrentTank).Cast<IActor>().ToList());
@@ -191,9 +192,9 @@ namespace TankArmageddon
                 }
                 #endregion
 
-                _inputs[10] = friendDist.X;
-                _inputs[11] = friendDist.Y;
-                _inputs[12] = life;
+                _inputs[index] = friendDist.X; index++;
+                _inputs[index] = friendDist.Y; index++;
+                _inputs[index] = life; index++;
 
                 #region Ennemi le plus proche
                 List<Tank> tanks = new List<Tank>();
@@ -216,17 +217,33 @@ namespace TankArmageddon
                 }
                 #endregion
 
-                _inputs[13] = ennemyDist.X;
-                _inputs[14] = ennemyDist.Y;
-                _inputs[15] = life;
+                _inputs[index] = ennemyDist.X; index++;
+                _inputs[index] = ennemyDist.Y; index++;
+                _inputs[index] = life; index++;
 
-                #region Action sélectionnée
+                #region Actions
                 for (int i = 0; i < Enum.GetValues(typeof(Action.eActions)).Length; i++)
                 {
+                    #region Sélection
                     if (CurrentTank.SelectedAction == (Action.eActions)i)
-                        _inputs[16 + i] = 1;
+                    {
+                        _inputs[index] = 1; index++;
+                    }
                     else
-                        _inputs[16 + i] = 0;
+                    {
+                        _inputs[index] = 0; index++;
+                    }
+                    #endregion
+
+                    #region Inventaire
+                    if (Parent.Inventory.ContainsKey((Action.eActions)i))
+                    {
+                        int val = Parent.Inventory[(Action.eActions)i];
+                        if (val == -1)
+                            val = 10;
+                        _inputs[index] = (float)utils.MapValue(0, 10, -1, 1, val, true); index++;
+                    }
+                    #endregion
                 }
                 #endregion
 

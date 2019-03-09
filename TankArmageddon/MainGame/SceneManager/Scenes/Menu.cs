@@ -215,7 +215,7 @@ namespace TankArmageddon
                     break;
                 case 3:
                     MainGame.IATrainingMode = true;
-                    MainGame.NumberOfTeam = 20;
+                    MainGame.NumberOfTeam = 10;
                     MainGame.NumberOfTank = 2;
                     MainGame.ChangeScene(SceneType.Gameplay);
                     break;
