@@ -21,10 +21,11 @@ namespace TankArmageddon
         #endregion
 
         #region Valeurs des malus sur le FittingScore
-        public static int MalusFuelEmpty = 30;
-        public static int MalusFallInWater = 100;
-        public static int MalusFriendlyFire = 20;
-        public static int MalusFriendKilled = 30;
+        public static int MalusShotOutOfScreen = 6;
+        public static int MalusFuelEmpty = 5;
+        public static int MalusFallInWater = 10;
+        public static int MalusFriendlyFire = 10;
+        public static int MalusFriendKilled = 15;
         #endregion
 
         #endregion

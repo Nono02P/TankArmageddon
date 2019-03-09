@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using System;
 using System.Collections.Generic;
@@ -151,7 +152,8 @@ namespace TankArmageddon
             IATrainingMode = MainGame.IATrainingMode;
             if (IATrainingMode)
             {
-                Population = Population.OpenFromFile("StartGame_Population");
+                Population = Population.OpenFromFile("Population");
+                //Population = new Population();
                 Population.OnGenomesChanged += Population_OnGenomesChanged;
             }
             #endregion
@@ -376,7 +378,7 @@ namespace TankArmageddon
                     NeuralNetworkControl nn = (NeuralNetworkControl)t.Control;
                     if (Population.Genomes.Count > 0)
                     {
-                        nn.Genome = Population.Genomes[i];
+                        nn.Genome = Population.Genomes[i % Population.Genomes.Count];
                         nn.Genome.OnFitnessScoreChange += Genome_OnFittingScoreChange;
                     }
                     else
@@ -450,7 +452,7 @@ namespace TankArmageddon
             if (Clicks == ClickType.Left && _inTour)
             {
                 ButtonAction btn = (ButtonAction)pSender;
-                Team team = Teams[_indexTeam];
+                Team team = Teams[IndexTeam];
                 if (team.Control is PlayerControl)
                 {
                     if (team.SelectAction(btn.ActionType))
@@ -472,7 +474,7 @@ namespace TankArmageddon
         public void RefreshActionButtonInventory()
         {
             int nbBtn = GUIGroupButtons.Elements.Count;
-            Dictionary<Action.eActions, int> inv = Teams[_indexTeam].Inventory;
+            Dictionary<Action.eActions, int> inv = Teams[IndexTeam].Inventory;
             for (int i = 0; i < nbBtn; i++)
             {
                 ButtonAction btn = (ButtonAction)GUIGroupButtons.Elements[i];
@@ -696,7 +698,7 @@ namespace TankArmageddon
             bool result = false;
             if (pPosition.X >= 0 && pPosition.X < MapSize.X && pPosition.Y >= 0 && pPosition.Y < MapSize.Y)
             {
-                result = MapData[(uint)(pPosition.X) + (uint)(pPosition.Y) * (uint)(MapSize.X)] > 0;
+                result = MapData[(int)(pPosition.X) + (int)(pPosition.Y) * (int)(MapSize.X)] > 0;
             }
             return result;
         }
@@ -939,7 +941,7 @@ namespace TankArmageddon
         {
             if(IATrainingMode)
             {
-                Population.Export("EndGame_Population");
+                Population.Export("Population");
             }
             if (Teams.Count == 1)
             {
@@ -957,6 +959,15 @@ namespace TankArmageddon
         #region Update
         public override void Update(GameTime gameTime)
         {
+            if (Input.OnReleased(Keys.Escape))
+            {
+                if (IATrainingMode)
+                {
+                    Population.Export("Population");
+                }
+                MainGame.ChangeScene(SceneType.Menu);
+            }
+
             #region Collisions
             // Gère les collisions entre IActors
             List<IActor> lstCollisionnable = lstActors.FindAll(actor => actor is ICollisionnable);

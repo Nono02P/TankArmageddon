@@ -64,6 +64,22 @@ namespace IA
                         }
                     }
                 }
+                for (int b = 0; b < pParent1._bias.Count; b++)
+                {
+                    Matrix m1 = pParent1._bias[b];
+                    Matrix m2 = pParent2._bias[b];
+                    for (int d = 0; d < m1.Data.Length; d++)
+                    {
+                        if (pRnd.NextDouble() > 0.5f)
+                        {
+                            childs[i]._bias[b].Data[d] = m1.Data[d];
+                        }
+                        else
+                        {
+                            childs[i]._bias[b].Data[d] = m2.Data[d];
+                        }
+                    }
+                }
             }
             return childs;
         }
@@ -84,6 +100,15 @@ namespace IA
                 {
                     if (pRnd.NextDouble() <= pMutationRate)
                         _weights[w].Data[d] = pRnd.Next();
+                }
+            }
+            for (int b = 0; b < _bias.Count; b++)
+            {
+                Matrix m = _bias[b];
+                for (int d = 0; d < m.Data.Length; d++)
+                {
+                    if (pRnd.NextDouble() <= pMutationRate)
+                        _bias[b].Data[d] = pRnd.Next();
                 }
             }
         }

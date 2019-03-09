@@ -49,6 +49,7 @@ namespace TankArmageddon
                     if (Control.OnPressedSpace) //(Input.OnPressed(Keys.Space))
                     {
                         Force = FORCE_MIN;
+                        BlockAction = true;
                     }
                     if (Control.IsDownSpace) //(Input.IsDown(Keys.Space))
                     {
@@ -59,7 +60,7 @@ namespace TankArmageddon
                         Texture2D img = AssetManager.TanksSpriteSheet;
                         float cosAngle = (float)Math.Cos(Parent.AngleCannon + Parent.Angle);
                         float sinAngle = (float)Math.Sin(Parent.AngleCannon + Parent.Angle);
-                        Vector2 p = new Vector2(Parent._imgCannon.Width * Parent.Scale.X * cosAngle, Parent._imgCannon.Width * Parent.Scale.X * sinAngle);
+                        Vector2 p = new Vector2(Parent._imgCannon.Width * 1.25f * Parent.Scale.X * cosAngle, Parent._imgCannon.Width * 1.25f * Parent.Scale.X * sinAngle);
                         p += Parent._positionCannon;
                         switch (TankArmageddon.Action.GetCategory(Parent.SelectedAction))
                         {
@@ -88,15 +89,14 @@ namespace TankArmageddon
                         }
                         Force = FORCE_MIN;
                         Parent.Parent.Parent.FinnishTour();
-                        BlockAction = true;
                         Enable = false;
                         //if (Parent.Parent.Inventory[Parent.SelectedAction] > 0)
                         //    Parent.Parent.Inventory[Parent.SelectedAction]--;
                     }
-                    LaunchBar.Visible = Control.IsDownSpace && Force < 100 && Enable; //Input.IsDown(Keys.Space) && Force < 100 && Enable;
-                    LaunchBar.Value = Force;
-                    LaunchBar.Angle = Parent.AngleCannon + Parent.Angle;
                 }
+                LaunchBar.Visible = Control.IsDownSpace && Force < 100 && Enable; //Input.IsDown(Keys.Space) && Force < 100 && Enable;
+                LaunchBar.Value = Force;
+                LaunchBar.Angle = Parent.AngleCannon + Parent.Angle;
             }
             #endregion
 

@@ -78,6 +78,11 @@ namespace TankArmageddon
                 {
                     OnBulletExplosion?.Invoke(this, new ExplosionEventArgs((Vector2)pPosition, Radius, Force));
                 }
+                else
+                {
+                    if (Sender.Parent.Control is NeuralNetworkControl)
+                        ((NeuralNetworkControl)Sender.Parent.Control).Genome.FitnessScore -= NeuralNetworkControl.MalusShotOutOfScreen;
+                }
                 Remove = true;
                 OnBulletExplosion -= Sender.Parent.Parent.CreateExplosion;
             }
@@ -142,6 +147,7 @@ namespace TankArmageddon
                 bool collision = false;
                 Vector2 normalised = Vector2.Normalize(Velocity);
                 Vector2 collisionPosition = previousPosition;
+                Vector2 mapSize = g.MapSize;
                 do
                 {
                     collisionPosition += normalised;
@@ -150,12 +156,12 @@ namespace TankArmageddon
                         collision = true;
                         collisionPosition -= normalised;
                     }
-                } while (!collision && Math.Abs((collisionPosition - Position).X) >= Math.Abs(normalised.X) && Math.Abs((collisionPosition - Position).Y) >= Math.Abs(normalised.Y));
+                } while (!collision && Math.Abs((collisionPosition - Position).X) >= Math.Abs(normalised.X) && Math.Abs((collisionPosition - Position).Y) >= Math.Abs(normalised.Y) && collisionPosition.X > 0 && collisionPosition.X < mapSize.X && collisionPosition.Y > 0 && collisionPosition.Y < mapSize.Y);
                 if (collision)
                 {
                     Die(true, collisionPosition);
                 }
-                if (Position.Y > Sender.Parent.Parent.MapSize.Y)
+                if (Position.Y > mapSize.Y)
                 {
                     Die(false, collisionPosition);
                 }

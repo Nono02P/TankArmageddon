@@ -272,7 +272,7 @@ namespace TankArmageddon
                         // Si le tank qui a provoqué l'explosion fait partie de la même équipe, provoque un malus
                         if (tank.Parent == Parent)
                         {
-                            Genome.FitnessScore -= NeuralNetworkControl.MalusFriendlyFire + force;
+                            Genome.FitnessScore -= NeuralNetworkControl.MalusFriendlyFire + (force / 10);
 
                             // Si il est en plus à l'origine de sa mort, ajoute un autre malus
                             if (Life <= 0)
@@ -290,7 +290,8 @@ namespace TankArmageddon
                             {
                                 Genome.FitnessScore += NeuralNetworkControl.BonusTankKilled;
                             }
-                        } }
+                        }
+                    }
                 }
             }
         }
@@ -338,6 +339,7 @@ namespace TankArmageddon
             #endregion
 
             Gameplay g = Parent.Parent;
+            Vector2 mapSize = g.MapSize;
 
             #region Gestion de la gravité en fonction du parachute et de la chute dans l'eau
             // Applique la gravité uniquement si le tank ne touche pas le sol (permet au tank d'éviter de passer au travers le sol qui n'est pas totalement détruit)
@@ -440,7 +442,10 @@ namespace TankArmageddon
                     collisionPosLeft -= normalised;
                     collisionPosRight -= normalised;
                 }
-            } while (!collision &&
+            } while (!collision && 
+            collisionPosMiddle.X > 0 && collisionPosMiddle.X < mapSize.X && collisionPosMiddle.Y > 0 && collisionPosMiddle.Y < mapSize.Y &&
+            collisionPosLeft.X > 0 && collisionPosLeft.X < mapSize.X && collisionPosLeft.Y > 0 && collisionPosLeft.Y < mapSize.Y &&
+            collisionPosRight.X > 0 && collisionPosRight.X < mapSize.X && collisionPosRight.Y > 0 && collisionPosRight.Y < mapSize.Y &&
             Math.Abs((collisionPosMiddle - newPosMiddle).X) >= Math.Abs(normalised.X) && Math.Abs((collisionPosMiddle - newPosMiddle).Y) >= Math.Abs(normalised.Y) &&
             Math.Abs((collisionPosLeft - newPosLeft).X) >= Math.Abs(normalised.X) && Math.Abs((collisionPosLeft - newPosLeft).Y) >= Math.Abs(normalised.Y) &&
             Math.Abs((collisionPosRight - newPosRight).X) >= Math.Abs(normalised.X) && Math.Abs((collisionPosRight - newPosRight).Y) >= Math.Abs(normalised.Y));

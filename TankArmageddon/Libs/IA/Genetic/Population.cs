@@ -43,6 +43,8 @@ namespace IA
 
         [DataMember]
         public ushort MinimumAcceptableFitness { get; set; } = 1;
+
+        [DataMember]
         public int Generation { get; private set; }
         #endregion
 
@@ -67,6 +69,10 @@ namespace IA
         #region Sérialize l'instance
         public void Export(string pPathFile = "Population")
         {
+            if(_ser == null)
+            {
+                _ser = new DataContractJsonSerializer(typeof(Population));
+            }
             string path = pPathFile;
             if (path == "")
             {
