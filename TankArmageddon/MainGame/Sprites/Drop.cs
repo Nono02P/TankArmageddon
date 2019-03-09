@@ -90,10 +90,22 @@ namespace TankArmageddon
             if (c.Intersects(BoundingBox))
             {
                 Explode();
-                ISentByTank sentByTank = (ISentByTank)sender;
-                if (sentByTank.Sender != null)
+
+                // Si l'explosion provient d'une action d'un tank.
+                ISentByTank sentByTank;
+                Tank tank;
+                if (sender is Tank)
                 {
-                    sentByTank.Sender.Parent.Control.FitnessScore += NeuralNetworkControl.BonusDropTouched;
+                    tank = (Tank)sender;
+                }
+                else
+                {
+                    sentByTank = (ISentByTank)sender;
+                    tank = sentByTank.Sender;
+                }
+                if (tank != null)
+                {
+                    tank.Parent.Control.FitnessScore += NeuralNetworkControl.BonusDropTouched;
                 }
             }
         }

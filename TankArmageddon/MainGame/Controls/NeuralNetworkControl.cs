@@ -17,18 +17,18 @@ namespace TankArmageddon
         #region Valeurs des bonus sur le FittingScore
         public static int BonusTankMove = 1;
         public static int BonusCannonMove = 2;
-        public static int BonusHelicoTankMove = 40;
-        public static int BonusShoot = 50;
-        public static int BonusDropTouched = 40;
+        public static int BonusHelicoTankMove = 10;
+        public static int BonusShoot = 5;
+        public static int BonusDropTouched = 2;
         public static int BonusDropPickUp = 2;
-        public static int BonusTankTouched = 50;
-        public static int BonusTankKilled = 100;
+        public static int BonusTankKilled = 10;
         #endregion
 
         #region Valeurs des malus sur le FittingScore
         public static int MalusFuelEmpty = 2;
         public static int MalusFallInWater = 10;
-        public static int MalusFriendlyFire = 50;
+        public static int MalusFriendlyFire = 20;
+        public static int MalusFriendKilled = 30;
         #endregion
 
         #endregion
@@ -282,9 +282,9 @@ namespace TankArmageddon
                 for (int i = 1; i < Enum.GetValues(typeof(Action.eActions)).Length; i++)
                 {
                     if (commands[i + 5])
-                        Parent.SelectAction((Action.eActions)i);
-                        //if (Parent.SelectAction((Action.eActions)i))
-                            //break;
+                        //Parent.SelectAction((Action.eActions)i);
+                        if (Parent.SelectAction((Action.eActions)i))
+                            break;
                 }
                 #endregion
             }

@@ -251,23 +251,40 @@ namespace TankArmageddon
                 Life -= force;
 
                 // Si l'explosion provient d'une action d'un tank.
-                ISentByTank sentByTank = (ISentByTank)sender;
-                if (sentByTank.Sender != null)
+                ISentByTank sentByTank;
+                Tank tank;
+                if (sender is Tank)
+                {
+                    tank = (Tank)sender;
+                }
+                else
+                {
+                    sentByTank = (ISentByTank)sender;
+                    tank = sentByTank.Sender;
+                }
+                
+                if (tank != null)
                 {
                     // Si le tank qui a provoqué l'explosion fait partie de la même équipe, provoque un malus
-                    if (sentByTank.Sender.Parent == Parent)
+                    if (tank.Parent == Parent)
                     {
-                        sentByTank.Sender.Parent.Control.FitnessScore -= NeuralNetworkControl.MalusFriendlyFire;
+                        tank.Parent.Control.FitnessScore -= NeuralNetworkControl.MalusFriendlyFire;
+
+                        // Si il est en plus à l'origine de sa mort, ajoute un autre malus
+                        if (Life < 0)
+                        {
+                            tank.Parent.Control.FitnessScore -= NeuralNetworkControl.MalusFriendKilled;
+                        }
                     }
                     else
                     {
                         // Si le tank qui a provoqué l'explosion fait partie d'une autre équipe, lui ajoute un bonus
-                        sentByTank.Sender.Parent.Control.FitnessScore += NeuralNetworkControl.BonusTankTouched;
+                        tank.Parent.Control.FitnessScore += force;
 
                         // Si il est en plus à l'origine de sa mort, ajoute un autre bonus
                         if (Life < 0)
                         {
-                            sentByTank.Sender.Parent.Control.FitnessScore += NeuralNetworkControl.BonusTankKilled;
+                            tank.Parent.Control.FitnessScore += NeuralNetworkControl.BonusTankKilled;
                         }
                     }
                 }

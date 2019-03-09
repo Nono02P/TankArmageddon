@@ -134,7 +134,7 @@ namespace TankArmageddon
                         {
                             Population.NextGeneration();
                         }
-                        _fittingScoreTextBox.Text = "Fitting Score : " + curTeam.Control.FitnessScore + " Generation : " + Population.Generation;
+                        _fittingScoreTextBox.Text = "Fitness Score : " + curTeam.Control.FitnessScore + " Generation : " + Population.Generation;
                     }
                     curTeam.RefreshCameraOnSelection();
                     RefreshActionButtonInventory();
@@ -321,7 +321,7 @@ namespace TankArmageddon
 
             if (IATrainingMode)
             {
-                _fittingScoreTextBox = new Textbox(Vector2.One, font, "Fitting Score : 0 Generation : " + Population.Generation);
+                _fittingScoreTextBox = new Textbox(Vector2.One, font, "Fitness Score : 0 Generation : " + Population.Generation);
                 _fittingScoreTextBox.ApplyColor(Color.Yellow, Color.Black);
                 GUIGroup.AddElement(_fittingScoreTextBox);
             }
@@ -402,7 +402,7 @@ namespace TankArmageddon
         #region Changement du Fitting Score
         private void NeuralNetworkControl_OnFittingScoreChange(object sender, int previous, int actual)
         {
-            _fittingScoreTextBox.Text = "Fitting Score : " + actual + " Generation : " + Population.Generation;
+            _fittingScoreTextBox.Text = "Fitness Score : " + actual + " Generation : " + Population.Generation;
         }
         #endregion
 

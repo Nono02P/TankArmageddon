@@ -22,6 +22,7 @@ namespace TankArmageddon
             public Tank Sender { get; private set; }
             public int Radius { get; protected set; }
             public int Force { get; protected set; }
+            public int BounceLimit { get; protected set; }
             public bool FocusCamera { get; set; }
             #endregion
 
@@ -36,6 +37,7 @@ namespace TankArmageddon
                     case Action.eActions.Grenada:
                         Radius = 80;
                         Force = 25;
+                        BounceLimit = 100;
                         _timerExplosion = 5;
                         Image = AssetManager.Grenada;
                         Scale = Vector2.One * 0.1f;
@@ -43,6 +45,7 @@ namespace TankArmageddon
                     case Action.eActions.SaintGrenada:
                         Radius = 80;
                         Force = 50;
+                        BounceLimit = 100;
                         _timerExplosion = 5;
                         Image = AssetManager.SaintGrenada;
                         Scale = Vector2.One * 0.08f;
@@ -179,20 +182,19 @@ namespace TankArmageddon
 
                     #region Rebond sur le sol
                     float hyp = (float)utils.MathDist(Vector2.Zero, Velocity) - FRICTION / 3;
+                    // Limite le rebond.
+                    hyp = MathHelper.Clamp(hyp, 0, BounceLimit);
 
-                    if (hyp > 0)
-                    {
-                        float angleFloor = (float)utils.MathAngle(after - before);
-                        float angleDirection = (float)utils.MathAngle(Velocity);
-                        float normAngle = angleDirection - angleFloor;
-                        vx = (float)Math.Cos(normAngle) * hyp;
-                        vy = -(float)Math.Sin(normAngle) * hyp;
-                        angleDirection = (float)utils.MathAngle(new Vector2(vx, vy));
-                        angleDirection += angleFloor;
-                        vx = (float)Math.Cos(angleDirection) * hyp;
-                        vy = (float)Math.Sin(angleDirection) * hyp;
-                        Velocity = new Vector2(vx, vy);
-                    }
+                    float angleFloor = (float)utils.MathAngle(after - before);
+                    float angleDirection = (float)utils.MathAngle(Velocity);
+                    float normAngle = angleDirection - angleFloor;
+                    vx = (float)Math.Cos(normAngle) * hyp;
+                    vy = -(float)Math.Sin(normAngle) * hyp;
+                    angleDirection = (float)utils.MathAngle(new Vector2(vx, vy));
+                    angleDirection += angleFloor;
+                    vx = (float)Math.Cos(angleDirection) * hyp;
+                    vy = (float)Math.Sin(angleDirection) * hyp;
+                    Velocity = new Vector2(vx, vy);
                     Position = collisionPosition + center;
                     #endregion
                 }
