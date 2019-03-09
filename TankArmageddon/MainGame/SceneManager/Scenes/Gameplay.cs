@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using IA;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
@@ -14,6 +15,7 @@ namespace TankArmageddon
     {
         #region Constantes
         private const int TIME_PER_TOUR = 60;
+        private const int TIME_PER_TOUR_IA_TRAINING = 15;
         private const int TIME_AFTER_ACTION = 10;
         private const int TIME_BETWEEN_TOUR = 10;
         #endregion
@@ -24,6 +26,26 @@ namespace TankArmageddon
         #endregion
 
         #region Variables privées
+        private Textbox _fittingScoreTextBox;
+        private Textbox _timerTextBox;
+        private Textbox _bigTimerTextBox;
+        private Textbox _currentTeamTextBox;
+        private Textbox _currentTankTextBox;
+        private Textbox _infoBulle;
+        private Timer _timerSecond;
+        private int _counter = TIME_PER_TOUR;
+        private bool _inTour = false;
+        private Texture2D _mapTexture;
+        private Texture2D _skyTexture;
+        private int _skyHeight = 3000;
+        private float[] _perlinNoise;
+        private int _indexTeam = 0;
+        private Image _gameBarImage;
+        private Image _cursorImage;
+        private List<Action.eActions> _lootBag;
+        private SoundEffect _sndexplosion;
+        private Water _water;
+        private bool _gameFinnished;
         private List<string> _names = new List<string>()
             {
                 "Almex",
@@ -83,28 +105,11 @@ namespace TankArmageddon
                 "Wile",
                 "Zethzer",
             };
-        private Textbox _timerTextBox;
-        private Textbox _bigTimerTextBox;
-        private Textbox _currentTeamTextBox;
-        private Textbox _currentTankTextBox;
-        private Textbox _infoBulle;
-        private Timer _timerSecond;
-        private int _counter = TIME_PER_TOUR;
-        private bool _inTour = false;
-        private Texture2D _mapTexture;
-        private Texture2D _skyTexture;
-        private int _skyHeight = 3000;
-        private float[] _perlinNoise;
-        private int _indexTeam = 0;
-        private Image _gameBarImage;
-        private Image _cursorImage;
-        private List<Action.eActions> _lootBag;
-        private SoundEffect _sndexplosion;
-        private Water _water;
-        private bool _gameFinnished;
         #endregion
 
         #region Propriétés
+        public bool IATrainingMode { get; private set; }
+        public Population Population { get; private set; }
         public Group GUIGroup { get; private set; }
         public GroupSelection GUIGroupButtons { get; private set; }
         public int WaterLevel { get { return (int)(MapSize.Y - MapSize.Y * 0.05f); } }
@@ -122,7 +127,16 @@ namespace TankArmageddon
                 if (Teams.Count > 0 && _indexTeam != value)
                 {
                     _indexTeam = value % Teams.Count;
-                    Teams[_indexTeam].RefreshCameraOnSelection();
+                    Team curTeam = Teams[_indexTeam];
+                    if (IATrainingMode)
+                    {
+                        if (_indexTeam != value)
+                        {
+                            Population.NextGeneration();
+                        }
+                        _fittingScoreTextBox.Text = "Fitting Score : " + curTeam.Control.FitnessScore + " Generation : " + Population.Generation;
+                    }
+                    curTeam.RefreshCameraOnSelection();
                     RefreshActionButtonInventory();
                 }
             }
@@ -132,6 +146,15 @@ namespace TankArmageddon
         #region Load/Unload
         public override void Load()
         {
+            #region Initialisation de la population (en cas de mode entrainement IA)
+            IATrainingMode = MainGame.IATrainingMode;
+            if (IATrainingMode)
+            {
+                Population = new Population();
+                Population.OnGenomesChanged += Population_OnGenomesChanged;
+            }
+            #endregion
+
             #region Démarrage des musiques
             sndMusic = AssetManager.mscGameplay;
             MediaPlayer.Play(sndMusic);
@@ -262,7 +285,7 @@ namespace TankArmageddon
             #region Création des éléments de GUI
             GUIGroup = new Group();
             Texture2D texture = AssetManager.GameBottomBar;
-            _gameBarImage = new Image(texture, new Vector2(MainGame.Screen.Width / 2 , MainGame.Screen.Height - texture.Height / 2));
+            _gameBarImage = new Image(texture, new Vector2(MainGame.Screen.Width / 2, MainGame.Screen.Height - texture.Height / 2));
             _gameBarImage.Layer -= 0.1f;
             _gameBarImage.SetOriginToCenter();
             GUIGroup.AddElement(_gameBarImage);
@@ -296,6 +319,13 @@ namespace TankArmageddon
             _infoBulle.ApplyColor(Color.Yellow, Color.Black);
             GUIGroup.AddElement(_infoBulle);
 
+            if (IATrainingMode)
+            {
+                _fittingScoreTextBox = new Textbox(Vector2.One, font, "Fitting Score : 0 Generation : " + Population.Generation);
+                _fittingScoreTextBox.ApplyColor(Color.Yellow, Color.Black);
+                GUIGroup.AddElement(_fittingScoreTextBox);
+            }
+
             GUIGroupButtons = new GroupSelection();
             for (int i = 0; i < Enum.GetValues(typeof(Action.eActions)).Length; i++)
             {
@@ -326,10 +356,26 @@ namespace TankArmageddon
             Team t;
             int numberOfTeam = MainGame.NumberOfTeam;
             int numberOfTankPerTeam = MainGame.NumberOfTank;
+            
             for (byte i = 0; i < numberOfTeam; i++)
             {
-                t = new Team(this, img, numberOfTankPerTeam, i, eControlType.NeuralNetwork);
+                eControlType controlType; 
+                if (IATrainingMode)
+                {
+                    controlType = eControlType.NeuralNetwork;
+                }
+                else
+                {
+                    controlType = eControlType.Player; // MainGame.ControlTypes[i];
+                }
+                t = new Team(this, img, numberOfTankPerTeam, i, controlType);
                 Teams.Add(t);
+                if (IATrainingMode)
+                {
+                    NeuralNetworkControl nn = (NeuralNetworkControl)t.Control;
+                    Population.Genomes.Add(nn.Genome);
+                    nn.OnFitnessScoreChange += NeuralNetworkControl_OnFittingScoreChange;
+                }
                 t.OnTankSelectionChange += OnTankSelectionChange;
             }
             t = Teams[IndexTeam];
@@ -345,7 +391,35 @@ namespace TankArmageddon
         public override void UnLoad()
         {
             _timerSecond.Elapsed -= OnTimerElapsed;
+            if (IATrainingMode)
+            {
+                Population.OnGenomesChanged -= Population_OnGenomesChanged;
+            }
             base.UnLoad();
+        }
+        #endregion
+
+        #region Changement du Fitting Score
+        private void NeuralNetworkControl_OnFittingScoreChange(object sender, int previous, int actual)
+        {
+            _fittingScoreTextBox.Text = "Fitting Score : " + actual + " Generation : " + Population.Generation;
+        }
+        #endregion
+
+        #region Changements sur la population
+        private void Population_OnGenomesChanged(object sender, PopulationManagerEventArgs e)
+        {
+            int index = 0;
+            for (int i = 0; i < Teams.Count; i++)
+            {
+                Team t = Teams[i];
+                if (t.Control is NeuralNetworkControl)
+                {
+                    NeuralNetworkControl nn = (NeuralNetworkControl)t.Control;
+                    nn.Genome = e.Genomes[i];
+                    index++;
+                }
+            }
         }
         #endregion
 
@@ -410,8 +484,6 @@ namespace TankArmageddon
         /// <summary>
         /// Evènements du timer (1 sec) pour la gestion des tours.
         /// </summary>
-        /// <param name="state"></param>
-        /// <param name="e"></param>
         public void OnTimerElapsed(object state, ElapsedEventArgs e)
         {
             _counter--;
@@ -444,7 +516,14 @@ namespace TankArmageddon
                 }
                 else
                 {
-                    _counter = TIME_PER_TOUR;
+                    if (IATrainingMode)
+                    {
+                        _counter = TIME_PER_TOUR_IA_TRAINING;
+                    }
+                    else
+                    {
+                        _counter = TIME_PER_TOUR;
+                    }
                     _timerTextBox.ApplyColor(Color.Green, Color.Black);
                     _bigTimerTextBox.ApplyColor(Color.Orange, Color.Black);
                     Team t = Teams[IndexTeam];
@@ -840,6 +919,10 @@ namespace TankArmageddon
         #region Timer de fin de partie
         private void TimerEnd_OnElapsed(object sender, ElapsedEventArgs e)
         {
+            if(IATrainingMode)
+            {
+                Population.Export("EndGame_Population");
+            }
             if (Teams.Count == 1)
             {
                 MainGame.Winner = Teams[0].ToString();

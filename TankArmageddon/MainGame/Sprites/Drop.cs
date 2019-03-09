@@ -5,7 +5,7 @@ using TankArmageddon.GUI;
 
 namespace TankArmageddon
 {
-    public class Drop : Sprite
+    public class Drop : Sprite, ISentByTank
     {
         #region Constantes
         private const float GRAVITY = 10f;
@@ -33,15 +33,17 @@ namespace TankArmageddon
 
         #region Propriétés
         public Gameplay Parent { get; private set; }
+        public Tank Sender { get; private set; }
         public eDropType DropType { get; private set; }
         public int Value { get; set; } = utils.MathRnd(50, 100);
         public bool Parachute { get => _parachute; private set { if (_parachute != value) { _parachute = value; _imgParachute.Visible = value; Parent.FinnishTour(true); } } }
         #endregion
 
         #region Constructeur
-        public Drop(Gameplay pParent, eDropType pDropType, Texture2D pImage, Vector2 pPosition, Vector2 pOrigin, Vector2 pScale) : base(pImage, null, pPosition, pOrigin, pScale)
+        public Drop(Gameplay pParent, eDropType pDropType, Texture2D pImage, Vector2 pPosition, Vector2 pOrigin, Vector2 pScale, Tank pSender = null) : base(pImage, null, pPosition, pOrigin, pScale)
         {
             Parent = pParent;
+            Sender = pSender;
             DropType = pDropType;
             switch (DropType)
             {
@@ -86,7 +88,14 @@ namespace TankArmageddon
         {
             Circle c = e.ExplosionCircle;
             if (c.Intersects(BoundingBox))
+            {
                 Explode();
+                ISentByTank sentByTank = (ISentByTank)sender;
+                if (sentByTank.Sender != null)
+                {
+                    sentByTank.Sender.Parent.Control.FitnessScore += NeuralNetworkControl.BonusDropTouched;
+                }
+            }
         }
         #endregion
 
@@ -100,6 +109,10 @@ namespace TankArmageddon
                     Parachute = false;
                 }
                 Tank t = (Tank)collisionnable;
+                if (t.IsControlled)
+                {
+                    t.Parent.Control.FitnessScore += NeuralNetworkControl.BonusDropPickUp;
+                }
                 Parent.RefreshActionButtonInventory();
                 Remove = true;
                 switch (DropType)

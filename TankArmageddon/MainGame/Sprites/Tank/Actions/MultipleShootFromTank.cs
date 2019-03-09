@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 
 namespace TankArmageddon
 {
@@ -76,6 +75,7 @@ namespace TankArmageddon
                     if (_counter >= NB_SHOOT)
                     {
                         Parent.Parent.Parent.FinnishTour();
+                        BlockAction = true;
                         Enable = false;
                         _counter = 0;
                         //if (Parent.Parent.Inventory[Parent.SelectedAction] > 0)

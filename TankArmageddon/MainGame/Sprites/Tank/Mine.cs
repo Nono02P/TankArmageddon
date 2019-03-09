@@ -6,7 +6,7 @@ namespace TankArmageddon
 {
     public partial class Tank
     {
-        public class Mine : Sprite
+        public class Mine : Sprite, ISentByTank
         {
             #region Constantes
             private const int TIMER_EXPLOSION = 2;
@@ -32,7 +32,7 @@ namespace TankArmageddon
             #endregion
 
             #region Propriétés
-            public Tank Parent { get; private set; }
+            public Tank Sender { get; private set; }
             public eState State { get; private set; }
             #endregion
 
@@ -41,7 +41,7 @@ namespace TankArmageddon
             {
                 #region Initialisation des valeurs
                 Layer += 0.2f;
-                Parent = pParent;
+                Sender = pParent;
                 Image = AssetManager.TanksSpriteSheet;
                 ImgBox = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tanks_mineOff.png").ImgBox;
                 _imgBoxOn = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tanks_mineOn.png").ImgBox;
@@ -60,7 +60,7 @@ namespace TankArmageddon
 
                 #region Abonnement aux évènements
                 _timerExplosion.Elapsed += OnTimerExplosionElapsed;
-                Parent.Parent.Parent.OnTourTimerEnd += Gameplay_OnTourTimerEnd;
+                Sender.Parent.Parent.OnTourTimerEnd += Gameplay_OnTourTimerEnd;
                 #endregion
             }
             #endregion
@@ -70,7 +70,7 @@ namespace TankArmageddon
             {
                 State = eState.On;
                 ImgBox = _imgBoxOn;
-                Parent.Parent.Parent.OnTourTimerEnd -= Gameplay_OnTourTimerEnd;
+                Sender.Parent.Parent.OnTourTimerEnd -= Gameplay_OnTourTimerEnd;
             }
             #endregion
 
@@ -99,7 +99,7 @@ namespace TankArmageddon
                 }
                 if (_counter >= TIMER_EXPLOSION)
                 {
-                    Parent.Parent.Parent.CreateExplosion(this, new ExplosionEventArgs(Position, RADIUS_EXPLOSION, FORCE));
+                    Sender.Parent.Parent.CreateExplosion(this, new ExplosionEventArgs(Position, RADIUS_EXPLOSION, FORCE));
                     Remove = true;
                     _timerExplosion.Elapsed -= OnTimerExplosionElapsed;
                 }
@@ -123,7 +123,7 @@ namespace TankArmageddon
             #region Update
             public override void Update(GameTime gameTime)
             {
-                Gameplay g = Parent.Parent.Parent;
+                Gameplay g = Sender.Parent.Parent;
 
                 #region Gestion de la gravité
                 float vx = Velocity.X;

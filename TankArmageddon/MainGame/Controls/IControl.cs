@@ -11,7 +11,7 @@ namespace TankArmageddon
     public interface IControl
     {
         Team Parent { get; }
-        int FittingScore { get; set; }
+        int FitnessScore { get; set; }
         bool OnPressedLeft { get; }
         bool OnPressedRight { get; }
         bool OnPressedUp { get; }

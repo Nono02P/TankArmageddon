@@ -1,16 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TankArmageddon
+﻿namespace TankArmageddon
 {
     public partial class Tank
     {
-        public class Drill : Sprite
+        public class Drill : Sprite, ISentByTank
         {
+            public Tank Sender { get; private set; }
 
+            public Drill(Tank pParent)
+            {
+                Sender = pParent;
+            }
         }
     }
 }

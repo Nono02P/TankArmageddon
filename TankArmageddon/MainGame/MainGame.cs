@@ -44,6 +44,8 @@ namespace TankArmageddon
         public static Scene CurrentScene { get; private set; }
         public static bool ExitGame { get;  set; }
         public static string Winner { get;  set; }
+        public static bool IATrainingMode { get; set; }
+        public static eControlType[] ControlTypes { get; set; }
 
         public static int NumberOfTeam { get; set; } = 2;
         public static int NumberOfTank { get; set; } = 1;
@@ -78,6 +80,7 @@ namespace TankArmageddon
             spriteBatch = new SpriteBatch(GraphicsDevice);
             primitiveBatch = new PrimitiveBatch(GraphicsDevice);
             AssetManager.Load(Content);
+            ControlTypes = new eControlType[4];
             ChangeScene(SceneType.Menu);
         }
         

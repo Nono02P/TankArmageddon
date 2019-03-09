@@ -1,7 +1,5 @@
-﻿using IA;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 
@@ -65,7 +63,7 @@ namespace TankArmageddon
             string tankName = "";
             string tankCannon = "tanks_turret2.png";
             string tankWheel = "tanks_tankTracks1.png";
-            switch (pTeamNumber)
+            switch (pTeamNumber % 4)
             {
                 case 0:
                     TeamColor = Color.Red;

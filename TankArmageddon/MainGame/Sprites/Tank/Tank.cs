@@ -249,6 +249,28 @@ namespace TankArmageddon
             {
                 int force = pExplosionEventArgs.Force;
                 Life -= force;
+
+                // Si l'explosion provient d'une action d'un tank.
+                ISentByTank sentByTank = (ISentByTank)sender;
+                if (sentByTank.Sender != null)
+                {
+                    // Si le tank qui a provoqué l'explosion fait partie de la même équipe, provoque un malus
+                    if (sentByTank.Sender.Parent == Parent)
+                    {
+                        sentByTank.Sender.Parent.Control.FitnessScore -= NeuralNetworkControl.MalusFriendlyFire;
+                    }
+                    else
+                    {
+                        // Si le tank qui a provoqué l'explosion fait partie d'une autre équipe, lui ajoute un bonus
+                        sentByTank.Sender.Parent.Control.FitnessScore += NeuralNetworkControl.BonusTankTouched;
+
+                        // Si il est en plus à l'origine de sa mort, ajoute un autre bonus
+                        if (Life < 0)
+                        {
+                            sentByTank.Sender.Parent.Control.FitnessScore += NeuralNetworkControl.BonusTankKilled;
+                        }
+                    }
+                }
             }
         }
         #endregion
@@ -296,7 +318,7 @@ namespace TankArmageddon
 
             Gameplay g = Parent.Parent;
 
-            #region Gestion de la gravité en fonction du parachute
+            #region Gestion de la gravité en fonction du parachute et de la chute dans l'eau
             // Applique la gravité uniquement si le tank ne touche pas le sol (permet au tank d'éviter de passer au travers le sol qui n'est pas totalement détruit)
             if (Parachute && !_onFloor)
             {
@@ -312,7 +334,14 @@ namespace TankArmageddon
             {
                 Velocity.Normalize();
                 if (Position.Y > g.WaterLevel + g.WaterHeight)
+                {
                     Die(false);
+                    if (IsControlled && Parent.Control is NeuralNetworkControl)
+                    {
+                        NeuralNetworkControl nn = (NeuralNetworkControl)Parent.Control;
+                        nn.FitnessScore -= NeuralNetworkControl.MalusFallInWater;
+                    }
+                }
             }
             #endregion
 

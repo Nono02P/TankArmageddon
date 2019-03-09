@@ -8,14 +8,39 @@ namespace TankArmageddon
 {
     public class NeuralNetworkControl : IControl
     {
+        #region Evènements
+        public event onIntChange OnFitnessScoreChange;
+        #endregion
+
+        #region Constantes
+
+        #region Valeurs des bonus sur le FittingScore
+        public static int BonusTankMove = 1;
+        public static int BonusCannonMove = 2;
+        public static int BonusHelicoTankMove = 5;
+        public static int BonusShoot = 50;
+        public static int BonusDropTouched = 40;
+        public static int BonusDropPickUp = 8;
+        public static int BonusTankTouched = 50;
+        public static int BonusTankKilled = 100;
+        #endregion
+
+        #region Valeurs des malus sur le FittingScore
+        public static int MalusFuelEmpty = 2;
+        public static int MalusFallInWater = 10;
+        public static int MalusFriendlyFire = 50;
+        #endregion
+
+        #endregion
+
         #region Variables privées
         private float[] _inputs;
-        private NeuralNetwork _neuralNetwork;
+        private int _fitnessScore;
         #endregion
 
         #region Propriétés
         public Team Parent { get; private set; }
-        public int FittingScore { get; set; }
+        public int FitnessScore { get => _fitnessScore; set { if (_fitnessScore != value) OnFitnessScoreChange?.Invoke(this, _fitnessScore, value); _fitnessScore = value; Genome.FitnessScore = value; } }
         public bool OnPressedLeft { get; private set; }
         public bool OnPressedRight { get; private set; }
         public bool OnPressedUp { get; private set; }
@@ -29,6 +54,7 @@ namespace TankArmageddon
         public bool IsDownSpace { get; private set; }
         public bool IsDownN { get; private set; }
         public bool OnReleasedSpace { get; private set; }
+        public GeneticNeuralNetwork Genome { get; set; }
         #endregion
 
         #region Constructeur
@@ -36,7 +62,7 @@ namespace TankArmageddon
         {
             Parent = pParent;
             _inputs = new float[30];
-            _neuralNetwork = new NeuralNetwork(_inputs.Length, new int[] { 24, 20 }, 20, ActivationFunctions.eActivationFunction.TanH, true);
+            Genome = new GeneticNeuralNetwork(_inputs.Length, new int[] { 24, 20 }, 20, ActivationFunctions.eActivationFunction.TanH, true);
         }
         #endregion
 
@@ -206,7 +232,7 @@ namespace TankArmageddon
 
                 #endregion
 
-                float[] outputs = _neuralNetwork.FeedForward(_inputs);
+                float[] outputs = Genome.FeedForward(_inputs);
 
                 #region Affectation des sorties
                 bool[] commands = new bool[outputs.Length];

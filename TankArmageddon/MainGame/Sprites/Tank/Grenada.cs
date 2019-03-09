@@ -7,7 +7,7 @@ namespace TankArmageddon
 {
     public partial class Tank
     {
-        public class Grenada : Sprite
+        public class Grenada : Sprite, ISentByTank
         {
             #region Variables privées
             private Textbox _textBox;
@@ -19,7 +19,7 @@ namespace TankArmageddon
             #region Propriétés
             public event ExplosionHandler OnExplosion;
             public Action.eActions BulletType { get; protected set; }
-            public Tank Parent { get; private set; }
+            public Tank Sender { get; private set; }
             public int Radius { get; protected set; }
             public int Force { get; protected set; }
             public bool FocusCamera { get; set; }
@@ -30,7 +30,7 @@ namespace TankArmageddon
             {
                 #region Initialisation des valeurs
                 Layer += 0.2f;
-                Parent = pShooter;
+                Sender = pShooter;
                 switch (pBulletType)
                 {
                     case Action.eActions.Grenada:
@@ -68,7 +68,7 @@ namespace TankArmageddon
                 #endregion
 
                 #region Abonnement aux évènements
-                OnExplosion += Parent.Parent.Parent.CreateExplosion;
+                OnExplosion += Sender.Parent.Parent.CreateExplosion;
                 _timer.Elapsed += OnTimerExplosionElapsed;
                 #endregion
             }
@@ -95,7 +95,7 @@ namespace TankArmageddon
                 }
                 Remove = true;
                 _textBox.Remove = true;
-                OnExplosion -= Parent.Parent.Parent.CreateExplosion;
+                OnExplosion -= Sender.Parent.Parent.CreateExplosion;
                 _timer.Elapsed -= OnTimerExplosionElapsed;
             }
             #endregion
@@ -118,7 +118,7 @@ namespace TankArmageddon
                 }
                 #endregion
 
-                Gameplay g = Parent.Parent.Parent;
+                Gameplay g = Sender.Parent.Parent;
 
                 #region Application de la gravité
                 float vx = Velocity.X;
@@ -203,7 +203,7 @@ namespace TankArmageddon
                 #endregion
 
                 #region Sortie de map
-                if (Parent.Parent.Parent.OutOfMap(this))
+                if (Sender.Parent.Parent.OutOfMap(this))
                 {
                     Die(false);
                 }

@@ -7,48 +7,66 @@ namespace IA
     [DataContract]
     public class NeuralNetwork
     {
+        #region Variables privées
         private Random _rnd;
+        #endregion        
 
+        #region Variables protected
         [DataMember]
-        private List<Matrix> _neurons;
+        protected List<Matrix> _neurons;
         [DataMember]
-        private List<Matrix> _weights;
+        protected List<Matrix> _weights;
         [DataMember]
-        private List<Matrix> _bias;
+        protected List<Matrix> _bias;
+        [DataMember]
+        protected bool _allowNegative;
+        #endregion
 
+        #region Propriétés
         [DataMember]
         public ActivationFunctions.eActivationFunction ActivationFunction { get; set; }
         [DataMember]
         public float LearningRate { get; set; } = 0.2f;
+        [DataMember]
+        public int NbInputs { get; private set; }
+        [DataMember]
+        public int[] NbHiddens { get; private set; }
+        [DataMember]
+        public int NbOutputs { get; private set; }
+        #endregion
 
-        public NeuralNetwork(int NbInputs, int[] NbHiddens, int NbOutputs, ActivationFunctions.eActivationFunction pActivationFunction = ActivationFunctions.eActivationFunction.Sigmoid, bool pAllowNegative = false)
+        public NeuralNetwork(int pNbInputs, int[] pNbHiddens, int pNbOutputs, ActivationFunctions.eActivationFunction pActivationFunction = ActivationFunctions.eActivationFunction.Sigmoid, bool pAllowNegative = false)
         {
+            NbInputs = pNbInputs;
+            NbHiddens = pNbHiddens;
+            NbOutputs = pNbOutputs;
+            _allowNegative = pAllowNegative;
             _rnd = new Random();
             ActivationFunction = pActivationFunction;
             _weights = new List<Matrix>();
             _neurons = new List<Matrix>();
             _bias = new List<Matrix>();
 
-            Matrix Weights_IH = new Matrix(NbHiddens[0], NbInputs);
-            Matrix Bias = new Matrix(NbHiddens[0], 1);
+            Matrix Weights_IH = new Matrix(pNbHiddens[0], pNbInputs);
+            Matrix Bias = new Matrix(pNbHiddens[0], 1);
             Weights_IH.Randomize(_rnd, pAllowNegative);
             Bias.Randomize(_rnd, pAllowNegative);
             _weights.Add(Weights_IH);
             _bias.Add(Bias);
 
-            for (int i = 0; i < NbHiddens.Length; i++)
+            for (int i = 0; i < pNbHiddens.Length; i++)
             {
                 Matrix w;
                 Matrix b;
-                if (i < NbHiddens.Length - 1)
+                if (i < pNbHiddens.Length - 1)
                 {
-                    w = new Matrix(NbHiddens[i + 1], NbHiddens[i]);
-                    b = new Matrix(NbHiddens[i + 1], 1);
+                    w = new Matrix(pNbHiddens[i + 1], pNbHiddens[i]);
+                    b = new Matrix(pNbHiddens[i + 1], 1);
                 }
                 else
                 {
-                    w = new Matrix(NbOutputs, NbHiddens[i]);
-                    b = new Matrix(NbOutputs, 1);
+                    w = new Matrix(pNbOutputs, pNbHiddens[i]);
+                    b = new Matrix(pNbOutputs, 1);
                 }
                 // Poids
                 w.Randomize(_rnd, pAllowNegative);

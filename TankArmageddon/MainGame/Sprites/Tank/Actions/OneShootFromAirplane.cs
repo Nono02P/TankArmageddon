@@ -63,6 +63,7 @@ namespace TankArmageddon
                         }
                         Parent.Parent.Parent.FinnishTour();
                         ShootCursor.Visible = false;
+                        BlockAction = true;
                         Enable = false;
                         //if (Parent.Parent.Inventory[Parent.SelectedAction] > 0)
                         //    Parent.Parent.Inventory[Parent.SelectedAction]--;

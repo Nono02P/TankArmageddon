@@ -6,7 +6,7 @@ namespace TankArmageddon
 {
     public partial class Tank
     {
-        public class Bullet : Sprite
+        public class Bullet : Sprite, ISentByTank
         {
             #region Evènements
             public event ExplosionHandler OnBulletExplosion;
@@ -14,7 +14,7 @@ namespace TankArmageddon
 
             #region Propriétés
             public Action.eActions BulletType { get; protected set; }
-            public Tank Parent { get; private set; }
+            public Tank Sender { get; private set; }
             public int Radius { get; protected set; }
             public int Force { get; protected set; }
             public bool FocusCamera { get; set; }
@@ -24,7 +24,7 @@ namespace TankArmageddon
             public Bullet(Tank pShooter, Texture2D pImage, Vector2 pPosition, Vector2 pVelocity, Action.eActions pBulletType, Vector2 pScale) : base(pImage)
             {
                 Layer += 0.2f;
-                Parent = pShooter;
+                Sender = pShooter;
                 Position = pPosition;
                 Velocity = pVelocity;
                 Scale = pScale;
@@ -67,7 +67,7 @@ namespace TankArmageddon
                         break;
                 }
                 Origin = new Vector2(ImgBox.Value.Width / 2, ImgBox.Value.Height / 2);
-                OnBulletExplosion += Parent.Parent.Parent.CreateExplosion;
+                OnBulletExplosion += Sender.Parent.Parent.CreateExplosion;
             }
             #endregion
 
@@ -79,7 +79,7 @@ namespace TankArmageddon
                     OnBulletExplosion?.Invoke(this, new ExplosionEventArgs((Vector2)pPosition, Radius, Force));
                 }
                 Remove = true;
-                OnBulletExplosion -= Parent.Parent.Parent.CreateExplosion;
+                OnBulletExplosion -= Sender.Parent.Parent.CreateExplosion;
             }
             #endregion
 
@@ -111,7 +111,7 @@ namespace TankArmageddon
                 }
                 #endregion
 
-                Gameplay g = Parent.Parent.Parent;
+                Gameplay g = Sender.Parent.Parent;
 
                 #region Application de la gravité
                 float vx = Velocity.X;
@@ -155,14 +155,14 @@ namespace TankArmageddon
                 {
                     Die(true, collisionPosition);
                 }
-                if (Position.Y > Parent.Parent.Parent.MapSize.Y)
+                if (Position.Y > Sender.Parent.Parent.MapSize.Y)
                 {
                     Die(false, collisionPosition);
                 }
                 #endregion
 
                 #region Sortie de map
-                if (Parent.Parent.Parent.OutOfMap(this))
+                if (Sender.Parent.Parent.OutOfMap(this))
                 {
                     Die(false);
                 }

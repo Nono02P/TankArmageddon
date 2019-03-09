@@ -1,13 +1,19 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Input;
 
 namespace TankArmageddon
 {
     public class PlayerControl : IControl
     {
+        #region Variables privées
+        private bool _previousRefreshState;
+        private SoundEffect _horn;
+        #endregion
+
         #region Propriétés
         public Team Parent { get; private set; }
-        public int FittingScore { get; set; }
+        public int FitnessScore { get; set; }
         public bool OnPressedLeft { get; private set; }
         public bool OnPressedRight { get; private set; }
         public bool OnPressedUp { get; private set; }
@@ -27,6 +33,7 @@ namespace TankArmageddon
         public PlayerControl(Team pParent)
         {
             Parent = pParent;
+            _horn = AssetManager.sndHorn;
         }
         #endregion
 
@@ -38,19 +45,23 @@ namespace TankArmageddon
         #region Update
         public void Update(bool pRefresh)
         {
-            OnPressedLeft = Input.OnPressed(Keys.Left);
-            OnPressedRight = Input.OnPressed(Keys.Right);
-            OnPressedUp = Input.OnPressed(Keys.Up);
-            OnPressedDown = Input.OnPressed(Keys.Down);
-            OnPressedSpace = Input.OnPressed(Keys.Space);
-            OnPressedN = Input.OnPressed(Keys.N);
-            IsDownLeft = Input.IsDown(Keys.Left);
-            IsDownRight = Input.IsDown(Keys.Right);
-            IsDownUp = Input.IsDown(Keys.Up);
-            IsDownDown = Input.IsDown(Keys.Down);
-            IsDownSpace = Input.IsDown(Keys.Space);
-            IsDownN = Input.IsDown(Keys.N);
-            OnReleasedSpace = Input.OnReleased(Keys.Space);
+            if (pRefresh && !_previousRefreshState)
+                _horn.Play();
+
+            OnPressedLeft = Input.OnPressed(Keys.Left) && pRefresh;
+            OnPressedRight = Input.OnPressed(Keys.Right) && pRefresh;
+            OnPressedUp = Input.OnPressed(Keys.Up) && pRefresh;
+            OnPressedDown = Input.OnPressed(Keys.Down) && pRefresh;
+            OnPressedSpace = Input.OnPressed(Keys.Space) && pRefresh;
+            OnPressedN = Input.OnPressed(Keys.N) && pRefresh;
+            IsDownLeft = Input.IsDown(Keys.Left) && pRefresh;
+            IsDownRight = Input.IsDown(Keys.Right) && pRefresh;
+            IsDownUp = Input.IsDown(Keys.Up) && pRefresh;
+            IsDownDown = Input.IsDown(Keys.Down) && pRefresh;
+            IsDownSpace = Input.IsDown(Keys.Space) && pRefresh;
+            IsDownN = Input.IsDown(Keys.N) && pRefresh;
+            OnReleasedSpace = Input.OnReleased(Keys.Space) && pRefresh;
+            _previousRefreshState = pRefresh;
         }
         #endregion
     }

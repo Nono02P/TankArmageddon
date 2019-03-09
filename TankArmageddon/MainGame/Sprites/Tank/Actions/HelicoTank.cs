@@ -10,6 +10,8 @@ namespace TankArmageddon
         {
             #region Variables privées
             private bool _blockAction;
+            private bool _fuelEmpty = false;
+            private bool _alreadyMoved = false;
             #endregion
 
             #region Propriétés
@@ -47,12 +49,30 @@ namespace TankArmageddon
                     Parent.Fuel -= FUEL_CONSUMPTION;
                     // Permet de désactiver la Continuous Collision Detection au moment du décollage.
                     Parent._disableCCD = true;
+                    if (!_alreadyMoved)
+                    {
+                        Control.FitnessScore += NeuralNetworkControl.BonusHelicoTankMove;
+                        _alreadyMoved = true;
+                    }
                 }
                 else
                 {
                     Parent._disableCCD = false;
                 }
                 Parent.Parent.RefreshCameraOnSelection();
+
+                if (Parent.Fuel > 0)
+                {
+                    _fuelEmpty = false;
+                }
+                else
+                {
+                    if (!_fuelEmpty)
+                    {
+                        Control.FitnessScore -= NeuralNetworkControl.MalusFuelEmpty;
+                        _fuelEmpty = true;
+                    }
+                }
             }
             #endregion
 

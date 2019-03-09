@@ -24,6 +24,8 @@ namespace TankArmageddon
         private Tweening _tweeninghowToPlay;
         private Textbox _exit;
         private Tweening _tweeningExit;
+        private Textbox _trainingMode;
+        private Tweening _tweeningTrainingMode;
         private GroupSelection _groupNbOfTeam;
         private Textbox _numberOfTeamDescription;
         private Tweening _tweeningNbOfTeamDescription;
@@ -69,6 +71,10 @@ namespace TankArmageddon
             text = "QUITTER";
             _exit = new Textbox(new Vector2(-2200, (screenHeight - font.MeasureString(text).Y) / 2 + 80), font, text);
             _groupMenu.AddElement((IIntegrableMenu)_exit);
+
+            text = "ENTRAINER L'IA";
+            _trainingMode = new Textbox(new Vector2(-3200, (screenHeight - font.MeasureString(text).Y) / 2 + 160), font, text);
+            _groupMenu.AddElement((IIntegrableMenu)_trainingMode);
 
             _groupMenu.RefreshColors();
             _groupMenu.CurrentSelection = 0;
@@ -118,6 +124,7 @@ namespace TankArmageddon
             _tweeningPlay = new Tweening(Tweening.Tween.InSine, (int)_play.Position.X, (int)(screenWidth - _play.Size.X) / 2, new TimeSpan(0, 0, 0, TIMER_INTRO));
             _tweeninghowToPlay = new Tweening(Tweening.Tween.InSine, (int)_howToPlay.Position.X, (int)(screenWidth - _howToPlay.Size.X) / 2, new TimeSpan(0, 0, 0, TIMER_INTRO));
             _tweeningExit = new Tweening(Tweening.Tween.InSine, (int)_exit.Position.X, (int)(screenWidth - _exit.Size.X) / 2, new TimeSpan(0, 0, 0, TIMER_INTRO));
+            _tweeningTrainingMode = new Tweening(Tweening.Tween.InSine, (int)_trainingMode.Position.X, (int)(screenWidth - _trainingMode.Size.X) / 2, new TimeSpan(0, 0, 0, TIMER_INTRO));
 
             _tweeningNbOfTeamDescription = new Tweening(Tweening.Tween.InSine, (int)_numberOfTeamDescription.Position.X, 10, new TimeSpan(0, 0, 0, TIMER_INTRO));
             _tweeningNbOfTankDescription = new Tweening(Tweening.Tween.InSine, (int)_numberOfTankDescription.Position.X, 10, new TimeSpan(0, 0, 0, TIMER_INTRO));
@@ -194,6 +201,7 @@ namespace TankArmageddon
         #region Sélection de scène
         private void Select()
         {
+            MainGame.IATrainingMode = false;
             switch (_groupMenu.CurrentSelection)
             {
                 case 0:
@@ -204,6 +212,12 @@ namespace TankArmageddon
                     break;
                 case 2:
                     MainGame.ExitGame = true;
+                    break;
+                case 3:
+                    MainGame.IATrainingMode = true;
+                    MainGame.NumberOfTeam = 20;
+                    MainGame.NumberOfTank = 2;
+                    MainGame.ChangeScene(SceneType.Gameplay);
                     break;
                 default:
                     break;
@@ -233,10 +247,12 @@ namespace TankArmageddon
             _tweeningPlay.Update(gameTime);
             _tweeninghowToPlay.Update(gameTime);
             _tweeningExit.Update(gameTime);
+            _tweeningTrainingMode.Update(gameTime);
 
             _play.Position = new Vector2(_tweeningPlay.Result, _play.Position.Y);
             _howToPlay.Position = new Vector2(_tweeninghowToPlay.Result, _howToPlay.Position.Y);
             _exit.Position = new Vector2(_tweeningExit.Result, _exit.Position.Y);
+            _trainingMode.Position = new Vector2(_tweeningTrainingMode.Result, _trainingMode.Position.Y);
 
             _tweeningNbOfTeamDescription.Update(gameTime);
             _numberOfTeamDescription.Position = new Vector2(_tweeningNbOfTeamDescription.Result, _numberOfTeamDescription.Position.Y);

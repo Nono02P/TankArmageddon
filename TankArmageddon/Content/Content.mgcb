@@ -179,12 +179,6 @@
 /processorParam:TextureFormat=Color
 /build:_Background/Victory.png
 
-#begin _Musics/Heros.mp3
-/importer:Mp3Importer
-/processor:SongProcessor
-/processorParam:Quality=Best
-/build:_Musics/Heros.mp3
-
 #begin _Font/MenuFont.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
@@ -203,4 +197,16 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:_Background/HowToPlay.png
+
+#begin _Game/horn.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:_Game/horn.wav
+
+#begin _Musics/Heros.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:_Musics/Heros.mp3
 

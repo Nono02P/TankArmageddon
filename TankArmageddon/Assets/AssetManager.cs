@@ -22,6 +22,7 @@ namespace TankArmageddon
         public static SoundEffect sndShoot { get; private set; }
         public static SoundEffect sndExplosion { get; private set; }
         public static SoundEffect sndSaintGrenada { get; private set; }
+        public static SoundEffect sndHorn { get; private set; }
         #endregion
 
         #region Font
@@ -60,6 +61,7 @@ namespace TankArmageddon
             sndShoot = pContent.Load<SoundEffect>("_Game/Shoot");
             sndExplosion = pContent.Load<SoundEffect>("_Game/Explosion");
             sndSaintGrenada = pContent.Load<SoundEffect>("_Game/Hallelujah");
+            sndHorn = pContent.Load<SoundEffect>("_Game/Horn");
             #endregion
 
             #region Font

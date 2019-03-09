@@ -42,8 +42,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Libs\IA\ActivationFunctions.cs" />
+    <Compile Include="Libs\IA\Genetic\GeneticNeuralNetwork.cs" />
     <Compile Include="Libs\IA\Matrix.cs" />
     <Compile Include="Libs\IA\NeuralNetwork.cs" />
+    <Compile Include="Libs\IA\Genetic\Population.cs" />
     <Compile Include="MainGame\ExplosionEventArgs.cs" />
     <Compile Include="MainGame\ButtonAction.cs" />
     <Compile Include="MainGame\Controls\NeuralNetworkControl.cs" />
@@ -53,6 +55,7 @@
     <Compile Include="MainGame\Spring.cs" />
     <Compile Include="MainGame\Sprites\Tank\Actions\Action.cs" />
     <Compile Include="MainGame\Sprites\Tank\Drill.cs" />
+    <Compile Include="MainGame\Sprites\Tank\ISentByTank.cs" />
     <Compile Include="MainGame\Water.cs" />
     <Compile Include="MainGame\Sprites\Drop.cs" />
     <Compile Include="MainGame\Sprites\Tank\Grenada.cs" />
