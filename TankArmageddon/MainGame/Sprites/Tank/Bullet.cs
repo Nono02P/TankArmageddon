@@ -31,34 +31,34 @@ namespace TankArmageddon
                 BulletType = pBulletType;
                 switch (BulletType)
                 {
-                    case Action.eActions.None:
+                    case TankArmageddon.Action.eActions.None:
                         break;
-                    case Action.eActions.iGrayBullet:
+                    case TankArmageddon.Action.eActions.iGrayBullet:
                         ImgBox = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tank_bullet1.png").ImgBox;
                         Radius = 40;
                         Force = 2;
                         break;
-                    case Action.eActions.iGrayBombshell:
+                    case TankArmageddon.Action.eActions.iGrayBombshell:
                         ImgBox = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tank_bullet2.png").ImgBox;
                         Radius = 50;
                         Force = 15;
                         break;
-                    case Action.eActions.GoldBullet:
+                    case TankArmageddon.Action.eActions.GoldBullet:
                         ImgBox = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tank_bullet5.png").ImgBox;
                         Radius = 40;
                         Force = 4;
                         break;
-                    case Action.eActions.GoldBombshell:
+                    case TankArmageddon.Action.eActions.GoldBombshell:
                         ImgBox = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tank_bullet6.png").ImgBox;
                         Radius = 50;
                         Force = 25;
                         break;
-                    case Action.eActions.GrayMissile:
+                    case TankArmageddon.Action.eActions.GrayMissile:
                         ImgBox = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tank_bullet4.png").ImgBox;
                         Radius = 80;
                         Force = 40;
                         break;
-                    case Action.eActions.GreenMissile:
+                    case TankArmageddon.Action.eActions.GreenMissile:
                         ImgBox = AssetManager.TanksAtlas.Textures.Find(t => t.Name == "tank_bullet3.png").ImgBox;
                         Radius = 80;
                         Force = 50;

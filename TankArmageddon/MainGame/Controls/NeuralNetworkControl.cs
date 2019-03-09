@@ -8,10 +8,6 @@ namespace TankArmageddon
 {
     public class NeuralNetworkControl : IControl
     {
-        #region Evènements
-        public event onIntChange OnFitnessScoreChange;
-        #endregion
-
         #region Constantes
 
         #region Valeurs des bonus sur le FittingScore
@@ -25,8 +21,8 @@ namespace TankArmageddon
         #endregion
 
         #region Valeurs des malus sur le FittingScore
-        public static int MalusFuelEmpty = 2;
-        public static int MalusFallInWater = 10;
+        public static int MalusFuelEmpty = 30;
+        public static int MalusFallInWater = 100;
         public static int MalusFriendlyFire = 20;
         public static int MalusFriendKilled = 30;
         #endregion
@@ -35,12 +31,10 @@ namespace TankArmageddon
 
         #region Variables privées
         private float[] _inputs;
-        private int _fitnessScore;
         #endregion
 
         #region Propriétés
         public Team Parent { get; private set; }
-        public int FitnessScore { get => _fitnessScore; set { if (_fitnessScore != value) OnFitnessScoreChange?.Invoke(this, _fitnessScore, value); _fitnessScore = value; Genome.FitnessScore = value; } }
         public bool OnPressedLeft { get; private set; }
         public bool OnPressedRight { get; private set; }
         public bool OnPressedUp { get; private set; }
@@ -282,9 +276,10 @@ namespace TankArmageddon
                 for (int i = 1; i < Enum.GetValues(typeof(Action.eActions)).Length; i++)
                 {
                     if (commands[i + 5])
-                        //Parent.SelectAction((Action.eActions)i);
-                        if (Parent.SelectAction((Action.eActions)i))
+                    {
+                        if(Parent.SelectAction((Action.eActions)i))
                             break;
+                    }
                 }
                 #endregion
             }

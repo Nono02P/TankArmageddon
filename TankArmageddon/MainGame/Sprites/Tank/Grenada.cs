@@ -34,18 +34,18 @@ namespace TankArmageddon
                 Sender = pShooter;
                 switch (pBulletType)
                 {
-                    case Action.eActions.Grenada:
+                    case TankArmageddon.Action.eActions.Grenada:
                         Radius = 80;
                         Force = 25;
-                        BounceLimit = 100;
+                        BounceLimit = 30;
                         _timerExplosion = 5;
                         Image = AssetManager.Grenada;
                         Scale = Vector2.One * 0.1f;
                         break;
-                    case Action.eActions.SaintGrenada:
+                    case TankArmageddon.Action.eActions.SaintGrenada:
                         Radius = 80;
                         Force = 50;
-                        BounceLimit = 100;
+                        BounceLimit = 30;
                         _timerExplosion = 5;
                         Image = AssetManager.SaintGrenada;
                         Scale = Vector2.One * 0.08f;

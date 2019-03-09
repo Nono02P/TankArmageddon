@@ -19,14 +19,14 @@ namespace TankArmageddon
                 {
                     if (Control.OnPressedSpace) //(Input.OnPressed(Keys.Space))
                     {
-                        switch (Action.GetCategory(Parent.SelectedAction))
+                        switch (TankArmageddon.Action.GetCategory(Parent.SelectedAction))
                         {
-                            case Action.eCategory.None:
-                            case Action.eCategory.Bullet:
-                            case Action.eCategory.Grenada:
-                            case Action.eCategory.Drop:
+                            case TankArmageddon.Action.eCategory.None:
+                            case TankArmageddon.Action.eCategory.Bullet:
+                            case TankArmageddon.Action.eCategory.Grenada:
+                            case TankArmageddon.Action.eCategory.Drop:
                                 break;
-                            case Action.eCategory.Mine:
+                            case TankArmageddon.Action.eCategory.Mine:
                                 Mine m = new Mine(Parent, Parent.Position);
                                 m.Angle = Parent.Angle;
                                 Parent.Parent.Parent.FinnishTour();

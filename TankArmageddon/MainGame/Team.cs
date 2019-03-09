@@ -178,9 +178,12 @@ namespace TankArmageddon
         #region Sélection de l'action
         public bool SelectAction(Action.eActions actions)
         {
-            Tank CurrentTank = Tanks[IndexTank];
-            CurrentTank.SelectedAction = actions;
-            return true;
+            if (Inventory[actions] != 0)
+            {
+                Tank CurrentTank = Tanks[IndexTank];
+                CurrentTank.SelectedAction = actions;
+                return true;
+            }
             return false;
         }
         #endregion
@@ -196,7 +199,7 @@ namespace TankArmageddon
                 Control.Update(pCanPlay);
 
                 // Sélectionne le tank suivant
-                if (Control.OnPressedN && pCanPlay)
+                if (Control.OnPressedN && pCanPlay && !CurrentTank.Action.BlockAction)
                 {
                     CurrentTank.IsControlled = false;
                     IndexTank++;

@@ -2,15 +2,24 @@
 using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
+using TankArmageddon;
 
 namespace IA
 {
     [DataContract]
     public class GeneticNeuralNetwork : NeuralNetwork
     {
+        #region Evènements
+        public event onIntChange OnFitnessScoreChange;
+        #endregion
+
+        #region Variables privées
+        private int _fitnessScore;
+        #endregion
+
         #region Propriétés
         [DataMember]
-        public int FitnessScore { get; set; }
+        public int FitnessScore { get => _fitnessScore; set { if (_fitnessScore != value) OnFitnessScoreChange?.Invoke(this, _fitnessScore, value); _fitnessScore = value; } }
         #endregion
 
         #region Constructeur

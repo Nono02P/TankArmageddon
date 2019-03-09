@@ -29,27 +29,27 @@ namespace TankArmageddon
                 if (Enable)
                 {
                     ShootCursor.Visible = true;
-                    Action.eCategory category = Action.GetCategory(Parent.SelectedAction);
-                    ShootCursor.Position = Control.CursorPosition(category != Action.eCategory.Drop); //Mouse.GetState().Position.ToVector2() + new Vector2(MainGame.Camera.Position.X, MainGame.Camera.Position.Y);
+                    Action.eCategory category = TankArmageddon.Action.GetCategory(Parent.SelectedAction);
+                    ShootCursor.Position = Control.CursorPosition(category != TankArmageddon.Action.eCategory.Drop); //Mouse.GetState().Position.ToVector2() + new Vector2(MainGame.Camera.Position.X, MainGame.Camera.Position.Y);
                     if (Control.OnPressedSpace) //(Input.OnPressed(Keys.Space))
                     {
                         switch (category)
                         {
-                            case Action.eCategory.None:
-                            case Action.eCategory.Grenada:
-                            case Action.eCategory.Mine:
+                            case TankArmageddon.Action.eCategory.None:
+                            case TankArmageddon.Action.eCategory.Grenada:
+                            case TankArmageddon.Action.eCategory.Mine:
                                 break;
-                            case Action.eCategory.Bullet:
+                            case TankArmageddon.Action.eCategory.Bullet:
                                 Bullet b = new Bullet(Parent, AssetManager.TanksSpriteSheet, new Vector2(ShootCursor.Position.X, 0), Vector2.Zero, Parent.SelectedAction, Vector2.One);
                                 break;
-                            case Action.eCategory.Drop:
+                            case TankArmageddon.Action.eCategory.Drop:
                                 Drop d;
                                 switch (Parent.SelectedAction)
                                 {
-                                    case Action.eActions.DropHealth:
+                                    case TankArmageddon.Action.eActions.DropHealth:
                                         d = new Drop(Parent.Parent.Parent, Drop.eDropType.Health, AssetManager.TanksSpriteSheet, new Vector2(ShootCursor.Position.X, 0), Vector2.Zero, Vector2.One);
                                         break;
-                                    case Action.eActions.iDropFuel:
+                                    case TankArmageddon.Action.eActions.iDropFuel:
                                         d = new Drop(Parent.Parent.Parent, Drop.eDropType.Fuel, AssetManager.TanksSpriteSheet, new Vector2(ShootCursor.Position.X, 0), Vector2.Zero, Vector2.One);
                                         d.Value = (int)Parent.Fuel / 2;
                                         Parent.Fuel -= d.Value;

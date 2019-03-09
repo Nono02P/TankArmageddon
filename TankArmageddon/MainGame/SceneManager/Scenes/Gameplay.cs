@@ -15,7 +15,7 @@ namespace TankArmageddon
     {
         #region Constantes
         private const int TIME_PER_TOUR = 60;
-        private const int TIME_PER_TOUR_IA_TRAINING = 15;
+        private const int TIME_PER_TOUR_IA_TRAINING = 20;
         private const int TIME_AFTER_ACTION = 10;
         private const int TIME_BETWEEN_TOUR = 10;
         #endregion
@@ -130,11 +130,12 @@ namespace TankArmageddon
                     Team curTeam = Teams[_indexTeam];
                     if (IATrainingMode)
                     {
+                        GeneticNeuralNetwork genome = ((NeuralNetworkControl)curTeam.Control).Genome;
                         if (_indexTeam != value)
                         {
                             Population.NextGeneration();
                         }
-                        _fittingScoreTextBox.Text = "Fitness Score : " + curTeam.Control.FitnessScore + " Generation : " + Population.Generation;
+                        _fittingScoreTextBox.Text = "Fitness Score : " + genome.FitnessScore + " Generation : " + Population.Generation;
                     }
                     curTeam.RefreshCameraOnSelection();
                     RefreshActionButtonInventory();
@@ -374,7 +375,7 @@ namespace TankArmageddon
                 {
                     NeuralNetworkControl nn = (NeuralNetworkControl)t.Control;
                     Population.Genomes.Add(nn.Genome);
-                    nn.OnFitnessScoreChange += NeuralNetworkControl_OnFittingScoreChange;
+                    nn.Genome.OnFitnessScoreChange += Genome_OnFittingScoreChange;
                 }
                 t.OnTankSelectionChange += OnTankSelectionChange;
             }
@@ -400,7 +401,7 @@ namespace TankArmageddon
         #endregion
 
         #region Changement du Fitting Score
-        private void NeuralNetworkControl_OnFittingScoreChange(object sender, int previous, int actual)
+        private void Genome_OnFittingScoreChange(object sender, int previous, int actual)
         {
             _fittingScoreTextBox.Text = "Fitness Score : " + actual + " Generation : " + Population.Generation;
         }
@@ -435,10 +436,13 @@ namespace TankArmageddon
             if (Clicks == ClickType.Left && _inTour)
             {
                 ButtonAction btn = (ButtonAction)pSender;
-                if (btn.Number != 0)
+                Team team = Teams[_indexTeam];
+                if (team.Control is PlayerControl)
                 {
-                    if(Teams[_indexTeam].SelectAction(btn.ActionType))
+                    if (team.SelectAction(btn.ActionType))
+                    {
                         GUIGroupButtons.CurrentSelection = GUIGroupButtons.Elements.FindIndex(b => b == btn);
+                    }
                 }
             }
         }

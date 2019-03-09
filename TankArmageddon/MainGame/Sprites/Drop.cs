@@ -105,7 +105,10 @@ namespace TankArmageddon
                 }
                 if (tank != null)
                 {
-                    tank.Parent.Control.FitnessScore += NeuralNetworkControl.BonusDropTouched;
+                    if (tank.Parent.Control is NeuralNetworkControl)
+                    {
+                        ((NeuralNetworkControl)tank.Parent.Control).Genome.FitnessScore += NeuralNetworkControl.BonusDropTouched;
+                    }
                 }
             }
         }
@@ -123,7 +126,10 @@ namespace TankArmageddon
                 Tank t = (Tank)collisionnable;
                 if (t.IsControlled)
                 {
-                    t.Parent.Control.FitnessScore += NeuralNetworkControl.BonusDropPickUp;
+                    if (t.Parent.Control is NeuralNetworkControl)
+                    {
+                        ((NeuralNetworkControl)t.Parent.Control).Genome.FitnessScore += NeuralNetworkControl.BonusDropPickUp;
+                    }
                 }
                 Parent.RefreshActionButtonInventory();
                 Remove = true;

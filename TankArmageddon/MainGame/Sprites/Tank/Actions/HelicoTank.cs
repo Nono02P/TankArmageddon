@@ -49,9 +49,9 @@ namespace TankArmageddon
                     Parent.Fuel -= FUEL_CONSUMPTION;
                     // Permet de désactiver la Continuous Collision Detection au moment du décollage.
                     Parent._disableCCD = true;
-                    if (!_alreadyMoved)
+                    if (!_alreadyMoved && Control is NeuralNetworkControl)
                     {
-                        Control.FitnessScore += NeuralNetworkControl.BonusHelicoTankMove;
+                        ((NeuralNetworkControl)Control).Genome.FitnessScore += NeuralNetworkControl.BonusHelicoTankMove;
                         _alreadyMoved = true;
                     }
                 }
@@ -67,9 +67,9 @@ namespace TankArmageddon
                 }
                 else
                 {
-                    if (!_fuelEmpty)
+                    if (!_fuelEmpty && Control is NeuralNetworkControl)
                     {
-                        Control.FitnessScore -= NeuralNetworkControl.MalusFuelEmpty;
+                        ((NeuralNetworkControl)Control).Genome.FitnessScore -= NeuralNetworkControl.MalusFuelEmpty;
                         _fuelEmpty = true;
                     }
                 }
@@ -81,7 +81,7 @@ namespace TankArmageddon
             #region Fin du tour
             public virtual void EndOfTour()
             {
-                Parent.SelectedAction = Action.eActions.None;
+                Parent.SelectedAction = TankArmageddon.Action.eActions.None;
             }
             #endregion
         }

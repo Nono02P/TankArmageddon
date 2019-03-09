@@ -61,24 +61,24 @@ namespace TankArmageddon
                         float sinAngle = (float)Math.Sin(Parent.AngleCannon + Parent.Angle);
                         Vector2 p = new Vector2(Parent._imgCannon.Width * 1.25f * Parent.Scale.X * cosAngle, Parent._imgCannon.Width * 1.25f * Parent.Scale.X * sinAngle);
                         p += Parent._positionCannon;
-                        switch (Action.GetCategory(Parent.SelectedAction))
+                        switch (TankArmageddon.Action.GetCategory(Parent.SelectedAction))
                         {
-                            case Action.eCategory.None:
-                            case Action.eCategory.Drop:
-                            case Action.eCategory.Mine:
+                            case TankArmageddon.Action.eCategory.None:
+                            case TankArmageddon.Action.eCategory.Drop:
+                            case TankArmageddon.Action.eCategory.Mine:
                                 break;
-                            case Action.eCategory.Bullet:
+                            case TankArmageddon.Action.eCategory.Bullet:
                                 Bullet b = new Bullet(Parent, img, p, new Vector2(cosAngle * Force, sinAngle * Force), Parent.SelectedAction, Parent.Scale);
                                 b.FocusCamera = true;
                                 break;
-                            case Action.eCategory.Grenada:
+                            case TankArmageddon.Action.eCategory.Grenada:
                                 Grenada g = new Grenada(Parent, p, new Vector2(cosAngle * Force, sinAngle * Force), Parent.SelectedAction);
                                 g.FocusCamera = true;
                                 break;
                             default:
                                 break;
                         }
-                        if (Parent.SelectedAction == Action.eActions.SaintGrenada)
+                        if (Parent.SelectedAction == TankArmageddon.Action.eActions.SaintGrenada)
                         {
                             _sndSaintGrenada.Play();
                         }
@@ -97,6 +97,14 @@ namespace TankArmageddon
                     LaunchBar.Value = Force;
                     LaunchBar.Angle = Parent.AngleCannon + Parent.Angle;
                 }
+            }
+            #endregion
+
+            #region Fin de tour
+            public override void EndOfTour()
+            {
+                base.EndOfTour();
+                LaunchBar.Visible = false;
             }
             #endregion
         }

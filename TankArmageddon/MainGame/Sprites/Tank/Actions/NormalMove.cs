@@ -27,7 +27,10 @@ namespace TankArmageddon
                     if (_blockAction != value)
                     {
                         _blockAction = value;
-                        Control.FitnessScore += NeuralNetworkControl.BonusShoot;
+                        if (Control is NeuralNetworkControl)
+                        {
+                            ((NeuralNetworkControl)Control).Genome.FitnessScore += NeuralNetworkControl.BonusShoot;
+                        }
                         if (Parent.Parent.Inventory[Parent.SelectedAction] > 0)
                         {
                             Parent.Parent.Inventory[Parent.SelectedAction]--;
@@ -53,18 +56,18 @@ namespace TankArmageddon
                 if (Parent.Up && Parent._direction == eDirection.Right || Parent.Down && Parent._direction == eDirection.Left)
                 {
                     Parent.AngleCannon -= SPEED_ROTATION;
-                    if (!_cannonAlreadyMoved)
+                    if (!_cannonAlreadyMoved && Control is NeuralNetworkControl)
                     {
-                        Control.FitnessScore += NeuralNetworkControl.BonusCannonMove;
+                        ((NeuralNetworkControl)Control).Genome.FitnessScore += NeuralNetworkControl.BonusCannonMove;
                         _cannonAlreadyMoved = true;
                     }
                 }
                 if (Parent.Down && Parent._direction == eDirection.Right || Parent.Up && Parent._direction == eDirection.Left)
                 {
                     Parent.AngleCannon += SPEED_ROTATION;
-                    if (!_cannonAlreadyMoved)
+                    if (!_cannonAlreadyMoved && Control is NeuralNetworkControl)
                     {
-                        Control.FitnessScore += NeuralNetworkControl.BonusCannonMove;
+                        ((NeuralNetworkControl)Control).Genome.FitnessScore += NeuralNetworkControl.BonusCannonMove;
                         _cannonAlreadyMoved = true;
                     }
                 }
@@ -82,17 +85,17 @@ namespace TankArmageddon
                         Parent.Fuel -= FUEL_CONSUMPTION;
                         Parent.Parent.RefreshCameraOnSelection();
                         _fuelEmpty = false;
-                        if (!_tankAlreadyMoved)
+                        if (!_tankAlreadyMoved && Control is NeuralNetworkControl)
                         {
-                            Control.FitnessScore += NeuralNetworkControl.BonusTankMove;
+                            ((NeuralNetworkControl)Control).Genome.FitnessScore += NeuralNetworkControl.BonusTankMove;
                             _tankAlreadyMoved = true;
                         }
                     }
                     else
                     {
-                        if (!_fuelEmpty)
+                        if (!_fuelEmpty && Control is NeuralNetworkControl)
                         {
-                            Control.FitnessScore -= NeuralNetworkControl.MalusFuelEmpty;
+                            ((NeuralNetworkControl)Control).Genome.FitnessScore -= NeuralNetworkControl.MalusFuelEmpty;
                             _fuelEmpty = true;
                         }
                     }
@@ -117,7 +120,7 @@ namespace TankArmageddon
             #region Fin du tour
             public virtual void EndOfTour()
             {
-                Parent.SelectedAction = Action.eActions.None;
+                Parent.SelectedAction = TankArmageddon.Action.eActions.None;
             }
             #endregion
         }

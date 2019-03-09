@@ -1,4 +1,5 @@
 ﻿using System;
+using IA;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using TankArmageddon.GUI;
@@ -41,7 +42,6 @@ namespace TankArmageddon
         private Group _group;
         private Image _guiGameplayIndex;
         private Action.eActions _selectedAction;
-        private IAction _action;
         private NormalMove _normalMove;
         private HelicoTank _helicoTank;
         private OneShootFromTank _oneShootFromTank;
@@ -53,6 +53,7 @@ namespace TankArmageddon
         #region Propriétés
         public Team Parent { get; set; }
         public Color TeamColor { get; private set; }
+        public IAction Action { get; private set; }
         public string Name { get; set; }
         public float AngleCannon { get; set; } = MathHelper.ToRadians(360);
         public bool Left { get; set; }
@@ -61,8 +62,8 @@ namespace TankArmageddon
         public bool Down { get; set; }
         public bool Space { get; set; }
         public bool IsControlled { get; set; }
-        public bool Parachute { get => _parachute; private set { if (_parachute != value) { _parachute = value; _imgParachute.Visible = value; } } } 
-        public Action.eActions SelectedAction { get => _selectedAction; set { if (!_action.BlockAction) { _selectedAction = value; RefreshActionClass(); } } }
+        public bool Parachute { get => _parachute; private set { if (_parachute != value) { _parachute = value; _imgParachute.Visible = value; } } }
+        public Action.eActions SelectedAction { get => _selectedAction; set { if (!Action.BlockAction) { _selectedAction = value; RefreshActionClass(); } } }
         public int Life { get => _life; set { _life = MathHelper.Clamp(value, 0, 100); _lifeBar.SetProgressiveValue(value, _barSpeed); RefreshGUITextbox(); } }
         public float Fuel { get => _fuel; set { _fuel = MathHelper.Clamp(value, 0, 100); _fuelBar.SetProgressiveValue(value, _barSpeed); } }
         #endregion
@@ -124,7 +125,7 @@ namespace TankArmageddon
             _multipleShootFromTank = new MultipleShootFromTank(this);
             _oneShootFromAirplane = new OneShootFromAirplane(this);
             _letOnFloor = new LetOnFloor(this);
-            _action = _normalMove;
+            Action = _normalMove;
             #endregion
 
             #region Abonnement aux évènements
@@ -168,44 +169,44 @@ namespace TankArmageddon
         /// </summary>
         private void RefreshActionClass()
         {
-            _action.BeforeActionChange();
+            Action.BeforeActionChange();
             switch (SelectedAction)
             {
-                case Action.eActions.None:
-                    _action = _normalMove;
+                case TankArmageddon.Action.eActions.None:
+                    Action = _normalMove;
                     break;
-                case Action.eActions.iGrayBullet:
-                case Action.eActions.GoldBullet:
-                    _action = _multipleShootFromTank;
+                case TankArmageddon.Action.eActions.iGrayBullet:
+                case TankArmageddon.Action.eActions.GoldBullet:
+                    Action = _multipleShootFromTank;
                     break;
-                case Action.eActions.iGrayBombshell:
-                case Action.eActions.GoldBombshell:
-                case Action.eActions.Grenada:
-                case Action.eActions.SaintGrenada:
-                    _action = _oneShootFromTank;
+                case TankArmageddon.Action.eActions.iGrayBombshell:
+                case TankArmageddon.Action.eActions.GoldBombshell:
+                case TankArmageddon.Action.eActions.Grenada:
+                case TankArmageddon.Action.eActions.SaintGrenada:
+                    Action = _oneShootFromTank;
                     break;
-                case Action.eActions.GrayMissile:
-                case Action.eActions.GreenMissile:
-                case Action.eActions.DropHealth:
-                case Action.eActions.iDropFuel:
-                    _action = _oneShootFromAirplane;
+                case TankArmageddon.Action.eActions.GrayMissile:
+                case TankArmageddon.Action.eActions.GreenMissile:
+                case TankArmageddon.Action.eActions.DropHealth:
+                case TankArmageddon.Action.eActions.iDropFuel:
+                    Action = _oneShootFromAirplane;
                     break;
                 //case Action.eActions.iTankBaseBall:
                     // TODO : Jouer l'animation
                     //break;
-                case Action.eActions.HelicoTank:
-                    _action = _helicoTank;
+                case TankArmageddon.Action.eActions.HelicoTank:
+                    Action = _helicoTank;
                     break;
-                case Action.eActions.Drilling:
+                case TankArmageddon.Action.eActions.Drilling:
                     // TODO : Jouer l'animation
                     break;
-                case Action.eActions.iMine:
-                    _action = _letOnFloor;
+                case TankArmageddon.Action.eActions.iMine:
+                    Action = _letOnFloor;
                     break;
                 default:
                     break;
             }
-            _action.Enable = true;
+            Action.Enable = true;
         }
         #endregion
 
@@ -265,28 +266,31 @@ namespace TankArmageddon
                 
                 if (tank != null)
                 {
-                    // Si le tank qui a provoqué l'explosion fait partie de la même équipe, provoque un malus
-                    if (tank.Parent == Parent)
+                    if (tank.Parent.Control is NeuralNetworkControl)
                     {
-                        tank.Parent.Control.FitnessScore -= NeuralNetworkControl.MalusFriendlyFire;
-
-                        // Si il est en plus à l'origine de sa mort, ajoute un autre malus
-                        if (Life < 0)
+                        GeneticNeuralNetwork Genome = ((NeuralNetworkControl)tank.Parent.Control).Genome;
+                        // Si le tank qui a provoqué l'explosion fait partie de la même équipe, provoque un malus
+                        if (tank.Parent == Parent)
                         {
-                            tank.Parent.Control.FitnessScore -= NeuralNetworkControl.MalusFriendKilled;
-                        }
-                    }
-                    else
-                    {
-                        // Si le tank qui a provoqué l'explosion fait partie d'une autre équipe, lui ajoute un bonus
-                        tank.Parent.Control.FitnessScore += force;
+                            Genome.FitnessScore -= NeuralNetworkControl.MalusFriendlyFire + force;
 
-                        // Si il est en plus à l'origine de sa mort, ajoute un autre bonus
-                        if (Life < 0)
-                        {
-                            tank.Parent.Control.FitnessScore += NeuralNetworkControl.BonusTankKilled;
+                            // Si il est en plus à l'origine de sa mort, ajoute un autre malus
+                            if (Life <= 0)
+                            {
+                                Genome.FitnessScore -= NeuralNetworkControl.MalusFriendKilled;
+                            }
                         }
-                    }
+                        else
+                        {
+                            // Si le tank qui a provoqué l'explosion fait partie d'une autre équipe, lui ajoute un bonus
+                            Genome.FitnessScore += force;
+
+                            // Si il est en plus à l'origine de sa mort, ajoute un autre bonus
+                            if (Life <= 0)
+                            {
+                                Genome.FitnessScore += NeuralNetworkControl.BonusTankKilled;
+                            }
+                        } }
                 }
             }
         }
@@ -295,9 +299,9 @@ namespace TankArmageddon
         #region Sur fin de tour
         private void Gameplay_OnTourTimerEnd(object sender, EventArgs e)
         {
-            _action.BlockAction = false;
-            _action.EndOfTour();
-            SelectedAction = Action.eActions.None;
+            Action.BlockAction = false;
+            Action.EndOfTour();
+            SelectedAction = TankArmageddon.Action.eActions.None;
             Parent.Parent.RefreshActionButtonSelection(SelectedAction);
         }
         #endregion
@@ -324,7 +328,7 @@ namespace TankArmageddon
             float vy = Velocity.Y;
             if (IsControlled)
             {
-                _action.Update(gameTime, ref vx, ref vy);
+                Action.Update(gameTime, ref vx, ref vy);
                 Layer = _originalLayer + 0.1f;
             }
             else
@@ -356,7 +360,7 @@ namespace TankArmageddon
                     if (IsControlled && Parent.Control is NeuralNetworkControl)
                     {
                         NeuralNetworkControl nn = (NeuralNetworkControl)Parent.Control;
-                        nn.FitnessScore -= NeuralNetworkControl.MalusFallInWater;
+                        nn.Genome.FitnessScore -= NeuralNetworkControl.MalusFallInWater;
                     }
                 }
             }

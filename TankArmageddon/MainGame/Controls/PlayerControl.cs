@@ -13,7 +13,6 @@ namespace TankArmageddon
 
         #region Propriétés
         public Team Parent { get; private set; }
-        public int FitnessScore { get; set; }
         public bool OnPressedLeft { get; private set; }
         public bool OnPressedRight { get; private set; }
         public bool OnPressedUp { get; private set; }
