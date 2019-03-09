@@ -31,10 +31,13 @@ namespace TankArmageddon
                         {
                             ((NeuralNetworkControl)Control).Genome.FitnessScore += NeuralNetworkControl.BonusShoot;
                         }
-                        if (Parent.Parent.Inventory[Parent.SelectedAction] > 0)
+                        if (Parent.SelectedAction != TankArmageddon.Action.eActions.None)
                         {
-                            Parent.Parent.Inventory[Parent.SelectedAction]--;
-                            Parent.Parent.Parent.RefreshActionButtonInventory();
+                            if (Parent.Parent.Inventory[Parent.SelectedAction] > 0)
+                            {
+                                Parent.Parent.Inventory[Parent.SelectedAction]--;
+                                Parent.Parent.Parent.RefreshActionButtonInventory();
+                            }
                         }
                     }
                 }
@@ -77,7 +80,7 @@ namespace TankArmageddon
                 #region Contrôles des déplacements
                 float xSpeed = (float)Math.Cos(Parent.Angle) * SPEED;
 
-                if (Parent.Left && Parent._onFloor)
+                if (Parent.Left && !Parent.Right && Parent._onFloor)
                 {
                     if (Parent.Fuel > 0)
                     {
@@ -101,13 +104,21 @@ namespace TankArmageddon
                     }
                     Parent.Effects = SpriteEffects.FlipHorizontally;
                 }
-                if (Parent.Right && Parent._onFloor)
+                if (Parent.Right && !Parent.Left && Parent._onFloor)
                 {
                     if (Parent.Fuel > 0)
                     {
                         vx += xSpeed;
                         Parent.Fuel -= FUEL_CONSUMPTION;
                         Parent.Parent.RefreshCameraOnSelection();
+                    }
+                    else
+                    {
+                        if (!_fuelEmpty && Control is NeuralNetworkControl)
+                        {
+                            ((NeuralNetworkControl)Control).Genome.FitnessScore -= NeuralNetworkControl.MalusFuelEmpty;
+                            _fuelEmpty = true;
+                        }
                     }
                     Parent.Effects = SpriteEffects.None;
                 }

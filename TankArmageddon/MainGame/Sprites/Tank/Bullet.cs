@@ -77,12 +77,12 @@ namespace TankArmageddon
                 if (pWithExplosion)
                 {
                     OnBulletExplosion?.Invoke(this, new ExplosionEventArgs((Vector2)pPosition, Radius, Force));
-                }
+                }/*
                 else
                 {
                     if (Sender.Parent.Control is NeuralNetworkControl)
                         ((NeuralNetworkControl)Sender.Parent.Control).Genome.FitnessScore -= NeuralNetworkControl.MalusShotOutOfScreen;
-                }
+                }*/
                 Remove = true;
                 OnBulletExplosion -= Sender.Parent.Parent.CreateExplosion;
             }

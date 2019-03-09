@@ -939,9 +939,10 @@ namespace TankArmageddon
         #region Timer de fin de partie
         private void TimerEnd_OnElapsed(object sender, ElapsedEventArgs e)
         {
-            if(IATrainingMode)
+            if (IATrainingMode)
             {
                 Population.Export("Population");
+                MainGame.ChangeScene(SceneType.Menu);
             }
             if (Teams.Count == 1)
             {
@@ -959,15 +960,6 @@ namespace TankArmageddon
         #region Update
         public override void Update(GameTime gameTime)
         {
-            if (Input.OnReleased(Keys.Escape))
-            {
-                if (IATrainingMode)
-                {
-                    Population.Export("Population");
-                }
-                MainGame.ChangeScene(SceneType.Menu);
-            }
-
             #region Collisions
             // Gère les collisions entre IActors
             List<IActor> lstCollisionnable = lstActors.FindAll(actor => actor is ICollisionnable);
@@ -1012,6 +1004,17 @@ namespace TankArmageddon
                 Timer timerEnd = new Timer(3000);
                 timerEnd.Enabled = true;
                 timerEnd.Elapsed += TimerEnd_OnElapsed;
+            }
+            #endregion
+
+            #region Arrêt manuel de la partie
+            if (Input.OnReleased(Keys.Escape))
+            {
+                if (IATrainingMode)
+                {
+                    Population.Export("Population");
+                }
+                MainGame.ChangeScene(SceneType.Menu);
             }
             #endregion
 

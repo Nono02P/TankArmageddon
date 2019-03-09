@@ -30,8 +30,6 @@ namespace IA
         #region Variables privées
         [DataMember]
         private Random _rnd;
-
-        private DataContractJsonSerializer _ser;
         #endregion
 
         #region Propriétés
@@ -53,7 +51,6 @@ namespace IA
         {
             Genomes = new List<GeneticNeuralNetwork>();
             _rnd = new Random();
-            _ser = new DataContractJsonSerializer(typeof(Population));
         }
         #endregion
 
@@ -69,17 +66,14 @@ namespace IA
         #region Sérialize l'instance
         public void Export(string pPathFile = "Population")
         {
-            if(_ser == null)
-            {
-                _ser = new DataContractJsonSerializer(typeof(Population));
-            }
+            DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(Population));
             string path = pPathFile;
             if (path == "")
             {
                 path = "Population";
             }
             FileStream stream = File.Create(path + ".json");
-            _ser.WriteObject(stream, this);
+            ser.WriteObject(stream, this);
             stream.Close();
         }
         #endregion
