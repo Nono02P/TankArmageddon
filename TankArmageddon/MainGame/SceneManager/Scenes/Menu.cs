@@ -217,6 +217,7 @@ namespace TankArmageddon
                     MainGame.IATrainingMode = true;
                     MainGame.NumberOfTeam = 15;
                     MainGame.NumberOfTank = 2;
+                    MainGame.AutoRestart = true;
                     MainGame.ChangeScene(SceneType.Gameplay);
                     break;
                 default:
@@ -288,7 +289,9 @@ namespace TankArmageddon
                     Select();
                 }
             }
-                base.Update(gameTime);
+            if (MainGame.AutoRestart)
+                MainGame.ChangeScene(SceneType.Gameplay);
+            base.Update(gameTime);
         }
         #endregion
 

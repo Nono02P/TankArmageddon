@@ -44,6 +44,7 @@ namespace TankArmageddon
         public static Scene CurrentScene { get; private set; }
         public static bool ExitGame { get;  set; }
         public static string Winner { get;  set; }
+        public static bool AutoRestart { get; set; }
         public static bool IATrainingMode { get; set; }
         public static eControlType[] ControlTypes { get; set; }
 
