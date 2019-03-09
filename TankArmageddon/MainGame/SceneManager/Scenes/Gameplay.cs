@@ -151,7 +151,7 @@ namespace TankArmageddon
             IATrainingMode = MainGame.IATrainingMode;
             if (IATrainingMode)
             {
-                Population = new Population();
+                Population = Population.OpenFromFile("StartGame_Population");
                 Population.OnGenomesChanged += Population_OnGenomesChanged;
             }
             #endregion
@@ -374,8 +374,16 @@ namespace TankArmageddon
                 if (IATrainingMode)
                 {
                     NeuralNetworkControl nn = (NeuralNetworkControl)t.Control;
-                    Population.Genomes.Add(nn.Genome);
-                    nn.Genome.OnFitnessScoreChange += Genome_OnFittingScoreChange;
+                    if (Population.Genomes.Count > 0)
+                    {
+                        nn.Genome = Population.Genomes[i];
+                        nn.Genome.OnFitnessScoreChange += Genome_OnFittingScoreChange;
+                    }
+                    else
+                    {
+                        Population.Genomes.Add(nn.Genome);
+                        nn.Genome.OnFitnessScoreChange += Genome_OnFittingScoreChange;
+                    }
                 }
                 t.OnTankSelectionChange += OnTankSelectionChange;
             }

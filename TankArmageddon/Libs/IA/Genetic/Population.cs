@@ -56,10 +56,10 @@ namespace IA
         #endregion
 
         #region Créé une instance à partir d'un fichier
-        public static Population OpenFromFile(string pPathFile)
+        public static Population OpenFromFile(string pPathFile = "Population")
         {
             DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(Population));
-            MemoryStream stream = new MemoryStream(File.ReadAllBytes(pPathFile));
+            MemoryStream stream = new MemoryStream(File.ReadAllBytes(pPathFile + ".json"));
             return (Population)ser.ReadObject(stream);
         }
         #endregion
