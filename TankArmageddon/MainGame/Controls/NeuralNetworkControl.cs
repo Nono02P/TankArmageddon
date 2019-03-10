@@ -14,7 +14,7 @@ namespace TankArmageddon
         public static int BonusTankMove = 1;
         public static int BonusCannonMove = 2;
         public static int BonusHelicoTankMove = 10;
-        public static int BonusShoot = 5;
+        //public static int BonusShoot = 5;
         public static int BonusDropTouched = 2;
         public static int BonusDropPickUp = 2;
         public static int BonusTankKilled = 10;

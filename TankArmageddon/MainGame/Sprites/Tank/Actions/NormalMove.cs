@@ -27,10 +27,10 @@ namespace TankArmageddon
                     if (_blockAction != value)
                     {
                         _blockAction = value;
-                        if (Control is NeuralNetworkControl)
+                        /*if (Control is NeuralNetworkControl)
                         {
                             ((NeuralNetworkControl)Control).Genome.FitnessScore += NeuralNetworkControl.BonusShoot;
-                        }
+                        }*/
                         if (Parent.SelectedAction != TankArmageddon.Action.eActions.None)
                         {
                             if (Parent.Parent.Inventory[Parent.SelectedAction] > 0)

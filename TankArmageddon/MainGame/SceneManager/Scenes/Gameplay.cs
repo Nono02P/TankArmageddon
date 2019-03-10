@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Timers;
 using TankArmageddon.GUI;
@@ -152,8 +153,14 @@ namespace TankArmageddon
             IATrainingMode = MainGame.IATrainingMode;
             if (IATrainingMode)
             {
-                Population = Population.OpenFromFile("Population");
-                //Population = new Population();
+                if (File.Exists("Population.json"))
+                {
+                    Population = Population.OpenFromFile("Population");
+                }
+                else
+                {
+                    Population = new Population();
+                }
                 Population.OnGenomesChanged += Population_OnGenomesChanged;
             }
             #endregion
@@ -369,7 +376,10 @@ namespace TankArmageddon
                 }
                 else
                 {
-                    controlType = eControlType.Player; // MainGame.ControlTypes[i];
+                    if (i < 1)
+                        controlType = eControlType.Player; // MainGame.ControlTypes[i];
+                    else
+                        controlType = eControlType.NeuralNetwork;
                 }
                 t = new Team(this, img, numberOfTankPerTeam, i, controlType);
                 Teams.Add(t);
@@ -1012,6 +1022,7 @@ namespace TankArmageddon
             {
                 if (IATrainingMode)
                 {
+                    MainGame.AutoRestart = false;
                     Population.Export("Population");
                 }
                 MainGame.ChangeScene(SceneType.Menu);

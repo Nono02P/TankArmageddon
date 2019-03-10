@@ -290,7 +290,12 @@ namespace TankArmageddon
                 }
             }
             if (MainGame.AutoRestart)
+            {
+                MainGame.IATrainingMode = true;
+                MainGame.NumberOfTeam = 15;
+                MainGame.NumberOfTank = 2;
                 MainGame.ChangeScene(SceneType.Gameplay);
+            }
             base.Update(gameTime);
         }
         #endregion
