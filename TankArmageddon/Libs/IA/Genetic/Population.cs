@@ -25,6 +25,7 @@ namespace IA
 
         #region Evènements
         public event PopulationManagerHandler OnGenomesChanged;
+        public event PopulationManagerHandler OnGenomesDeletion;
         #endregion
 
         #region Variables privées
@@ -94,6 +95,7 @@ namespace IA
             for (int i = 0; i < Genomes.Count; i++)
             {
                 GeneticNeuralNetwork g = Genomes[i];
+                g.FitnessScore = (int)Math.Pow(g.FitnessScore, 4);
                 if (g.FitnessScore > 0)
                     totalFitness += g.FitnessScore;
                 if (g.FitnessScore > maxFitness)
@@ -113,38 +115,47 @@ namespace IA
             // Sinon, génère un nouveau schéma de réseau de neurones.
             if (maxFitness > MinimumAcceptableFitness)
             {
-                #region Création d'un sac de parents (pour gérer un pourcentage de chance par rapport au score)
-                List<GeneticNeuralNetwork> parentBag = new List<GeneticNeuralNetwork>();
-                for (int i = 0; i < Genomes.Count; i++)
-                {
-                    GeneticNeuralNetwork g = Genomes[i];
-                    for (int j = 0; j < (g.FitnessScore / (float)totalFitness) * 100; j++)
-                    {
-                        parentBag.Add(g);
-                    }
-                }
-                #endregion
-
                 #region Génère des enfants
                 List<GeneticNeuralNetwork> nextPopulation = new List<GeneticNeuralNetwork>();
                 while (nextPopulation.Count < populationNumber)
                 {
-                    #region Sélectionne deux parents et les retire du sac
-                    int indexP1 = _rnd.Next(parentBag.Count);
-                    GeneticNeuralNetwork p1 = parentBag[indexP1];
-                    parentBag.RemoveAt(indexP1);
+                    bool selected = false;
+                    GeneticNeuralNetwork p1;
+                    GeneticNeuralNetwork p2;
 
-                    int indexP2 = _rnd.Next(parentBag.Count);
-                    GeneticNeuralNetwork p2 = parentBag[indexP2];
-                    parentBag.RemoveAt(indexP2);
+                    #region Sélectionne deux parents et les retire du sac
+                    do
+                    {
+                        int indexP1 = _rnd.Next(Genomes.Count);
+                        p1 = Genomes[indexP1];
+                        if (_rnd.Next(totalFitness) < p1.FitnessScore)
+                            selected = true;
+                    } while (!selected);
+
+                    selected = false;
+                    do
+                    {
+                        int indexP2 = _rnd.Next(Genomes.Count);
+                        p2 = Genomes[indexP2];
+                        if (_rnd.Next(totalFitness) < p1.FitnessScore)
+                            selected = true;
+                    } while (!selected);
                     #endregion
 
-                    GeneticNeuralNetwork[] childs = GeneticNeuralNetwork.CreateChilds(p1, p2, _rnd);
-
+                    //GeneticNeuralNetwork[] childs = GeneticNeuralNetwork.CreateChilds(p1, p2, _rnd);
+                    p1.FitnessScore = 0;
+                    p2.FitnessScore = 0;
                     if (nextPopulation.Count == populationNumber - 1)
+                    {
                         nextPopulation.Add(p1);
+                        //nextPopulation.Add(childs[0]);
+                    }
                     else
-                        nextPopulation.AddRange(childs);
+                    {
+                        nextPopulation.Add(p1);
+                        nextPopulation.Add(p2);
+                        //nextPopulation.AddRange(childs);
+                    }
                 }
                 #endregion
 
@@ -155,7 +166,7 @@ namespace IA
                     c.Mutate(_rnd, MutationRate);
                 }
                 #endregion
-
+                OnGenomesDeletion?.Invoke(this, new PopulationManagerEventArgs(Genomes));
                 Genomes = nextPopulation;
             }
             else
@@ -169,6 +180,7 @@ namespace IA
                 {
                     hidden[i] = _rnd.Next(nbOutputs, nbInputs + nbOutputs);
                 }
+                OnGenomesDeletion?.Invoke(this, new PopulationManagerEventArgs(Genomes));
                 Genomes = new List<GeneticNeuralNetwork>();
                 for (int i = 0; i < populationNumber; i++)
                 {

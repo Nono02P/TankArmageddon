@@ -53,11 +53,17 @@ namespace TankArmageddon
         #endregion
 
         #region Constructeur
-        public NeuralNetworkControl(Team pParent)
+        public NeuralNetworkControl(Team pParent, Random pRnd)
         {
             Parent = pParent;
             _inputs = new float[46];
-            Genome = new GeneticNeuralNetwork(_inputs.Length, new int[] { 24, 20 }, 20, ActivationFunctions.eActivationFunction.TanH, true);
+            int nbOutputs = 20;
+            int[] hidden = new int[pRnd.Next(2, 20)];
+            for (int i = 0; i < hidden.Length; i++)
+            {
+                hidden[i] = pRnd.Next(nbOutputs, _inputs.Length + nbOutputs);
+            }
+            Genome = new GeneticNeuralNetwork(_inputs.Length, hidden, nbOutputs, ActivationFunctions.eActivationFunction.TanH, true);
         }
         #endregion
 

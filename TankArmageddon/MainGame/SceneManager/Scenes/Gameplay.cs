@@ -126,7 +126,7 @@ namespace TankArmageddon
             get { return _indexTeam; }
             private set
             {
-                if (Teams.Count > 0 && _indexTeam != value)
+                if (Teams.Count > 0)// && _indexTeam != value)
                 {
                     _indexTeam = value % Teams.Count;
                     Team curTeam = Teams[_indexTeam];
@@ -160,7 +160,9 @@ namespace TankArmageddon
                 else
                 {
                     Population = new Population();
+                    Population.MutationRate = 0.05f;
                 }
+                Population.OnGenomesDeletion += Population_OnGenomesDeletion;
                 Population.OnGenomesChanged += Population_OnGenomesChanged;
             }
             #endregion
@@ -366,7 +368,8 @@ namespace TankArmageddon
             Team t;
             int numberOfTeam = MainGame.NumberOfTeam;
             int numberOfTankPerTeam = MainGame.NumberOfTank;
-            
+            Random rnd = new Random();
+
             for (byte i = 0; i < numberOfTeam; i++)
             {
                 eControlType controlType; 
@@ -381,20 +384,20 @@ namespace TankArmageddon
                     else
                         controlType = eControlType.NeuralNetwork;
                 }
-                t = new Team(this, img, numberOfTankPerTeam, i, controlType);
+                t = new Team(this, img, numberOfTankPerTeam, i, rnd, controlType);
                 Teams.Add(t);
                 if (IATrainingMode)
                 {
                     NeuralNetworkControl nn = (NeuralNetworkControl)t.Control;
-                    if (Population.Genomes.Count > 0)
+                    if (Population.Genomes.Count > i)
                     {
                         nn.Genome = Population.Genomes[i % Population.Genomes.Count];
-                        nn.Genome.OnFitnessScoreChange += Genome_OnFittingScoreChange;
+                        nn.Genome.OnFitnessScoreChange += Genome_OnFitnessScoreChange;
                     }
                     else
                     {
                         Population.Genomes.Add(nn.Genome);
-                        nn.Genome.OnFitnessScoreChange += Genome_OnFittingScoreChange;
+                        nn.Genome.OnFitnessScoreChange += Genome_OnFitnessScoreChange;
                     }
                 }
                 t.OnTankSelectionChange += OnTankSelectionChange;
@@ -411,6 +414,14 @@ namespace TankArmageddon
 
         public override void UnLoad()
         {
+            for (int i = 0; i < GUIGroupButtons.Elements.Count; i++)
+            {
+                Element elm = GUIGroupButtons.Elements[i];
+                elm.OnHover -= OnButtonHover;
+                elm.OnClick -= OnButtonClicked;
+            }
+            MainGame.Camera.OnPositionChange += OnCameraPositionChange;
+
             _timerSecond.Elapsed -= OnTimerElapsed;
             for (int i = 0; i < Teams.Count; i++)
             {
@@ -419,20 +430,37 @@ namespace TankArmageddon
             }
             if (IATrainingMode)
             {
+                for (int i = 0; i < Population.Genomes.Count; i++)
+                {
+                    GeneticNeuralNetwork gnn = Population.Genomes[i];
+                    gnn.OnFitnessScoreChange -= Genome_OnFitnessScoreChange;
+                }
+                Population.OnGenomesDeletion -= Population_OnGenomesDeletion;
                 Population.OnGenomesChanged -= Population_OnGenomesChanged;
             }
+            _water.Unload();
             base.UnLoad();
         }
         #endregion
 
         #region Changement du Fitting Score
-        private void Genome_OnFittingScoreChange(object sender, int previous, int actual)
+        private void Genome_OnFitnessScoreChange(object sender, int previous, int actual)
         {
             _fittingScoreTextBox.Text = "Fitness Score : " + actual + " Generation : " + Population.Generation;
         }
         #endregion
 
         #region Changements sur la population
+        private void Population_OnGenomesDeletion(object sender, PopulationManagerEventArgs e)
+        {
+            
+            for (int i = 0; i < e.Genomes.Count; i++)
+            {
+                GeneticNeuralNetwork gnn = e.Genomes[i];
+                gnn.OnFitnessScoreChange -= Genome_OnFitnessScoreChange;
+            }
+        }
+
         private void Population_OnGenomesChanged(object sender, PopulationManagerEventArgs e)
         {
             int index = 0;
@@ -441,9 +469,9 @@ namespace TankArmageddon
                 Team t = Teams[i];
                 if (t.Control is NeuralNetworkControl)
                 {
-                    NeuralNetworkControl nn = (NeuralNetworkControl)t.Control;
-                    nn.Genome = e.Genomes[i];
-                    nn.Genome.OnFitnessScoreChange += Genome_OnFittingScoreChange;
+                    NeuralNetworkControl gnn = (NeuralNetworkControl)t.Control;
+                    gnn.Genome = e.Genomes[i];
+                    gnn.Genome.OnFitnessScoreChange += Genome_OnFitnessScoreChange;
                     index++;
                 }
             }
@@ -462,7 +490,7 @@ namespace TankArmageddon
             if (Clicks == ClickType.Left && _inTour)
             {
                 ButtonAction btn = (ButtonAction)pSender;
-                Team team = Teams[IndexTeam];
+                Team team = Teams[IndexTeam % Teams.Count];
                 if (team.Control is PlayerControl)
                 {
                     if (team.SelectAction(btn.ActionType))
@@ -954,14 +982,17 @@ namespace TankArmageddon
                 Population.Export("Population");
                 MainGame.ChangeScene(SceneType.Menu);
             }
-            if (Teams.Count == 1)
-            {
-                MainGame.Winner = Teams[0].ToString();
-                MainGame.ChangeScene(SceneType.Victory);
-            }
             else
             {
-                MainGame.ChangeScene(SceneType.Gameover);
+                if (Teams.Count == 1)
+                {
+                    MainGame.Winner = Teams[0].ToString();
+                    MainGame.ChangeScene(SceneType.Victory);
+                }
+                else
+                {
+                    MainGame.ChangeScene(SceneType.Gameover);
+                }
             }
             ((Timer)sender).Elapsed -= TimerEnd_OnElapsed;
         }
@@ -1014,6 +1045,7 @@ namespace TankArmageddon
                 Timer timerEnd = new Timer(3000);
                 timerEnd.Enabled = true;
                 timerEnd.Elapsed += TimerEnd_OnElapsed;
+                GC.Collect();
             }
             #endregion
 

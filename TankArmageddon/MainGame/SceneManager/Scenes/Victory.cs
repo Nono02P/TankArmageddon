@@ -25,9 +25,7 @@ namespace TankArmageddon
         private Textbox _exit;
         private Tweening _tweeningExit;
         #endregion
-
-        #region Méthodes
-
+        
         #region Load/Unload
         public override void Load()
         {
@@ -78,6 +76,16 @@ namespace TankArmageddon
             #endregion
 
             base.Load();
+        }
+
+        public override void UnLoad()
+        {
+            foreach (Textbox txt in _groupMenu.Elements)
+            {
+                txt.OnHover -= Textbox_OnHover;
+                txt.OnClick -= Textbox_OnClick;
+            }
+            base.UnLoad();
         }
         #endregion
 
@@ -156,8 +164,6 @@ namespace TankArmageddon
             spriteBatch.Draw(_background, _background.Bounds, _backgroundColor);
             base.Draw(spriteBatch, gameTime);
         }
-        #endregion
-        
         #endregion
     }
 }

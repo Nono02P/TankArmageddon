@@ -148,6 +148,19 @@ namespace TankArmageddon
         public override void UnLoad()
         {
             MediaPlayer.Stop();
+            foreach (Textbox txt in _groupMenu.Elements)
+            {
+                txt.OnHover -= MenuTextbox_OnHover;
+                txt.OnClick -= MenuTextbox_OnClick;
+            }
+            for (int i = 0; i < _numberOfTeam.Length; i++)
+            {
+                _numberOfTeam[i].OnClick -= NbOfTeamTextbox_OnClick;
+            }
+            for (int i = 0; i < _numberOfTank.Length; i++)
+            {
+                _numberOfTank[i].OnClick -= NbOfTankTextbox_OnClick;
+            }
             base.UnLoad();
         }
         #endregion

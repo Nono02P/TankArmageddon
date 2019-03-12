@@ -87,6 +87,13 @@ namespace TankArmageddon
         }
         #endregion
 
+        #region Unload
+        public void Unload()
+        {
+            Parent.OnExplosion -= Gameplay_OnExplosion;
+        }
+        #endregion
+
         #region Splash
         public void Splash(Vector2 pPosition, float pVelocity)
         {
@@ -176,13 +183,13 @@ namespace TankArmageddon
             bottom = MathHelper.Clamp(bottom, 0, _maxBottom);
             float scale = (Position.X + offsetPos.X + Size.X) / (Springs.Length - 1f); // be sure to use float division
 
-            for (int i = 0; i < Springs.Length - 1; i++)
+            for (int i = (int)(offsetPos.X / scale); i < (int)((offsetPos.X + MainGame.Screen.Width) / scale); i++) //Springs.Length - 1; i++)
             {
                 Spring s1 = Springs[i];
                 Spring s2 = Springs[i + 1];
                 
-                Vector2 p1 = new Vector2(i * scale, s1.Value - offsetPos.Y);
-                Vector2 p2 = new Vector2((i + 1) * scale, s2.Value - offsetPos.Y);
+                Vector2 p1 = new Vector2(i * scale - offsetPos.X, s1.Value - offsetPos.Y);
+                Vector2 p2 = new Vector2((i + 1) * scale - offsetPos.X, s2.Value - offsetPos.Y);
                 Vector2 p3 = new Vector2(p2.X, bottom);
                 Vector2 p4 = new Vector2(p1.X, bottom);
 

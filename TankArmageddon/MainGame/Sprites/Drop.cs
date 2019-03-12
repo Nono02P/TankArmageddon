@@ -133,6 +133,9 @@ namespace TankArmageddon
                 }
                 Parent.RefreshActionButtonInventory();
                 Remove = true;
+                Parent.OnExplosion -= Gameplay_OnExplosion;
+                OnDropExplosion -= Parent.CreateExplosion;
+
                 switch (DropType)
                 {
                     case eDropType.Weapon:

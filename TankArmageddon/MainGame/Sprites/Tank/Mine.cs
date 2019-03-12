@@ -106,10 +106,12 @@ namespace TankArmageddon
             }
             #endregion
 
-            #region 
+            #region Fin de vie de la mine
             private void Die(bool pWithExplosion)
             {
-                
+                Remove = true;
+                _timerExplosion.Elapsed -= OnTimerExplosionElapsed;
+                Sender.Parent.Parent.OnTourTimerEnd -= Gameplay_OnTourTimerEnd;
             }
             #endregion
 

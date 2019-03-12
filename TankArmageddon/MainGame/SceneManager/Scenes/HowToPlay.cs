@@ -18,8 +18,6 @@ namespace TankArmageddon
         private Textbox _menu;
         #endregion
 
-        #region Méthodes
-
         #region Load/Unload
         public override void Load()
         {
@@ -49,6 +47,12 @@ namespace TankArmageddon
             #endregion
 
             base.Load();
+        }
+
+        public override void UnLoad()
+        {
+            _menu.OnClick -= Textbox_OnClick;
+            base.UnLoad();
         }
         #endregion
 
@@ -85,8 +89,6 @@ namespace TankArmageddon
             spriteBatch.Draw(_background, _background.Bounds, _backgroundColor);
             base.Draw(spriteBatch, gameTime);
         }
-        #endregion
-
         #endregion
     }
 }

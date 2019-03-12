@@ -52,9 +52,10 @@ namespace IA
                 {
                     Matrix m1 = pParent1._weights[w];
                     Matrix m2 = pParent2._weights[w];
+                    int crossoverPosition = pRnd.Next(m1.Data.Length);
                     for (int d = 0; d < m1.Data.Length; d++)
                     {
-                        if (pRnd.NextDouble() > 0.5f)
+                        if (d < crossoverPosition) //(pRnd.NextDouble() > 0.5f)
                         {
                             childs[i]._weights[w].Data[d] = m1.Data[d];
                         }
@@ -68,9 +69,10 @@ namespace IA
                 {
                     Matrix m1 = pParent1._bias[b];
                     Matrix m2 = pParent2._bias[b];
+                    int crossoverPosition = pRnd.Next(m1.Data.Length);
                     for (int d = 0; d < m1.Data.Length; d++)
                     {
-                        if (pRnd.NextDouble() > 0.5f)
+                        if (d < crossoverPosition) //(pRnd.NextDouble() > 0.5f)
                         {
                             childs[i]._bias[b].Data[d] = m1.Data[d];
                         }

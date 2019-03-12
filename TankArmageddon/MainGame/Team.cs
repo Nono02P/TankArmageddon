@@ -40,7 +40,7 @@ namespace TankArmageddon
         #endregion
 
         #region Constructeur
-        public Team(Gameplay pParent, Texture2D pImage, int pNumberOfTanks, int pTeamNumber, eControlType pControlType = eControlType.Player)
+        public Team(Gameplay pParent, Texture2D pImage, int pNumberOfTanks, int pTeamNumber, Random pRnd, eControlType pControlType = eControlType.Player)
         {
             #region Création de l'inventaire
             Inventory = new Dictionary<Action.eActions, int>();
@@ -93,7 +93,7 @@ namespace TankArmageddon
             switch (pControlType)
             {
                 case eControlType.NeuralNetwork:
-                    Control = new NeuralNetworkControl(this);
+                    Control = new NeuralNetworkControl(this, pRnd);
                     break;
                 case eControlType.Player:
                     Control = new PlayerControl(this);
