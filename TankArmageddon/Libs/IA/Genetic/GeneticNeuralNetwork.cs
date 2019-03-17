@@ -35,6 +35,23 @@ namespace IA
         }
         #endregion
 
+        #region Copie
+        public new GeneticNeuralNetwork Copy()
+        {
+            GeneticNeuralNetwork result = new GeneticNeuralNetwork(NbInputs, NbHiddens, NbOutputs, ActivationFunction, _allowNegative);
+            result.LearningRate = LearningRate;
+            for (int i = 0; i < _weights.Count; i++)
+            {
+                result._weights[i] = _weights[i].Copy();
+            }
+            for (int i = 0; i < _bias.Count; i++)
+            {
+                result._bias[i] = _bias[i].Copy();
+            }
+            return result;
+        }
+        #endregion
+
         #region Génère deux enfants à partir de deux parents
         /// <summary>
         /// Génère deux enfants à partir de deux parents
@@ -45,7 +62,9 @@ namespace IA
         public static GeneticNeuralNetwork[] CreateChilds(GeneticNeuralNetwork pParent1, GeneticNeuralNetwork pParent2, Random pRnd)
         {
             GeneticNeuralNetwork[] childs = new GeneticNeuralNetwork[2];
-            for (int i = 0; i < childs.Length; i++)
+            childs[0] = pParent1.Copy();
+            childs[1] = pParent2.Copy();
+            /*for (int i = 0; i < childs.Length; i++)
             {
                 childs[i] = new GeneticNeuralNetwork(pParent1.NbInputs, pParent1.NbHiddens, pParent1.NbOutputs, pParent1.ActivationFunction, pParent1._allowNegative);
                 for (int w = 0; w < pParent1._weights.Count; w++)
@@ -81,8 +100,8 @@ namespace IA
                             childs[i]._bias[b].Data[d] = m2.Data[d];
                         }
                     }
-                }
-            }
+                } 
+            }*/
             return childs;
         }
         #endregion
@@ -101,7 +120,16 @@ namespace IA
                 for (int d = 0; d < m.Data.Length; d++)
                 {
                     if (pRnd.NextDouble() <= pMutationRate)
-                        _weights[w].Data[d] = pRnd.Next();
+                    {
+                        if (_allowNegative)
+                        {
+                            _weights[w].Data[d] = pRnd.Next() * 2 - 1;
+                        }
+                        else
+                        {
+                            _weights[w].Data[d] = pRnd.Next();
+                        }
+                    }
                 }
             }
             for (int b = 0; b < _bias.Count; b++)
@@ -110,7 +138,16 @@ namespace IA
                 for (int d = 0; d < m.Data.Length; d++)
                 {
                     if (pRnd.NextDouble() <= pMutationRate)
-                        _bias[b].Data[d] = pRnd.Next();
+                    {
+                        if (_allowNegative)
+                        {
+                            _bias[b].Data[d] = pRnd.Next() * 2 - 1;
+                        }
+                        else
+                        {
+                            _bias[b].Data[d] = pRnd.Next();
+                        }
+                    }
                 }
             }
         }

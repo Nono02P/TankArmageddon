@@ -49,7 +49,7 @@ namespace TankArmageddon
             base.Update(gameTime);
 
             #region Collision avec le sol
-            if (Parent.IsSolid(Position))
+            if (Parent.IsSolid(Position) || Position.X < 0 || Position.X > Parent.MapSize.X || Position.Y < 0 || Position.Y > Parent.MapSize.Y)
             {
                 Remove = true;
             }

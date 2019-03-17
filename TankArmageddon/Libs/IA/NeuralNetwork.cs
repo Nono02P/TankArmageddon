@@ -35,6 +35,7 @@ namespace IA
         public int NbOutputs { get; private set; }
         #endregion
 
+        #region Constructeur
         public NeuralNetwork(int pNbInputs, int[] pNbHiddens, int pNbOutputs, ActivationFunctions.eActivationFunction pActivationFunction = ActivationFunctions.eActivationFunction.Sigmoid, bool pAllowNegative = false)
         {
             NbInputs = pNbInputs;
@@ -76,7 +77,30 @@ namespace IA
                 _bias.Add(b);
             }
         }
+        #endregion
 
+        #region Copie
+        /// <summary>
+        /// Créé et renvois une copie du réseau de neurones.
+        /// </summary>
+        /// <returns>Renvois la copie du réseau de neurones.</returns>
+        public virtual NeuralNetwork Copy()
+        {
+            NeuralNetwork result = new NeuralNetwork(NbInputs, NbHiddens, NbOutputs, ActivationFunction, _allowNegative);
+            result.LearningRate = LearningRate;
+            for (int i = 0; i < _weights.Count; i++)
+            {
+                result._weights[i] = _weights[i].Copy();
+            }
+            for (int i = 0; i < _bias.Count; i++)
+            {
+                result._bias[i] = _bias[i].Copy();
+            }
+            return result;
+        }
+        #endregion
+
+        #region FeedForward
         /// <summary>
         /// Exécutes le réseau de neurones afin d'évaluer la sortie en fonction des entrées.
         /// </summary>
@@ -101,7 +125,9 @@ namespace IA
             }
             return O.Data;
         }
+        #endregion
 
+        #region Trainning
         /// <summary>
         /// Entraine le réseau en exécutant le réseau pour en évaluer les sorties.
         /// Puis compare les sorties obtenus par rapport aux sorties désirées, et ajuste les poids afin de se rapprocher des sorties désirées.
@@ -148,5 +174,6 @@ namespace IA
             }
             return new Tuple<float[], float[]> (O.Data, error.Data);
         }
+        #endregion
     }
 }

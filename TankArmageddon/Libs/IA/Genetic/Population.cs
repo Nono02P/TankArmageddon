@@ -60,7 +60,13 @@ namespace IA
         {
             DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(Population));
             MemoryStream stream = new MemoryStream(File.ReadAllBytes(pPathFile + ".json"));
-            return (Population)ser.ReadObject(stream);
+            Population pop = (Population)ser.ReadObject(stream);
+            pop._rnd = new Random();
+            for (int i = 0; i < pop.Genomes.Count; i++)
+            {
+                pop.Genomes[i].FitnessScore = 0;
+            }
+            return pop;
         }
         #endregion
 
@@ -142,19 +148,14 @@ namespace IA
                     } while (!selected);
                     #endregion
 
-                    //GeneticNeuralNetwork[] childs = GeneticNeuralNetwork.CreateChilds(p1, p2, _rnd);
-                    p1.FitnessScore = 0;
-                    p2.FitnessScore = 0;
+                    GeneticNeuralNetwork[] childs = GeneticNeuralNetwork.CreateChilds(p1, p2, _rnd);
                     if (nextPopulation.Count == populationNumber - 1)
                     {
-                        nextPopulation.Add(p1);
-                        //nextPopulation.Add(childs[0]);
+                        nextPopulation.Add(childs[0]);
                     }
                     else
                     {
-                        nextPopulation.Add(p1);
-                        nextPopulation.Add(p2);
-                        //nextPopulation.AddRange(childs);
+                        nextPopulation.AddRange(childs);
                     }
                 }
                 #endregion

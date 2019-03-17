@@ -379,10 +379,10 @@ namespace TankArmageddon
                 }
                 else
                 {
-                    if (i < 1)
+                    //if (i < 1)
                         controlType = eControlType.Player; // MainGame.ControlTypes[i];
-                    else
-                        controlType = eControlType.NeuralNetwork;
+                    //else
+                        //controlType = eControlType.NeuralNetwork;
                 }
                 t = new Team(this, img, numberOfTankPerTeam, i, rnd, controlType);
                 Teams.Add(t);
@@ -490,7 +490,7 @@ namespace TankArmageddon
             if (Clicks == ClickType.Left && _inTour)
             {
                 ButtonAction btn = (ButtonAction)pSender;
-                Team team = Teams[IndexTeam % Teams.Count];
+                Team team = Teams[IndexTeam];
                 if (team.Control is PlayerControl)
                 {
                     if (team.SelectAction(btn.ActionType))
@@ -718,9 +718,12 @@ namespace TankArmageddon
             while (y < MapSize.Y - 1)
             {
                 y++;
-                if (MapData[(uint)(pPosition.X + pXOffset + y * MapSize.X)] > 0)
+                if (y >= 0)
                 {
-                    break;
+                    if (MapData[(uint)(pPosition.X + pXOffset + y * MapSize.X)] > 0)
+                    {
+                        break;
+                    }
                 }
             }
             return new Vector2(pXOffset, y - pPosition.Y);
@@ -1036,6 +1039,10 @@ namespace TankArmageddon
             }
 
             Teams.RemoveAll(t => t.Remove);
+            if (IndexTeam >= Teams.Count)
+            {
+                IndexTeam++;
+            }
             #endregion
 
             #region Victoire / Défaite

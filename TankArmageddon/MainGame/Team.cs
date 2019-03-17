@@ -178,11 +178,14 @@ namespace TankArmageddon
         #region Sélection de l'action
         public bool SelectAction(Action.eActions actions)
         {
-            if (Inventory[actions] != 0)
+            if (actions != Action.eActions.None)
             {
-                Tank CurrentTank = Tanks[IndexTank];
-                CurrentTank.SelectedAction = actions;
-                return true;
+                if (Inventory[actions] != 0)
+                {
+                    Tank CurrentTank = Tanks[IndexTank];
+                    CurrentTank.SelectedAction = actions;
+                    return true;
+                }
             }
             return false;
         }
